@@ -11,9 +11,8 @@ public class Building {
 	private String name;
 	private String filename;
 	
-	public Building(int cost, /*BufferedImage image,*/ int quality, String name, String filename) {
+	public Building(int cost, int quality, String name, String filename) {
 		this.cost = cost;
-		//this.image = image;
 		this.qualityNeeded = quality;
 		this.name = name;
 		this.filename = filename;
@@ -22,7 +21,6 @@ public class Building {
 	
 	public BufferedImage loadImage() {
 		BufferedImage img = null;
-		//System.out.println("assets/"+this.filename+".png");
 		try {
 			img = ImageIO.read(new File("assets/main-screen/buildings/"+this.filename+".png"));
 		} catch (IOException e) {
@@ -54,5 +52,10 @@ public class Building {
 	}
 	public void setQualityNeeded(int qualityNeeded) {
 		this.qualityNeeded = qualityNeeded;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		Building other = (Building) obj;
+		return name.equals(other.name);
 	}
 }

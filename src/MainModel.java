@@ -3,9 +3,11 @@ import java.util.HashMap;
 public class MainModel {
 	public final int POLLUTION_MAX = 10000;
 	public final int MONEY_MAX = 1000;
-	private int pollution = 0;
-	private int money = 99;
-	private MapSpot[][] map;
+	private int pollution = 1;
+	private int money = 100;
+	private final int MAP_HEIGHT = 10;
+	private final int MAP_WIDTH = 10;
+	private MapSpot[][] map = new MapSpot[MAP_HEIGHT][MAP_WIDTH];
 	private HashMap<String,Building> buildingTypes;
 	private int pollIncr = 1;
 	private int moneyIncr = 1;
@@ -64,7 +66,8 @@ public class MainModel {
 		this.map = map;
 	}
 	
-	public MainModel() {
+	public MainModel(MapSpot[][] map) {
+		this.map = map;
 		buildingTypes = loadBuildingTypes();
 	}
 	
@@ -78,35 +81,27 @@ public class MainModel {
 		return types;
 	}
 	
-	public void build(Building structure, int xPos, int yPos) {
-		//System.out.println("BUILD: "+isConstructable(structure)+" isValid: "+isValidPlacement(xPos,yPos));//test
-		if(!placedBuildings[build.ordinal()] && isValidPlacement(xPos, yPos) && isConstructable(structure)) {
+	public Active build(Building structure, int xPos, int yPos) {
+		if(!placedBuildings[build.ordinal()] && isValidPlacement(xPos, yPos, structure) && isConstructable(structure)) {
 			placedBuildings[build.ordinal()] = true;
 			map[xPos][yPos].setB(structure);
-			//map[xPos][yPos].getButton().setText(structure.getName());
-			//map[xPos][yPos].getButton().setIcon(new ImageIcon(structure.getImage()));
 			switch(build) {
 			case FISH:
-				//new FishGame();
-				break;
+				return Active.FISH;
 			case BIRD:
-				//new BirdGame();
-				break;
+				return Active.BIRD;
 			case RESEARCH:
-				//new ResearchGame();
-				break;
+				return Active.RESEARCH;
 			default:
-				break;
+				return Active.MAIN;
 			}
 		}
 		build = BuildState.NONE;
+		return Active.MAIN;
 	}
 	
 	public void removeBuilding(int xPos, int yPos) {
-		//Building removed = map[xPos][yPos].getB();
 		map[xPos][yPos].setB(null);
-		//map[xPos][yPos].getButton().setText("");
-		//how to set built to false again?
 		build = BuildState.NONE;
 	}
 	
@@ -118,8 +113,8 @@ public class MainModel {
 		return false;
 	}
 	
-	public boolean isValidPlacement(int xPos, int yPos) {
-		return map[xPos][yPos].isValid();
+	public boolean isValidPlacement(int xPos, int yPos, Building structure) {
+		return map[yPos][xPos].isValid(structure);
 	}
 	
 	public boolean gameOver() {

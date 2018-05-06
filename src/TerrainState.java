@@ -1,4 +1,8 @@
-
 public enum TerrainState {
-	NORMAL, RIVER, FOREST, BEACH, OTHER
+	NORMAL,
+	RIVER,
+	FOREST,
+	BEACH,
+	OCEAN,
+	OTHER
 }
