@@ -35,25 +35,37 @@ public class BirdWatchingGameController {
 			public void keyPressed(KeyEvent ke) {
 				switch (ke.getKeyCode()) {
 				case KeyEvent.VK_UP:
-					birdModel.camera.setYSpeed(birdModel.getScaledHeight(-15));
+					if (birdModel.toDisplayInfo == null && !birdModel.gameOver)
+						birdModel.camera.setYSpeed(birdModel.getScaledHeight(-15));
 					break;
 				case KeyEvent.VK_DOWN:
-					birdModel.camera.setYSpeed(birdModel.getScaledHeight(15));
+					if (birdModel.toDisplayInfo == null && !birdModel.gameOver)
+						birdModel.camera.setYSpeed(birdModel.getScaledHeight(15));
 					break;
 				case KeyEvent.VK_LEFT:
-					birdModel.camera.setXSpeed(birdModel.getScaledWidth(-15));
+					if (birdModel.toDisplayInfo == null && !birdModel.gameOver)
+						birdModel.camera.setXSpeed(birdModel.getScaledWidth(-15));
 					break;
 				case KeyEvent.VK_RIGHT:
-					birdModel.camera.setXSpeed(birdModel.getScaledWidth(15));
+					if (birdModel.toDisplayInfo == null && !birdModel.gameOver)
+						birdModel.camera.setXSpeed(birdModel.getScaledWidth(15));
 					break;
 				case KeyEvent.VK_SPACE:
 					birdModel.wrongBird = false;
 					birdModel.tryAgain = false;
-					birdModel.takePicture(birdModel.searchingFor, birdModel.birds);
-					birdView.searchingFor = birdModel.searchingFor;
+					if (birdModel.toDisplayInfo == null) {
+						birdModel.takePicture(birdModel.searchingFor, birdModel.birds);
+						birdView.searchingFor = birdModel.searchingFor;
+					}
 					break;
 				case KeyEvent.VK_ENTER:
-					if (birdView.gameOver) {
+					if (birdView.toDisplayInfo != null) {
+						birdView.toDisplayInfo = null;
+						birdModel.toDisplayInfo = null;
+						//birdView.pauseGame = false;
+						//birdView.repaintCount = 0;
+					}
+					else if (birdView.gameOver) {
 						birdView.panel.setVisible(false);
 					}
 					
@@ -105,7 +117,7 @@ public class BirdWatchingGameController {
 
 	public void redraw() {
 		birdModel.update();
-		birdView.update(birdModel.getBirds(), birdModel.getCamera(), birdModel.isFlash());
+		birdView.update(birdModel.getBirds(), birdModel.getCamera(), birdModel.isFlash(), birdModel.toDisplayInfo);
 	}
 
 }

@@ -41,8 +41,8 @@ public class Bird {
 			rect = new Rectangle(xPos, yPos, bWidth, bHeight);
 		}
 		else if (sp == Bird.Species.SANDPIPER) {
-			this.xSpd = rand.nextInt(25) + 15;
-			this.ySpd = rand.nextInt(25) + 15;
+			this.xSpd = rand.nextInt(15) + 15;
+			this.ySpd = rand.nextInt(15) + 15;
 			this.xPos = getScaledWidth(776) + rand.nextInt(getScaledWidth(153)); 
 			this.yPos = getScaledHeight(431) + rand.nextInt(getScaledHeight(138)); 
 			this.direction = BDirection.values()[rand.nextInt(6)];
@@ -51,8 +51,8 @@ public class Bird {
 			rect = new Rectangle(xPos, yPos, bWidth, bHeight);
 		}
 		else {
-			this.xSpd = rand.nextInt(25) + 15;
-			this.ySpd = rand.nextInt(25) + 15;
+			this.xSpd = rand.nextInt(20) + 15;
+			this.ySpd = rand.nextInt(20) + 15;
 			this.xPos = rand.nextInt(screenWidth - getScaledWidth(331)); //keeps inside screen bounds
 			this.yPos = rand.nextInt(screenHeight - getScaledHeight(341)); // keeps inside screen bounds
 			this.direction = BDirection.values()[rand.nextInt(6)];

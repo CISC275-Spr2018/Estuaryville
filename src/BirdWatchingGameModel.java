@@ -23,6 +23,7 @@ public class BirdWatchingGameModel extends Model {
 	boolean gameOver = false;
 	boolean wrongBird = false;
 	boolean tryAgain = false;
+	Bird toDisplayInfo = null;
 	
 	/**
 	 * Creates an instance of the BirdWatchingGameModel class.
@@ -238,9 +239,8 @@ public class BirdWatchingGameModel extends Model {
 		if (!birds.isEmpty()) {
 			takePicFrame = 1;
 			if (isOnTarget(target)) {
-				System.out.println("got it");
 				score += 100;
-				displayInfo(target);
+				toDisplayInfo = target;
 				birds.remove(birds.indexOf(target)); //remove target bird
 				if (birds.isEmpty()) {
 					gameOver = true;
@@ -256,13 +256,11 @@ public class BirdWatchingGameModel extends Model {
 				for (Bird b : birdList) {
 					if (isOnTarget(b)) {
 						//display wrong bird
-						System.out.println("wrong bird");
 						wrongBird = true;
 						return;
 					}
 				}
 				//display look again
-				System.out.println("try again");
 				tryAgain = true;
 			}
 		}
@@ -271,10 +269,6 @@ public class BirdWatchingGameModel extends Model {
 	public static boolean isOnTarget(Bird b) {
 		//collision detection
 		return camera.rect.contains(b.rect);
-	}
-	
-	public static void displayInfo(Bird b) {
-		
 	}
 	
 	/**
