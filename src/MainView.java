@@ -1,8 +1,10 @@
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -12,13 +14,17 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 public class MainView {
 	//width/height constants
-	final static int FRAME_WIDTH = 1900;
-	final static int FRAME_HEIGHT = 1000;
+	static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	final static int FRAME_WIDTH = screenSize.width;
+	final static int FRAME_HEIGHT = screenSize.height;
+	//static int FRAME_WIDTH = 1900;
+	//static int FRAME_HEIGHT = 1000;
 	final static int SIDEBAR_WIDTH = (int) (FRAME_WIDTH*0.2);
 	final static int SIDEBAR_HEIGHT = FRAME_HEIGHT;
 	final static int MAP_WIDTH = FRAME_WIDTH-SIDEBAR_WIDTH;
@@ -54,6 +60,7 @@ public class MainView {
 	//globals
 	private JFrame frame;
 	private DrawPanel panel;
+	private JLayeredPane mainPanel;
 	final String[] buildingNames = {"Port","Bird Watching Tower","Factory","Research Station","Fishing Pier"};
 	private MapSpot[][] board = new MapSpot[NUM_MAP_BUTTONS_X][NUM_MAP_BUTTONS_Y];
 	private HashMap<String,JButton> sidebarButtons = new HashMap<String,JButton>();
@@ -61,6 +68,10 @@ public class MainView {
 	//setters/getters
 	public JFrame getFrame() {
 		return frame;
+	}
+	
+	public JLayeredPane getMainPanel() {
+		return mainPanel;
 	}
 
 	public DrawPanel getPanel() {
@@ -80,7 +91,7 @@ public class MainView {
 	}
 
 	@SuppressWarnings("serial")
-	private class DrawPanel extends JPanel{
+	public class DrawPanel extends JPanel{
 		private int xPos;
 		private int yPos;
 		private int yOffset;
@@ -128,19 +139,24 @@ public class MainView {
 	}
 	
 	public MainView(){
-		frame = new JFrame();		
+		frame = new JFrame();
+		
 		panel = new DrawPanel(BAR_X, BAR_Y, BAR_Y_OFFSET);
 		panel.setLayout(null);
+		panel.setBounds(0,0,FRAME_WIDTH,FRAME_HEIGHT);
+		mainPanel = new JLayeredPane();
+		mainPanel.setBounds(0,0,FRAME_WIDTH,FRAME_HEIGHT);
 		
 		addSidebar();
 		addMainMap();
 		
 		frame.setTitle("EstuaryVille");
-		frame.getContentPane().add(panel);
+		frame.getContentPane().add(mainPanel);
 		frame.setBackground(new Color(100, 153, 239));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		frame.setVisible(true);
+		frame.setResizable(false);
 	}
 	
 	public void addSidebar() {
