@@ -1,3 +1,5 @@
+import java.awt.Rectangle;
+
 /*
  * Joel Turk
  */
@@ -8,6 +10,10 @@
  * 
  */
 public class Fish extends Mover{
+	
+	boolean hooked;
+	Rectangle mouth;
+	int hookedFor;
 	/**
 	 * Species of fish in our game have different sprites, sizes, and animations
 	 * @author Joel
@@ -50,7 +56,24 @@ public class Fish extends Mover{
 	 */
 	public void setSpecies(Species sp){species = sp;}
 	
-	
+	/**
+	 * Gets the Rectangle hit box for this Fish's mouth
+	 * @return a Rectangle
+	 */
+	public Rectangle getMouth(){return this.mouth;}
+	/**
+	 * Updates the location of this Fish's mouth
+	 * @param x new x location
+	 * @param y new y location
+	 */
+	public void setMouth(int x, int y, Direction dir){
+		if(dir == Direction.EAST){
+			mouth.setLocation(x + (int)(.75* FishingGameView.FISH_WIDTH),
+							  y + (int)(.4 * FishingGameView.FISH_HEIGHT));
+		}else if(dir == Direction.WEST){
+			mouth.setLocation(x, y + (int)(.4 * FishingGameView.FISH_HEIGHT));
+		}
+	}
 	
 	/**
 	 * Creates a fish based off of the specifications given. X and Y locations are randomized.
@@ -64,7 +87,27 @@ public class Fish extends Mover{
 		xSpeed = xS;
 		ySpeed = yS;
 		direction = dir;
-		xPos = (int) (Math.random()*FishingGameView.getWidth()/2 + FishingGameView.getWidth()/4);
-		yPos = (int) (Math.random()*FishingGameView.getHeight()/2 + 300);
+		hooked = false;
+		xPos = (int) (Math.random()*FishingGameView.getWidth());
+		yPos = (int) (Math.random()*(FishingGameModel.WATER_BOTTOM - FishingGameModel.WATER_TOP - FishingGameView.FISH_HEIGHT) + FishingGameModel.WATER_TOP);
+		if(dir == Direction.EAST){
+			mouth = new Rectangle(xPos + (int)(.75*FishingGameView.FISH_WIDTH),
+					yPos + (int)(.4 * FishingGameView.FISH_HEIGHT), 
+					20, 
+					20);
+		}else{
+			mouth = new Rectangle(xPos, yPos + (int)(.4 * FishingGameView.FISH_HEIGHT), 20, 20);
+		}
+		hookedFor = 0;
 	}
+	/**
+	 * Sets the fish hooked attribute to true or false
+	 * @param b a boolean representing if the fish is hooked
+	 */
+	public void setHooked(boolean b) {hooked = b;}
+	/**
+	 * Tells whether this Fish is hooked or not
+	 * @return a Boolean, isHooked
+	 */
+	public boolean getHooked(){return hooked;}
 }

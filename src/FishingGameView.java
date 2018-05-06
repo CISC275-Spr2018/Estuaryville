@@ -1,18 +1,22 @@
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.text.StyledEditorKit.FontFamilyAction;
 
 
 /* 
@@ -25,27 +29,37 @@ import javax.swing.JPanel;
  * @author Joel
  */
 public class FishingGameView extends View{
-
-	final static int WIDTH = 786;//1100;//786;//
-	final static int HEIGHT = 500;//500;//
+	static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	final static int WIDTH = screenSize.width;//1100;//786;//
+	final static int HEIGHT = screenSize.height; //500;//
 	public static BufferedImage bg; //background image
 	public static BufferedImage hook_sprite; //the fishing hook
+	final static double SCALE = (FishingGameView.WIDTH / 1280.0);
+	final static double SCALE_Y = (FishingGameView.HEIGHT / 800.0);
+	final static int HOOK_WIDTH = (int) (15 * SCALE);
+	final static int HOOK_HEIGHT = (int) (21 * SCALE);
+	final static int FISH_WIDTH = (int)(100 * SCALE);
+	final static int FISH_HEIGHT = (int)(100 * SCALE_Y);
+	final static int ROD_X = (int) (748 * SCALE);
+	final static int ROD_Y = (int) (73 * SCALE_Y);
 	public BufferedImage[][] fish_sprites;
 	public BufferedImage[] object_sprites; //trash and fish
 	public int imgWidths[];
 	public int imgHeights[];
-	private Fish[] fishes;
+	private ArrayList<Fish> fishes;
 	private Hook hook;
 	private int frameCount = 0;
 	private DrawPanel panel;// = new DrawPanel();
+	boolean reeling;
+	boolean gameOver;
 	
 	/**
 	 * Creates a new FishingGameView with a custom JPanel
 	 */
 	public FishingGameView(){
 		panel = new DrawPanel();
-		fishes = new Fish[1];
-		fishes[0] = new Fish(Fish.Species.STURGEON, 1, 1, Direction.EAST);
+		fishes = new ArrayList<Fish>();
+		fishes.add(new Fish(Fish.Species.STURGEON, 1, 1, Direction.EAST));
 		hook = new Hook();
 		loadSprites();
 		frame = new JFrame();
@@ -55,6 +69,8 @@ public class FishingGameView extends View{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(WIDTH, HEIGHT);
 		frame.setVisible(true);
+		reeling = false;
+		gameOver = false;
 	}
 	
 	public class DrawPanel extends JPanel{
@@ -73,40 +89,51 @@ public class FishingGameView extends View{
 		@Override
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
-			g.drawImage(bg, 0, -22, Color.GRAY, this);
+			g.drawImage(bg, 0, (int)(-22.0/700.0 * FishingGameView.HEIGHT), Color.GRAY, this);
 			g.drawImage(hook_sprite, hook.getXPos(), hook.getYPos(), this);
 			g.setColor(Color.WHITE);
 			Graphics2D g2d = (Graphics2D) g;
 			g2d.setStroke(new BasicStroke(3));
-			int rodX = (int) (((double) 643.0/1100.0) * FishingGameView.getWidth());
-			int rodY = (int) (((double)64.0/700.0) * FishingGameView.getHeight());
-			int hookX = hook.getXPos()+51;
-			int hookY = hook.getYPos()+55;
+			int hookX = hook.getXPos()+(HOOK_WIDTH*2/3);
+			int hookY = hook.getYPos();
 			int waterSurfaceY = (int) (365.0/700.0 * FishingGameView.HEIGHT);
 			int x = 0, y = 0, width = 0, height = 0, startAngle = 0, arcAngle = 0;
-			if(hookX < rodX){//hook is left of rod
-				x = hookX - (rodX - hookX);
-				width = 2 * (rodX - hookX);
+			if(!reeling){
+				if(hookX < ROD_X){//hook is left of rod
+			
+				x = hookX - (ROD_X - hookX);
+				width = 2 * (ROD_X - hookX);
 				startAngle = 0;
 				arcAngle = -90;
 			} else {//hook is right of rod
-				x = rodX;
-				width = 2 * (hookX - rodX);
+				x = ROD_X;
+				width = 2 * (hookX - ROD_X);
 				startAngle = 180;
 				arcAngle = 90;
 			}
 			//hookY > rodY always**
-			y = rodY - (waterSurfaceY - rodY);
-			height = 2 * (waterSurfaceY - rodY);
+			y = ROD_Y - (waterSurfaceY - ROD_Y);
+			height = 2 * (waterSurfaceY - ROD_Y);
 			g2d.drawArc(x, y, width, height, startAngle, arcAngle);//draw arc to water height
 			g2d.drawLine(hookX, waterSurfaceY, hookX, hookY);//draw line down to hook
-			//g2d.drawLine(rodX, rodY, hookX , hookY);
-			for(int i = 0; i < fishes.length; i++){
-				Fish f = fishes[i];
+			}else{
+				g2d.drawLine(ROD_X, ROD_Y, hookX , hookY);
+			}
+			for(int i = 0; i < fishes.size(); i++){
+				Fish f = fishes.get(i);
+				if(f.getHooked()){
+					System.out.println("The "+f.getSpecies().getName()+" is HOOKED");
+				}
+				g.drawRect(f.getMouth().x, f.getMouth().y, f.getMouth().width, f.getMouth().height);
+				g.drawRect(hook.getHitbox().x, hook.getHitbox().y, hook.getHitbox().width, hook.getHitbox().height);
 				if(f.getDirection().equals(Direction.WEST))
 					g.drawImage(fish_sprites[f.getSpecies().ordinal()*2][frameCount], f.getXPos(), f.getYPos(), this);
 				else
 					g.drawImage(fish_sprites[f.getSpecies().ordinal()*2+1][frameCount], f.getXPos(), f.getYPos(), this);
+			}
+			if(gameOver){
+				g.setFont(new Font("Futura", Font.BOLD, 50));
+				g.drawString("You've done it this time. You killed them all!", 125, FishingGameView.HEIGHT/2);
 			}
 		}
 	}
@@ -133,12 +160,12 @@ public class FishingGameView extends View{
 	 * gets the width of the frame
 	 * @return the width in pixels
 	 */
-	public static int getWidth(){return WIDTH;}
+	public static int getWidth(){return FishingGameView.WIDTH;}
 	/**
 	 * gets the height of the frame
 	 * @return the height in pixels
 	 */
-	public static int getHeight(){return HEIGHT;}
+	public static int getHeight(){return FishingGameView.HEIGHT;}
 	
 	/**
 	 * gets the DrawPanel used
@@ -155,8 +182,8 @@ public class FishingGameView extends View{
 		try {
 			bg = ImageIO.read(new File("assets/fishing-game/fishing-background-1.png"));
 			bg = resize(bg, FishingGameView.WIDTH, FishingGameView.HEIGHT);
-			hook_sprite = ImageIO.read(new File("assets/fishing-game/hook-1.png"));
-			hook_sprite = resize(hook_sprite, 100, 100);
+			hook_sprite = ImageIO.read(new File("assets/fishing-game/hook.png"));
+			hook_sprite = resize(hook_sprite, (int) (HOOK_WIDTH * SCALE), (int) (HOOK_HEIGHT * SCALE_Y));
 			Scanner infoScanner = new Scanner(new File("assets/fishing-game/info.txt"));
 			imgWidths = new int[speciesNum];
 			imgHeights = new int[speciesNum];
@@ -174,7 +201,7 @@ public class FishingGameView extends View{
 					loadFishSheet(Fish.Species.values()[i], i, j);
 					int counter = 0;
 					for(BufferedImage img : fish_sprites[i*dirNum + j]){
-						fish_sprites[i*dirNum+j][counter] = resize(img, 100, 100);
+						fish_sprites[i*dirNum+j][counter] = resize(img, FISH_WIDTH, FISH_HEIGHT);
 						counter++;
 					}
 				}
@@ -212,9 +239,14 @@ public class FishingGameView extends View{
 	 * @param fArr array of Fish to display
 	 * @param h the current Hook
 	 */
-	public void update(Fish[] fArr, Hook h) {
-		fishes = fArr;
+	public void update(ArrayList<Fish> fish, Hook h, Fish hooked, boolean done) {
+		fishes = fish;
 		hook = h;
+		if(hooked != null)
+			reeling = true;
+		else
+			reeling = false;
+		gameOver = done;
 		frameCount = (frameCount + 1) % 4;
 		panel.repaint();
 		try {
