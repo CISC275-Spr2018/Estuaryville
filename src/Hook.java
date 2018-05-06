@@ -1,33 +1,22 @@
-/**
- * 
+/*
+ * Joel Turk
  */
 
-public class Hook {
-	private int hookXPos;
-	private int hookYPos;
-	private int hookXIncr;
-	private int hookYIncr;
-	private Direction dir;
+/**
+ * Represents the hook that the user moves around to catch fish with
+ * @author Joel
+ *
+ */
+public class Hook extends Mover{
 	final int hookRadius = 10;
 	
-	public Direction getDirection(){return dir;}
-	public void setDirection(Direction d){dir = d;}
-	
-	public int getXPos(){return hookXPos;}
-	public void setXPos(int x){hookXPos = x;}
-	
-	public int getYPos(){return hookYPos;}
-	public void setYPos(int y){hookYPos = y;}
-	
-	public int getXSpeed(){return hookXIncr;}
-	public void setXSpeed(int x){hookXIncr = x;}
-	
-	public int getYSpeed(){return hookYIncr;}
-	public void setYSpeed(int y){hookYIncr = y;}
-	
+	/**
+	 * Creates a new hook with (x,y) = (500, 450)
+	 */
 	public Hook(){
-		hookXPos = 500;
-		hookYPos = 450;
+		super();
+		super.setXPos((int) (500.0/1100.0 * FishingGameView.getWidth()));
+		super.setYPos((int) (450.0/700.0 * FishingGameView.getHeight()));
 	}
 	
 }

@@ -13,8 +13,10 @@ import javax.swing.Timer;
 import org.w3c.dom.events.MouseEvent;
 
 /**
- * Do not modify this file without permission from your TA.
- **/
+ * 
+ * @author Joel
+ *
+ */
 public class FishingGameController {
 
 	private FishingGameModel fishModel;
@@ -24,12 +26,12 @@ public class FishingGameController {
 	@SuppressWarnings("serial")
 	public FishingGameController() {
 		fishView = new FishingGameView();
-		fishView.getFrame().addMouseListener(new MouseListener(){
+		fishView.getPanel().addMouseListener(new MouseListener(){
 			@Override
 			public void mousePressed(java.awt.event.MouseEvent me) {
-				System.out.println("GetX/Y:["+me.getX() +", "+me.getY()+"]");
+				System.out.println("Clicked:["+me.getX() +", "+me.getY()+"]");
+				System.out.println("Screen Size: ["+FishingGameView.getWidth()+", "+FishingGameView.getHeight()+"]");
 			}
-			
 			public void mouseClicked(java.awt.event.MouseEvent e) {}
 			public void mouseReleased(java.awt.event.MouseEvent e) {}
 			public void mouseEntered(java.awt.event.MouseEvent e) {}
@@ -38,21 +40,21 @@ public class FishingGameController {
 				
 			}
 		});
-		fishView.getFrame().addKeyListener(new KeyListener() {
+		fishView.getPanel().addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent ke) {	
 				switch(ke.getKeyCode()){
 				case KeyEvent.VK_UP:
-					fishModel.hook.setYSpeed(-15);
+					fishModel.hook.setYSpeed(-10);
 					break;
 				case KeyEvent.VK_DOWN:
-					fishModel.hook.setYSpeed(15);
+					fishModel.hook.setYSpeed(10);
 					break;
 				case KeyEvent.VK_LEFT:
-					fishModel.hook.setXSpeed(-15);
+					fishModel.hook.setXSpeed(-10);
 					break;
 				case KeyEvent.VK_RIGHT:
-					fishModel.hook.setXSpeed(15);
+					fishModel.hook.setXSpeed(10);
 					break;
 				}
 			}
@@ -87,9 +89,7 @@ public class FishingGameController {
 				}
 			}
 		});*/
-		fishModel = new FishingGameModel(FishingGameView.getWidth(), FishingGameView.getHeight());
-		
-		//model = new Model(view.getWidth(), view.getHeight(), view.getImageWidth(), view.getImageHeight());
+		fishModel = new FishingGameModel(FishingGameView.WIDTH, FishingGameView.HEIGHT);
 		FishingGameController c = this;
 		drawAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
