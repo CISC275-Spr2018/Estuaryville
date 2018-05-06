@@ -30,6 +30,9 @@ public class FishingGameController {
 			@Override
 			public void mousePressed(java.awt.event.MouseEvent me) {
 				System.out.println("Clicked:["+me.getX() +", "+me.getY()+"]");
+				fishModel.hook.setXPos(me.getX());
+				fishModel.hook.setYPos(me.getY());
+				System.out.println("Hook: ["+FishingGameView.HOOK_WIDTH+", "+FishingGameView.HOOK_HEIGHT+"]");
 				System.out.println("Screen Size: ["+FishingGameView.getWidth()+", "+FishingGameView.getHeight()+"]");
 			}
 			public void mouseClicked(java.awt.event.MouseEvent e) {}
@@ -112,7 +115,7 @@ public class FishingGameController {
 
 	public void redraw() {
 		fishModel.update();
-		fishView.update(fishModel.getFish(), fishModel.getHook());
+		fishView.update(fishModel.getFish(), fishModel.getHook(), fishModel.caught, fishModel.gameOver);
 	}
 
 }
