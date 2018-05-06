@@ -1,12 +1,23 @@
-/**
+/*
  * Joel Turk
  */
 
+/**
+ * This is a model of the fishing game that holds all objects that should be presented during the game.
+ * This model is responsible for movement, collision, and all other dynamic aspects of the fishing game.
+ * @author Joel
+ */
 public class FishingGameModel extends Model{
 	
 	public Hook hook;
 	public Fish[] fishes;
 	
+	/**
+	 * Creates a new instance of FishingGameModel
+	 * Adds an interactive hook and fish to the screen.
+	 * @param w width of the game's JFrame
+	 * @param h height of the game's JFrame
+	 */
 	public FishingGameModel(int w, int h){
 		super(w, h);
 		fishes = new Fish[3];
@@ -18,9 +29,21 @@ public class FishingGameModel extends Model{
 		hook.setYSpeed(0);
 	}
 	
+	/**
+	 * Gets all Fish currently in the game's Model
+	 * @return an array of Fish objects
+	 */
 	public Fish[] getFish(){return fishes;}
+	/**
+	 * Gets the Hook object that the user may move
+	 * @return the current Hook
+	 *
+	 */
 	public Hook getHook(){return hook;}
 	
+	/**
+	 * Scaffolding method to update every object's movement and check for collisions
+	 */
 	@Override
 	public void update(){
 		Fish f;
@@ -30,6 +53,12 @@ public class FishingGameModel extends Model{
 		}
 		checkBounds(hook);
 	}
+	
+	/**
+	 * updates movement and keeps fish within frame bounds
+	 * @param f a Fish object to update
+	 *
+	 */
 	public void checkBounds(Fish f){
 		switch(f.getDirection()){
 		case NORTH:
@@ -60,8 +89,12 @@ public class FishingGameModel extends Model{
 			break;
 		}
 	}
+	/**
+	 * Updates hook position and keeps it within frame bounds
+	 * @param h the current Hook
+	 */
 public void checkBounds(Hook h){
-		if(h.getYPos() + h.getYSpeed() < 300 || h.getYPos() + h.getYSpeed() > FishingGameView.getHeight() - 100){
+		if(h.getYPos() + h.getYSpeed() < (310.0 / 700 * FishingGameView.getHeight()) || h.getYPos() + h.getYSpeed() > FishingGameView.getHeight() - 100){
 			//don't change y
 		}else{
 			h.setYPos(h.getYPos() + h.getYSpeed());
