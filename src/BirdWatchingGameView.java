@@ -35,6 +35,7 @@ public class BirdWatchingGameView extends View{
 	public BufferedImage[][] bird_sprites;
 	public int imgWidths[];
 	public int imgHeights[];
+	public static int screenWidth, screenHeight;
 	public static ArrayList<Bird> birds;
 	JFrame frame;
 	DrawPanel panel = new DrawPanel();
@@ -58,13 +59,14 @@ public class BirdWatchingGameView extends View{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Toolkit tk = Toolkit.getDefaultToolkit();
 	    Dimension d = tk.getScreenSize();
+	    screenWidth = d.width;
+	    screenHeight = d.height;
 	    frame.setSize(d.width, d.height);
 		loadSprites();
 	    //frame.setSize(background.getWidth(), background.getHeight());
 		frame.setVisible(true);
-		camera = new Camera(background.getWidth(), background.getHeight()); 
-		birds = new ArrayList<Bird>();
-		birds.add(new Bird(Bird.Species.BLUE_HERON));
+		camera = new Camera(screenWidth, screenHeight); 
+	    birds = new ArrayList<Bird>();
 	}
 	
 	/**
@@ -94,24 +96,24 @@ public class BirdWatchingGameView extends View{
 					//g.drawImage(bird_sprites[b.species.ordinal()*2+1][frameCount], b.getXPos(), b.getYPos(), this);
 			}
 			//draw target bird
-			g.setFont(new Font("Futura", Font.BOLD, getScaledWidthPosition(50)));
-			g.drawString("Look for", getScaledWidthPosition(1030), getScaledHeightPosition(45));
-			g.drawString("this bird!", getScaledWidthPosition(1030), getScaledHeightPosition(95));
-			g.drawImage(bird_sprites[searchingFor.species.ordinal()][0], getScaledWidthPosition(1250), getScaledHeightPosition(5), this);
+			g.setFont(new Font("Futura", Font.BOLD, getScaledWidth(50)));
+			g.drawString("Look for the", getScaledWidth(950), getScaledHeight(45));
+			g.drawString(searchingFor.species.toString().toLowerCase().replaceAll("_", " "), getScaledWidth(950), getScaledHeight(95));
+			g.drawImage(bird_sprites[searchingFor.species.ordinal()][0], getScaledWidth(1250), getScaledHeight(5), this);
 			g.drawImage(camera_sprite, camera.getXPos(), camera.getYPos(), this);
 			if(flash) {
 				g.setColor(Color.WHITE);
 				g.fillRect(0, 0, scaledBackground.getWidth(), scaledBackground.getHeight());
 			}
 			if (gameOver) {
-				g.drawString("Finished!", 450, 500);
-				g.drawString("Press Enter to continue", 450, 600);
+				g.drawString("Finished!", getScaledWidth(800), getScaledHeight(350));
+				g.drawString("Press Enter to continue", screenWidth / 2, getScaledHeight(400));
 			}
 			if (wrongBird) {
-				g.drawString("Wrong bird!", 450, 500);
+				g.drawString("Wrong bird!", getScaledWidth(800), getScaledHeight(350));
 			}
 			if (tryAgain) {
-				g.drawString("Try again!", 450, 500);
+				g.drawString("Try again!", getScaledWidth(800), getScaledHeight(350));
 			}
 			
 		}
@@ -135,25 +137,22 @@ public class BirdWatchingGameView extends View{
 			for (int i = 0; i < numSpecies; i++) {
 				while (!nextLine.contains(Bird.Species.values()[i].name)) {
 					nextLine = scan.next();
-					//System.out.println(nextLine);
 					if (nextLine.contains(Bird.Species.values()[i].name)) {
 						imgWidths[i] = scan.nextInt();
-						//System.out.println("Width: " + imgWidths[i]);
 						imgHeights[i] = scan.nextInt();
-						//System.out.println("Height: " + imgHeights[i]);
 					}
 				}
 				loadBirdSheet(Bird.Species.values()[i], i);
 			}
 			//resize camera for screen
-			camera_sprite = resizeImg(camera_sprite, getScaledWidthPosition(320), getScaledHeightPosition(320));
+			camera_sprite = resizeImg(camera_sprite, getScaledWidth(320), getScaledHeight(320));
 			//resize background for screen
-			scaledBackground = resizeImg(background, frame.getWidth(), frame.getHeight());
+			scaledBackground = resizeImg(background, screenWidth, screenHeight);
 			//resize birds for screen
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < 16; j++) {
 				//if(b.getDirection().equals(Direction.WEST))
-					bird_sprites[i][j] = resizeImg(bird_sprites[i][j], getScaledWidthPosition(imgWidths[i]), getScaledHeightPosition(imgHeights[i]));
+					bird_sprites[i][j] = resizeImg(bird_sprites[i][j], getScaledWidth(imgWidths[i]), getScaledHeight(imgHeights[i]));
 				//else
 					//g.drawImage(bird_sprites[b.species.ordinal()*2+1][frameCount], b.getXPos(), b.getYPos(), this);
 				}
@@ -215,15 +214,15 @@ public class BirdWatchingGameView extends View{
 	 * Gets the width of the background within the BirdWatchingGameView.
 	 * @return The width of the background in the view.
 	 */
-	public static int getWidth(){
-		return scaledBackground.getWidth();
+	public static int getScreenWidth(){
+		return screenWidth;
 	}
 	/**
 	 * Gets the height of the background within the BirdWatchingGameView.
 	 * @return The height of the background in the view.
 	 */
-	public static int getHeight(){
-		return scaledBackground.getHeight();
+	public static int getScreenHeight(){
+		return screenHeight;
 	}
 	/**
 	 * Gets the frame being used in the BirdWatchingGameView.
@@ -248,15 +247,15 @@ public class BirdWatchingGameView extends View{
 	    return dimg;
 	}  
 	
-	public int getScaledWidthPosition(int n) {
+	public int getScaledWidth(int n) {
 		double number = (double)n;
-		double position = (number / background.getWidth()) * frame.getWidth();
+		double position = (number / background.getWidth()) * screenWidth;
 		return (int) position;
 	}
 	
-	public int getScaledHeightPosition(int n) {
+	public int getScaledHeight(int n) {
 		double number = (double)n;
-		double position = (number / background.getHeight()) * frame.getHeight();
+		double position = (number / background.getHeight()) * screenHeight;
 		return (int) position;
 	}
 	
