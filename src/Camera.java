@@ -26,8 +26,8 @@ public class Camera {
 		cYIncr = 0;
 		cWidth = getScaledWidth(320);
 		cHeight = getScaledHeight(320);
-		cXPos = (screenWidth / 2) - (cWidth / 2); //camera will not be on screen for frame 1
-		cYPos = (screenHeight / 2) - (cHeight / 2); //camera will not be on screen for frame 1
+		cXPos = (screenWidth / 2) - (cWidth / 2); 
+		cYPos = (screenHeight / 2) - (cHeight / 2); 
 		rect = new Rectangle(cXPos, cYPos, cWidth, cHeight);
 	}
 		

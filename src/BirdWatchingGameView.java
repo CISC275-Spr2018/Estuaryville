@@ -31,7 +31,7 @@ public class BirdWatchingGameView extends View{
 	public static BufferedImage background, scaledBackground;
 	Camera camera;
 	public static BufferedImage camera_sprite;
-	public BufferedImage[] all_sprites;
+	public BufferedImage[] bird_info_screens, all_sprites;
 	public BufferedImage[][] bird_sprites;
 	public int imgWidths[];
 	public int imgHeights[];
@@ -43,6 +43,9 @@ public class BirdWatchingGameView extends View{
 	boolean gameOver;
 	boolean wrongBird = false;
 	boolean tryAgain = false;
+	Bird toDisplayInfo = null;
+	//boolean pauseGame = false;
+	//int repaintCount = 0;
 	
 	/**
 	 * Creates an instance of the BirdWatchingGameView class. This constructor creates
@@ -85,35 +88,39 @@ public class BirdWatchingGameView extends View{
 		@Override
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
-			//resizeImg(background, frame.getWidth(), frame.getHeight());
 			g.drawImage(scaledBackground, 0, 0, Color.gray, this);
-			//System.out.println(frameCount);
 			for (int i = 0; i < birds.size(); i++) {
 				Bird b = birds.get(i);
-				//if(b.getDirection().equals(Direction.WEST))
-					g.drawImage(bird_sprites[b.species.ordinal()][frameCount], b.getXPos(), b.getYPos(), this);
-				//else
-					//g.drawImage(bird_sprites[b.species.ordinal()*2+1][frameCount], b.getXPos(), b.getYPos(), this);
+				if(b.getDirection().name().contains("WEST"))
+					g.drawImage(bird_sprites[b.species.ordinal() * 2][frameCount], b.getXPos(), b.getYPos(), this);
+				else
+					g.drawImage(bird_sprites[b.species.ordinal()*2 + 1][frameCount], b.getXPos(), b.getYPos(), this);
 			}
-			//draw target bird
-			g.setFont(new Font("Futura", Font.BOLD, getScaledWidth(50)));
-			g.drawString("Look for the", getScaledWidth(950), getScaledHeight(45));
-			g.drawString(searchingFor.species.toString().toLowerCase().replaceAll("_", " "), getScaledWidth(950), getScaledHeight(95));
-			g.drawImage(bird_sprites[searchingFor.species.ordinal()][0], getScaledWidth(1250), getScaledHeight(5), this);
 			g.drawImage(camera_sprite, camera.getXPos(), camera.getYPos(), this);
+			g.setFont(new Font("Futura", Font.BOLD, getScaledWidth(50)));
+			//draw target bird
+			if (!gameOver) {
+				g.drawString("Look for the", getScaledWidth(950), getScaledHeight(45));
+				g.drawString(searchingFor.species.toString().toLowerCase().replaceAll("_", " "), getScaledWidth(950), getScaledHeight(95));
+				g.drawImage(bird_sprites[searchingFor.species.ordinal() * 2][0], getScaledWidth(1250), getScaledHeight(5), this);
+			}
 			if(flash) {
 				g.setColor(Color.WHITE);
 				g.fillRect(0, 0, scaledBackground.getWidth(), scaledBackground.getHeight());
 			}
 			if (gameOver) {
-				g.drawString("Finished!", getScaledWidth(800), getScaledHeight(350));
-				g.drawString("Press Enter to continue", screenWidth / 2, getScaledHeight(400));
+				g.drawString("Finished!", getScaledWidth(800), getScaledHeight(300));
+				g.drawString("Press Enter", getScaledWidth(800), getScaledHeight(350));
+				g.drawString("To Continue!", getScaledWidth(800), getScaledHeight(400));
 			}
 			if (wrongBird) {
-				g.drawString("Wrong bird!", getScaledWidth(800), getScaledHeight(350));
+				g.drawString("Wrong Bird!", getScaledWidth(800), getScaledHeight(350));
 			}
 			if (tryAgain) {
-				g.drawString("Try again!", getScaledWidth(800), getScaledHeight(350));
+				g.drawString("Try Again!", getScaledWidth(800), getScaledHeight(350));
+			}
+			if (toDisplayInfo != null) {
+				g.drawImage(bird_info_screens[toDisplayInfo.species.ordinal()], (screenWidth / 2) - (getScaledWidth(900) / 2), (screenHeight / 2) - (getScaledHeight(400) / 2), this);
 			}
 			
 		}
@@ -132,7 +139,8 @@ public class BirdWatchingGameView extends View{
 			Scanner scan = new Scanner(new File("assets/bird-game/info.txt"));
 			imgHeights = new int[numSpecies];
 			imgWidths = new int[numSpecies];
-			bird_sprites = new BufferedImage[numSpecies][]; //MULTIPLY NUMSPECIES BY NUMDIR
+			bird_sprites = new BufferedImage[numSpecies * numDirections][16]; //MULTIPLY NUMSPECIES BY NUMDIR
+			bird_info_screens = new BufferedImage[numSpecies];
 			String nextLine = "";
 			for (int i = 0; i < numSpecies; i++) {
 				while (!nextLine.contains(Bird.Species.values()[i].name)) {
@@ -142,17 +150,27 @@ public class BirdWatchingGameView extends View{
 						imgHeights[i] = scan.nextInt();
 					}
 				}
-				loadBirdSheet(Bird.Species.values()[i], i);
+				for (int j = 0; j < numDirections; j++) {
+					loadBirdSheet(Bird.Species.values()[i], i, j);
+				}
+			}
+			//load bird info screens
+			for (int i = 0; i < numSpecies; i++) {
+				loadBirdInfoScreen(Bird.Species.values()[i], i);
+			}
+			//resize bird info screens
+			for (int i = 0; i < numSpecies; i++) {
+				bird_info_screens[i] = resizeImg(bird_info_screens[i], getScaledWidth(900), getScaledHeight(400));
 			}
 			//resize camera for screen
 			camera_sprite = resizeImg(camera_sprite, getScaledWidth(320), getScaledHeight(320));
 			//resize background for screen
 			scaledBackground = resizeImg(background, screenWidth, screenHeight);
 			//resize birds for screen
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < 6; i++) {
 				for (int j = 0; j < 16; j++) {
 				//if(b.getDirection().equals(Direction.WEST))
-					bird_sprites[i][j] = resizeImg(bird_sprites[i][j], getScaledWidth(imgWidths[i]), getScaledHeight(imgHeights[i]));
+					bird_sprites[i][j] = resizeImg(bird_sprites[i][j], getScaledWidth(imgWidths[i / 2]), getScaledHeight(imgHeights[i / 2]));
 				//else
 					//g.drawImage(bird_sprites[b.species.ordinal()*2+1][frameCount], b.getXPos(), b.getYPos(), this);
 				}
@@ -170,25 +188,26 @@ public class BirdWatchingGameView extends View{
 	 * @param index The index of the array to place the bird sprites into
 	 * @throws IOException
 	 */
-	private void loadBirdSheet(Bird.Species species, int index) throws IOException{
-		BufferedImage birdSheet = ImageIO.read(new File("assets/bird-game/birds/"
-					+species.name+"-sheet.png"));
+	private void loadBirdSheet(Bird.Species species, int index, int isEast) throws IOException{
+		String filePath = "assets/bird-game/birds/" + species.name;
+		if (isEast > 0)
+			filePath += "-east";
+		filePath += "-sheet.png";
+		BufferedImage birdSheet = ImageIO.read(new File(filePath));
 		int numSubImages = 16;	
-		bird_sprites[index] = new BufferedImage[numSubImages];
+		bird_sprites[index * 2 + isEast] = new BufferedImage[numSubImages];
 		for(int i = 0; i < numSubImages; i++){
-			for (int j = 0; j < imgWidths.length; j++) {
-			}
+			//for (int j = 0; j < imgWidths.length; j++) {
+			//}
 			//System.out.println(imgWidths[index] * i + imgWidths[index]);
-			bird_sprites[index][i] = birdSheet.getSubimage(imgWidths[index] * i, 0, imgWidths[index], imgHeights[index]);
+			bird_sprites[index * 2 + isEast][i] = birdSheet.getSubimage(imgWidths[index] * i, 0, imgWidths[index], imgHeights[index]);
 		}
 	}
 	
-	/**
-	 * Gets the array of sprites within the BirdWatchingGameView
-	 * @return the array of sprites
-	 */
-	public BufferedImage[] getSprites(){
-		return all_sprites;		
+	private void loadBirdInfoScreen(Bird.Species species, int index) throws IOException {
+		String filePath = "assets/bird-game/bird-info/" + species.name + "-info.png";
+		BufferedImage infoScreen = ImageIO.read(new File(filePath));
+		bird_info_screens[index] = infoScreen;
 	}
 	
 	/**
@@ -196,18 +215,27 @@ public class BirdWatchingGameView extends View{
 	 * @param birdArray The array of Birds used to update the view
 	 * @param c The camera used to update the view. 
 	 */
-	public void update(ArrayList<Bird> birdList, Camera c, boolean f) {
+	public void update(ArrayList<Bird> birdList, Camera c, boolean f, Bird b) {
 		birds = birdList;
 		camera = c;
 		frameCount = (frameCount + 1) % 16;
 		flash = f;
-		panel.repaint();
-		try {
-			Thread.sleep(80);
+		toDisplayInfo = b;
+		/*if (pauseGame) {
+			while (repaintCount < 2) {
+				panel.repaint();
+				repaintCount++;
+			}
 		}
-		catch (InterruptedException e){
-			e.printStackTrace();
-		}
+		else if (!pauseGame) {*/
+			panel.repaint();
+			try {
+				Thread.sleep(30);
+			}
+			catch (InterruptedException e){
+				e.printStackTrace();
+			}
+		//}
 	}
 	
 	/**
@@ -236,6 +264,10 @@ public class BirdWatchingGameView extends View{
 	public void update() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override public BufferedImage[] getSprites() {
+		return all_sprites;
 	}
 	
 	public static BufferedImage resizeImg(BufferedImage img, int newW, int newH) { 
