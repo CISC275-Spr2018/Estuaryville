@@ -28,23 +28,23 @@ public class BirdWatchingGameController {
 	@SuppressWarnings("serial")
 	public BirdWatchingGameController() {
 		birdView = new BirdWatchingGameView();
-		birdModel = new BirdWatchingGameModel(BirdWatchingGameView.getWidth(), BirdWatchingGameView.getHeight());
+		birdModel = new BirdWatchingGameModel(BirdWatchingGameView.getScreenWidth(), BirdWatchingGameView.getScreenHeight());
 		birdView.searchingFor = birdModel.searchingFor;
 		birdView.getPanel().addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent ke) {
 				switch (ke.getKeyCode()) {
 				case KeyEvent.VK_UP:
-					birdModel.camera.setYSpeed(-15);
+					birdModel.camera.setYSpeed(birdModel.getScaledHeight(-15));
 					break;
 				case KeyEvent.VK_DOWN:
-					birdModel.camera.setYSpeed(15);
+					birdModel.camera.setYSpeed(birdModel.getScaledHeight(15));
 					break;
 				case KeyEvent.VK_LEFT:
-					birdModel.camera.setXSpeed(-15);
+					birdModel.camera.setXSpeed(birdModel.getScaledWidth(-15));
 					break;
 				case KeyEvent.VK_RIGHT:
-					birdModel.camera.setXSpeed(15);
+					birdModel.camera.setXSpeed(birdModel.getScaledWidth(15));
 					break;
 				case KeyEvent.VK_SPACE:
 					birdModel.wrongBird = false;
@@ -54,7 +54,7 @@ public class BirdWatchingGameController {
 					break;
 				case KeyEvent.VK_ENTER:
 					if (birdView.gameOver) {
-						birdView.frame.setVisible(false);
+						birdView.panel.setVisible(false);
 					}
 					
 				}
@@ -95,7 +95,7 @@ public class BirdWatchingGameController {
 	public void start() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				Timer t = new Timer(30, drawAction);
+				Timer t = new Timer(10, drawAction);
 				t.start();
 			}
 		});

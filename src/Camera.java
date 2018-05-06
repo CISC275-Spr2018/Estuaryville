@@ -11,6 +11,8 @@ public class Camera {
 	private int cXIncr;
 	private int cYIncr;
 	Rectangle rect;
+	int screenWidth, screenHeight;
+	int cWidth, cHeight;
 	
 	/**
 	 * Creates an instance of the Camera class. This constructor assigns the x position
@@ -18,9 +20,15 @@ public class Camera {
 	 * the screen.
 	 */
 	public Camera(int w, int h){
-		cXPos = (w / 2) - 150; 
-		cYPos = (h / 2) - 200;
-		rect = new Rectangle(cXPos, cYPos, 320, 320);
+		screenWidth = w;
+		screenHeight = h;
+		cXIncr = 0;
+		cYIncr = 0;
+		cWidth = getScaledWidth(320);
+		cHeight = getScaledHeight(320);
+		cXPos = (screenWidth / 2) - (cWidth / 2); //camera will not be on screen for frame 1
+		cYPos = (screenHeight / 2) - (cHeight / 2); //camera will not be on screen for frame 1
+		rect = new Rectangle(cXPos, cYPos, cWidth, cHeight);
 	}
 		
 	/**
@@ -70,4 +78,26 @@ public class Camera {
 	 * @param y The speed to assign to the y speed attribute of the Camera.
 	 */
 	public void setYSpeed(int y){cYIncr = y;}
+	
+	public Rectangle getRect() {return rect;}
+	public void setRect(Rectangle r) {rect = r;}
+	
+	public int getCWidth() {return cWidth;}
+	public void setCWidth(int w) {cWidth = w;}
+
+	public int getCHeight() {return cWidth;}
+	public void setCHeight(int h) {cHeight = h;}
+	
+	public int getScaledWidth(int n) {
+		double number = (double)n;
+		double position = (number / 1440) * screenWidth;
+		return (int) position;
+	}
+	
+	public int getScaledHeight(int n) {
+		double number = (double)n;
+		double position = (number / 900) * screenHeight;
+		return (int) position;
+	}
+
 }

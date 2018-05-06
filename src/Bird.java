@@ -10,6 +10,8 @@ import java.util.Random;
 public class Bird {
 	int xSpd, ySpd;
 	int xPos, yPos;
+	int bWidth, bHeight;
+	int screenWidth, screenHeight;
 	BDirection direction;
 	Species species;
 	Rectangle rect;
@@ -20,32 +22,43 @@ public class Bird {
 	 * of the Bird. 
 	 * @param sp The Species of Bird to create an instance of.
 	 */
-	public Bird(Species sp) {
+	public Bird(Species sp, int w, int h) {
+		screenWidth = w;
+		screenHeight = h;
 		this.species = sp;
 		Random rand = new Random();
 		if (sp == Bird.Species.BLUE_HERON) {
 			this.xSpd = 0; //Blue Heron doesn't move
 			this.ySpd = 0; //Blue Heron doesn't move
-			this.xPos = 150 + rand.nextInt(540); //keeps Blue Heron on grass
-			this.yPos = 350 + rand.nextInt(200); //keeps Blue Heron on grass
-			this.direction = BDirection.values()[rand.nextInt(6)];
-			rect = new Rectangle(xPos, yPos, 160, 160);
+			this.xPos = getScaledWidth(150) + rand.nextInt(getScaledWidth(525)); //keeps Blue Heron on grass
+			this.yPos = getScaledHeight(350) + rand.nextInt(getScaledHeight(170)); //keeps Blue Heron on grass
+			int dirToUse = rand.nextInt(2); //used to choose east or west direction
+			if (dirToUse == 1)
+				dirToUse = 3;
+			this.direction = BDirection.values()[dirToUse]; //east or west
+			this.bWidth = getScaledWidth(160);
+			this.bHeight = getScaledHeight(160);
+			rect = new Rectangle(xPos, yPos, bWidth, bHeight);
 		}
 		else if (sp == Bird.Species.SANDPIPER) {
 			this.xSpd = rand.nextInt(25) + 15;
 			this.ySpd = rand.nextInt(25) + 15;
-			this.xPos = 150 + rand.nextInt(540); 
-			this.yPos = 350 + rand.nextInt(200); 
+			this.xPos = getScaledWidth(776) + rand.nextInt(getScaledWidth(153)); 
+			this.yPos = getScaledHeight(431) + rand.nextInt(getScaledHeight(138)); 
 			this.direction = BDirection.values()[rand.nextInt(6)];
-			rect = new Rectangle(xPos, yPos, 80, 80);
+			this.bWidth = getScaledWidth(80);
+			this.bHeight = getScaledHeight(80);
+			rect = new Rectangle(xPos, yPos, bWidth, bHeight);
 		}
 		else {
 			this.xSpd = rand.nextInt(25) + 15;
 			this.ySpd = rand.nextInt(25) + 15;
-			this.xPos = rand.nextInt(BirdWatchingGameView.getWidth() - 160); //keeps inside screen bounds
-			this.yPos = rand.nextInt(BirdWatchingGameView.getHeight() - 175); // keeps inside screen bounds
+			this.xPos = rand.nextInt(screenWidth - getScaledWidth(331)); //keeps inside screen bounds
+			this.yPos = rand.nextInt(screenHeight - getScaledHeight(341)); // keeps inside screen bounds
 			this.direction = BDirection.values()[rand.nextInt(6)];
-			rect = new Rectangle(xPos, yPos, 160, 175);
+			this.bWidth = getScaledWidth(160);
+			this.bHeight = getScaledHeight(175);
+			rect = new Rectangle(xPos, yPos, bWidth, bHeight);
 		}
 	}
 	
@@ -143,4 +156,16 @@ public class Bird {
 	 * @param yp The position to assign to the y position attribute of the Bird. 
 	 */
 	public void setYPos(int yp){yPos = yp;}
+	
+	public int getScaledWidth(int n) {
+		double number = (double)n;
+		double position = (number / 1440) * screenWidth;
+		return (int) position;
+	}
+	
+	public int getScaledHeight(int n) {
+		double number = (double)n;
+		double position = (number / 900) * screenHeight;
+		return (int) position;
+	}
 }
