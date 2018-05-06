@@ -186,6 +186,7 @@ public class Controller {
 					//Way to simplify?? using enum string etc?
 					@Override
 					public void actionPerformed(ActionEvent e) {
+						System.out.println("MAP["+x+"]["+y+"]: "+model.getMap()[x][y].tState);
 						switch(model.getBuild()) {
 						case PORT:
 							model.build(model.getBuildingTypes().get("Port"), x, y);

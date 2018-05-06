@@ -21,7 +21,7 @@ import javax.swing.SwingConstants;
 public class MainView {
 	//width/height constants
 	static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	final static int FRAME_WIDTH = screenSize.width;
+	final static int FRAME_WIDTH =  screenSize.width;
 	final static int FRAME_HEIGHT = screenSize.height;
 	//static int FRAME_WIDTH = 1900;
 	//static int FRAME_HEIGHT = 1000;
@@ -168,11 +168,13 @@ public class MainView {
 			button.setIcon(sidebarImages[i]);
 			button.setVerticalTextPosition(SwingConstants.BOTTOM);
 			button.setHorizontalTextPosition(SwingConstants.CENTER);
+			button.setRolloverEnabled(false);
 			panel.add(button);
 			sidebarButtons.put(buildingNames[i], button);
 		}
 		JButton button = new JButton("Remove");
 		button.setBounds(BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+BUILDING_BUTTON_Y_OFFSET, BUILDING_BUTTON_WIDTH, BUILDING_BUTTON_HEIGHT);
+		button.setRolloverEnabled(false);
 		panel.add(button);
 		sidebarButtons.put("Remove", button);
 	}
@@ -218,8 +220,98 @@ public class MainView {
 				JButton button = new JButton();
 				button.setBounds(MAP_BUTTON_X+(i*MAP_BUTTON_X_OFFSET), MAP_BUTTON_Y+(j*MAP_BUTTON_Y_OFFSET), MAP_BUTTON_WIDTH, MAP_BUTTON_HEIGHT);
 				button.setHorizontalTextPosition(SwingConstants.CENTER);
+				button.setRolloverEnabled(false);
 				panel.add(button);
-				board[i][j] = new MapSpot(button, TerrainState.NORMAL, backgroundImages[i][j]);
+				TerrainState state = TerrainState.OTHER;
+				switch(i) {
+				case 0:
+					if(0 <= j && j <= 3) {
+						state = TerrainState.OCEAN;
+					}
+					else if (4 <= j && j <= 8) {
+						state = TerrainState.BEACH;
+					}
+					else {
+						state = TerrainState.FOREST;
+					}
+					break;
+				case 1:
+					if(0 <= j && j <= 1) {
+						state = TerrainState.OCEAN;
+					}
+					else if (2 <= j && j <= 3) {
+						state = TerrainState.BEACH;
+					}
+					else if (4 <= j && j <= 7) {
+						state = TerrainState.NORMAL;
+					}
+					else {
+						state = TerrainState.FOREST;
+					}
+					break;
+				case 2:
+					if(0 <= j && j <= 1) {
+						state = TerrainState.OCEAN;
+					}
+					else if (2 <= j && j <= 6) {
+						state = TerrainState.BEACH;
+					}
+					else {
+						state = TerrainState.FOREST;
+					}
+					break;
+				case 3:
+					if(0 == j) {
+						state = TerrainState.BEACH;
+					}
+					else if (j == 1) {
+						state = TerrainState.RIVER;
+					}
+					else {
+						state = TerrainState.NORMAL;
+					}
+					break;
+				case 4:
+				case 5:
+					if (j == 1) {
+						state = TerrainState.RIVER;
+					}
+					else {
+						state = TerrainState.NORMAL;
+					}
+					break;
+				case 6:
+				case 7:
+					if (j == 2) {
+						state = TerrainState.RIVER;
+					}
+					else {
+						state = TerrainState.NORMAL;
+					}
+					break;
+				case 8:
+					if (j == 3 || j == 4) {
+						state = TerrainState.RIVER;
+					}
+					else {
+						state = TerrainState.NORMAL;
+					}
+					break;
+				case 9:
+					if(j == 0) {
+						state = TerrainState.FOREST;
+					}
+					else if (j == 3) {
+						state = TerrainState.RIVER;
+					}
+					else {
+						state = TerrainState.NORMAL;
+					}
+					break;
+				default:
+					break;
+				}
+				board[i][j] = new MapSpot(button, state, backgroundImages[i][j]);
 			}
 		}
 	}
