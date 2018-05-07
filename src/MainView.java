@@ -66,30 +66,54 @@ public class MainView {
 	private HashMap<String,JButton> sidebarButtons = new HashMap<String,JButton>();
 	
 	//setters/getters
+	/**
+	 * Returns the JFrame being displayed.
+	 * @return the JFrame being displayed.
+	 */
 	public JFrame getFrame() {
 		return frame;
 	}
-	
+	/**
+	 * Returns the LayeredPanel every JPanel is added to.
+	 * @return the main LayeredPanel.
+	 */
 	public JLayeredPane getMainPanel() {
 		return mainPanel;
 	}
-
+	/**
+	 * Returns the MainScreen Panel.
+	 * @return the MainScreen Panel.
+	 */
 	public DrawPanel getPanel() {
 		return panel;
 	}
-
+	/**
+	 * Returns the names of all the buildings.
+	 * @return the names of all the buildings.
+	 */
 	public String[] getBuildingNames() {
 		return buildingNames;
 	}
-
+	/**
+	 * Returns the grid of MapSpots.
+	 * @return the grid of MapSpots.
+	 */
 	public MapSpot[][] getBoard() {
 		return board;
 	}
-
+	/**
+	 * Returns the buttons on the side bar.
+	 * @return the buttons on the side bar.
+	 */
 	public HashMap<String, JButton> getSidebarButtons() {
 		return sidebarButtons;
 	}
-
+	
+	/**
+	 * The panel that draws the everything onto the Frame
+	 * @author Riley
+	 *
+	 */
 	@SuppressWarnings("serial")
 	public class DrawPanel extends JPanel{
 		private int xPos;
@@ -98,23 +122,38 @@ public class MainView {
 		
 		private double moneyRatio = 0;
 		private double pollutionRatio = 0;
-		
+		/**
+		 * Sets the moneyRatio 
+		 * @param moneyRatio the ratio to set.
+		 */
 		public void setMoneyRatio(double moneyRatio) {
 			if(moneyRatio <= 1)
 				this.moneyRatio = moneyRatio;
 		}
-		
+		/**
+		 * Sets the pollution Ratio
+		 * @param pollutionRatio the ratio to set.
+		 */
 		public void setPollutionRatio(double pollutionRatio) {
 			if(pollutionRatio <= 1)
 				this.pollutionRatio = pollutionRatio;
 		}
-		
+		/**
+		 * Creates a new instance of DrawPanel
+		 * @param x the x position of DrawPanel
+		 * @param y the y position of DrawPanel
+		 * @param yOffset the vertical Offset to have a border
+		 */
 		public DrawPanel(int x, int y, int yOffset) {
 			xPos = x;
 			yPos = y;
 			this.yOffset = yOffset;
 		}
 		
+		/**
+		 * Drawing the information on Frame.
+		 * @param g The Graphics used to draw.
+		 */
 		@Override
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
@@ -137,7 +176,9 @@ public class MainView {
 			g2d.drawString(""+pollutionRatio*10000, BAR_X, BAR_Y+BAR_Y_OFFSET-10);
 		}
 	}
-	
+	/**
+	 * Creates a new instance of MainView.
+	 */
 	public MainView(){
 		frame = new JFrame();
 		
@@ -158,7 +199,9 @@ public class MainView {
 		frame.setVisible(true);
 		frame.setResizable(false);
 	}
-	
+	/**
+	 * Creates side bar buttons and adds them to the panel.
+	 */
 	public void addSidebar() {
 		ImageIcon[] sidebarImages = loadSidebarImages();
 		for(int i = 0; i < buildingNames.length; i++) {
@@ -179,6 +222,10 @@ public class MainView {
 		sidebarButtons.put("Remove", button);
 	}
 	
+	/**
+	 * Loads the images for the side bar buttons.
+	 * @return An array of Images to use for the side bar buttons.
+	 */
 	public ImageIcon[] loadSidebarImages() {
 		BufferedImage[] bImgs = new BufferedImage[buildingNames.length];
 		ImageIcon[] imgs = new ImageIcon[buildingNames.length];
@@ -201,7 +248,13 @@ public class MainView {
 		}
 		return imgs;
 	}
-	
+	/**
+	 * Resizes button images to a new width and height.
+	 * @param img the image to resize.
+	 * @param newW the new width of the image.
+	 * @param newH the new height of the image.
+	 * @return
+	 */
 	public static BufferedImage resize(BufferedImage img, int newW, int newH) { 
 	    Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
 	    BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
@@ -212,7 +265,9 @@ public class MainView {
 
 	    return dimg;
 	}  
-	
+	/**
+	 * Creates and adds the main grid of MapSpots to the panel.
+	 */
 	public void addMainMap() {
 		ImageIcon[][] backgroundImages = loadBackgroundImages();
 		for(int i = 0; i < NUM_MAP_BUTTONS_X; i++) {
@@ -315,7 +370,10 @@ public class MainView {
 			}
 		}
 	}
-	
+	/**
+	 * Loads the background images for the MapSpots for the main grid.
+	 * @return A 2D array of Images for the MapSpots of the main grid.
+	 */
 	public ImageIcon[][] loadBackgroundImages() {
 		ImageIcon[][] bgImages = new ImageIcon[NUM_MAP_BUTTONS_X][NUM_MAP_BUTTONS_Y];
 		BufferedImage[][] bgBImages = new BufferedImage[NUM_MAP_BUTTONS_X][NUM_MAP_BUTTONS_Y];
@@ -332,18 +390,25 @@ public class MainView {
 		}
 		return bgImages;
 	}
-	
+	/**
+	 * Updates the image to reflect the money and pollution levels
+	 * @param money The current money amount.
+	 * @param poll The current pollution level.
+	 * @param map The current state of the main grid.
+	 */
 	public void update(double money, double poll, MapSpot[][] map) {
 		updateBoard();
 		updateBars(money, poll);
 		this.board = map;
 		panel.repaint();
 	}
-	
+	/**
+	 * Displays image of building if one exists or deletes Image if it is removed from a Spot.
+	 */
 	public void updateBoard() {
 		for(MapSpot[] ms_arr : board) {
 			for(MapSpot ms : ms_arr) {
-				if(ms.getB() != null) {//optimize with boolean?
+				if(ms.getB() != null) {
 					BufferedImage bImage = resize(ms.getB().getImage(),MAP_BUTTON_HEIGHT,MAP_BUTTON_HEIGHT);
 					BuildingImage bi = new BuildingImage(ms.getBackground(),new ImageIcon(bImage));
 					ms.setShowImage(bi);
@@ -354,7 +419,11 @@ public class MainView {
 			}
 		}
 	}
-	
+	/**
+	 * Update the Money and Pollution Bars on the left side of the screen
+	 * @param moneyRatio the ratio of current money to max money.
+	 * @param pollutionRatio the ratio of current pollution to max pollution.
+	 */
 	public void updateBars(double moneyRatio, double pollutionRatio) {
 		panel.setMoneyRatio(moneyRatio);
 		panel.setPollutionRatio(pollutionRatio);
