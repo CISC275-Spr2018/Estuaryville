@@ -1,4 +1,5 @@
 import java.awt.EventQueue;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -344,7 +345,16 @@ public class Controller {
 				activePanel = Active.RESEARCH;
 				rView.getPanel().requestFocusInWindow();
 				rMod.updateLocationAndDirection();
+				rMod.crabCollisionChecker();
+				rMod.boundsCollisionChecker();
+				rMod.endCheck();
 				rView.update(rMod.getPlayer(), rMod.getCrabs(), rMod.getRects());
+				if (rMod.lifeCheck()) {
+					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight());
+				}
+				if (rMod.endCheck()) {
+					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight());
+				}
 				break;
 			default:
 				break;
