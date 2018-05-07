@@ -87,20 +87,20 @@ public class MapSpotTester {
 	@Test
 	public void isValidTest() {
 		MapSpot ms = new MapSpot();
-		assertEquals(ms.isValid(),true);
+		assertEquals(ms.isValid(new Building(0,0,"Factory","factory")),true);
 	}
 	
 	@Test
 	public void isValidTest2() {
 		MapSpot ms = new MapSpot();
 		ms.settState(TerrainState.OTHER);
-		assertEquals(ms.isValid(),false);
+		assertEquals(ms.isValid(new Building(0,0,"Factory","factory")),false);
 	}
 	
 	@Test
 	public void isValidTest3() {
 		MapSpot ms = new MapSpot();
 		ms.setB(new Building(0,0,"Factory","factory"));
-		assertEquals(ms.isValid(),false);
+		assertEquals(ms.isValid(new Building(0,0,"Factory","factory")),false);
 	}
 }
