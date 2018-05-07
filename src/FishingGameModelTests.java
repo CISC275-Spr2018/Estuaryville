@@ -11,7 +11,8 @@ import org.junit.Test;
 public class FishingGameModelTests {
 	FishingGameModel fgm = new FishingGameModel(1440,900);
 	
-	@Test public void testGetters(){
+	@Test 
+	public void testGetters(){
 		Fish f = new Fish(Fish.Species.AMERICAN_SHAD, 500, 500, Direction.EAST);
 		fgm.caught = f;
 		assertEquals(f, fgm.getCaught());
@@ -19,6 +20,8 @@ public class FishingGameModelTests {
 		assertEquals(false, fgm.getGameOver());
 		fgm.displayCatch = false;
 		assertEquals(false, fgm.getDisplayCatch());
+		fgm.trashAL = new ArrayList<Trash>();
+		assertEquals(fgm.trashAL, fgm.getTrash());
 	}
 	
 	@Test
@@ -321,6 +324,30 @@ public class FishingGameModelTests {
 		assertEquals(true, f.contains(fishy));
 	}
 	@Test
+	public void testReelItInTrash(){
+		ArrayList<Trash> f = new ArrayList<Trash>();
+		f.add(new Trash(Trash.Type.CAN));
+		f.add(new Trash(Trash.Type.STRAW));
+		f.get(0).setHitbox(500, 500);
+		Hook h = new Hook();
+		h.setHitbox(501, 501);
+		h.setXPos(FishingGameView.ROD_X);
+		h.setYPos(FishingGameView.ROD_Y - 150);
+		fgm.hook = h;
+		fgm.trashAL = f;
+		fgm.caught = f.get(0);
+		fgm.hook = h;
+		Mover trash = fgm.caught;
+		fgm.reelItIn(trash);
+		assertEquals(true, f.contains(trash));
+		h.setXPos(FishingGameView.ROD_X - 150);
+		h.setYPos(FishingGameView.ROD_Y);
+		assertEquals(true, f.contains(trash));
+		h.setXPos(FishingGameView.ROD_X - 150);
+		h.setYPos(FishingGameView.ROD_Y - 150);
+		assertEquals(true, f.contains(trash));
+	}
+	@Test
 	public void testUpdate1(){
 		ArrayList<Fish> f = new ArrayList<Fish>();
 		f.add(new Fish(Fish.Species.AMERICAN_SHAD, 0, 0, Direction.WEST));
@@ -354,4 +381,28 @@ public class FishingGameModelTests {
 		fgm.update();
 		assertEquals(false, f.contains(fishy));
 	}
+	@Test
+	public void testUpdate3(){
+		ArrayList<Trash> f = new ArrayList<Trash>();
+		//f.add(new Fish(Fish.Species.AMERICAN_SHAD, 0, 0, Direction.WEST));
+		//f.add(new Fish(Fish.Species.STURGEON, 0, 0, Direction.EAST));
+		f.add(new Trash(Trash.Type.CAN));
+		//f.add(new Trash(Trash.Type.STRAW));
+		f.get(0).setHitbox(500, 500);
+		Hook h = new Hook();
+		h.setXPos(501);
+		h.setYPos(501);
+		h.setHitbox(501, 501);
+		fgm.hook = h;
+		fgm.trashAL = f;
+		fgm.timeSinceCatch = 35;
+		Fish fishy = null;
+		fgm.update();
+	}
+	@Test
+	public void testSetPollutionLevel(){
+		fgm.setPollutionLevel(0.5);
+		assertEquals(4, fgm.getTrash().size());
+	}
+
 }

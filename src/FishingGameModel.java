@@ -15,20 +15,21 @@ public class FishingGameModel extends Model {
 
 	public Hook hook;
 	public ArrayList<Fish> fishes;
+	public ArrayList<Trash> trashAL;
 	final static int WATER_TOP = (int) (.52 * FishingGameView.getHeight());
 	final static int WATER_BOTTOM = (int) (FishingGameView.getHeight() - 50);
-	int fishCaughtX;
-	int fishCaughtY;
-	Fish caught;
+	int piecesOfTrash;
+	final static int MAX_TRASH = 8;
+	Mover caught;
 	int timeSinceCatch;
 	boolean displayCatch;
 	boolean gameOver;
 	// GETTERS
 	/**
-	 * returns the Fish that is on the hook currently
-	 * @return the caught Fish
+	 * returns the Mover that is on the hook currently
+	 * @return the caught Mover
 	 */
-	public Fish getCaught(){return caught;}
+	public Mover getCaught(){return caught;}
 	/**
 	 * a boolean telling whether the mini game is done
 	 * @return true if game is over, false if not
@@ -40,6 +41,12 @@ public class FishingGameModel extends Model {
 	 */
 	public boolean getDisplayCatch(){return displayCatch;}
 	
+	public void setPollutionLevel(double pl){
+		piecesOfTrash = (int) (pl * MAX_TRASH);
+		for(int i = 0; i < piecesOfTrash; i++){
+			trashAL.add(new Trash(Trash.Type.values()[i%3]));
+		}
+	}
 	
 	
 	/**
@@ -54,6 +61,7 @@ public class FishingGameModel extends Model {
 	public FishingGameModel(int w, int h) {
 		super(w, h);
 		fishes = new ArrayList<Fish>();
+		trashAL = new ArrayList<Trash>();
 		for (int i = 0; i < 12; i++) {
 			fishes.add(new Fish(Fish.Species.values()[i % 3], 9, 2, (i % 2 == 0 ? Direction.EAST : Direction.WEST)));
 		}
@@ -72,6 +80,15 @@ public class FishingGameModel extends Model {
 	 */
 	public ArrayList<Fish> getFish() {
 		return fishes;
+	}
+	
+	/**
+	 * Gets all Trash currently in the game's Model
+	 * 
+	 * @return an array of Fish objects
+	 */
+	public ArrayList<Trash> getTrash() {
+		return trashAL;
 	}
 
 	/**
@@ -92,13 +109,18 @@ public class FishingGameModel extends Model {
 	public void update() {
 		boolean reeling = false;
 		Fish f;
+		Trash t;
 		int i = 0;
 		if(fishes.size() == 0)
 			gameOver = true;
-		while (!reeling && i < fishes.size()) {
-			if (fishCaught(fishes.get(i))) {
+		while (!reeling && i < fishes.size() + trashAL.size()) {
+			if(i < fishes.size() && fishCaught(fishes.get(i))) {
 				caught = fishes.get(i);
 				reelItIn(fishes.get(i));
+				reeling = true;
+			}else if(i >= fishes.size() && trashCaught(trashAL.get(i - fishes.size()))){
+				caught = trashAL.get(i - fishes.size());
+				reelItIn(trashAL.get(i - fishes.size()));
 				reeling = true;
 			}
 			i++;
@@ -124,21 +146,39 @@ public class FishingGameModel extends Model {
 			if (!f.getHooked())
 				checkBounds(f);
 			f.setMouth(f.getXPos(), f.getYPos(), f.getDirection());
-
+		}
+		for(i = 0; i < trashAL.size(); i++){
+			t = trashAL.get(i);
+			if(!t.getHooked())
+				t.move();
+			t.setHitbox(t.getXPos(), t.getYPos());
 		}
 
 	}
-
-	public void reelItIn(Fish f) {
+/**
+ * Reels in the hook and whatever Mover is caught
+ * @param m a Mover that is caught on the hook
+ */
+	public void reelItIn(Mover m) {
 		int xDiff = (FishingGameView.ROD_X - hook.getXPos()) / 7;
 		int yDiff = (FishingGameView.ROD_Y - hook.getYPos()) / 7;
-		f.setXPos(f.getXPos() + xDiff);
-		f.setYPos(f.getYPos() + yDiff);
+		m.setXPos(m.getXPos() + xDiff);
+		m.setYPos(m.getYPos() + yDiff);
 		hook.setXPos(hook.getXPos() + xDiff);
 		hook.setYPos(hook.getYPos() + yDiff);
-		if(Math.abs(hook.getXPos() - FishingGameView.ROD_X) < 7 && Math.abs(hook.getYPos() - FishingGameView.ROD_Y) < 7){
-			fishes.remove(f);
-			timeSinceCatch = 0;
+		if(m instanceof Fish)
+		{
+			Fish f = (Fish) m;
+			if(Math.abs(hook.getXPos() - FishingGameView.ROD_X) < 7 && Math.abs(hook.getYPos() - FishingGameView.ROD_Y) < 7){
+				fishes.remove(f);
+				timeSinceCatch = 0;
+			}
+		}else{
+			Trash t = (Trash) m;
+			if(Math.abs(hook.getXPos() - FishingGameView.ROD_X) < 7 && Math.abs(hook.getYPos() - FishingGameView.ROD_Y) < 7){
+				trashAL.remove(t);
+				timeSinceCatch = 0;
+			}
 		}
 	}
 
@@ -150,7 +190,7 @@ public class FishingGameModel extends Model {
 	 *
 	 */
 	public void checkBounds(Fish f) {
-		if (caught != null && f.getSpecies() == caught.getSpecies()) {
+		if (caught instanceof Fish && f.getSpecies() == ((Fish) caught).getSpecies()) {
 			//System.out.println((f.getDirection().ordinal()*2 - 4) * 1);
 			switch(f.getDirection()){
 			case EAST:
@@ -226,12 +266,31 @@ public class FishingGameModel extends Model {
 		}
 	}
 
+	/**
+	 * checks the Trash with the hook
+	 * @param t the Trash
+	 * @return a boolean, if the Trash is hooked
+	 */
+	public boolean trashCaught(Trash t) {
+		if (t.getHitbox().intersects(hook.getHitbox())) {
+			//System.out.println("The " + f.getSpecies().getName() + " is HOOKED");
+			t.setHooked(true);
+			return true;
+		} else {
+			t.setHooked(false);
+		}
+		return false;
+	}
+	
+	/**
+	 * checks the Fish with the hook
+	 * @param f the Fish
+	 * @return a boolean, if the fish is hooked
+	 */
 	public boolean fishCaught(Fish f) {
 		if (f.getMouth().intersects(hook.getHitbox())) {
 			System.out.println("The " + f.getSpecies().getName() + " is HOOKED");
 			f.setHooked(true);
-			fishCaughtX = f.getXPos();
-			fishCaughtY = f.getYPos();
 			return true;
 		} else {
 			f.setHooked(false);
