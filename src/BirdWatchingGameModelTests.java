@@ -357,19 +357,24 @@ public class BirdWatchingGameModelTests {
 		testModel.takePicture(testModel.birds.get(0), testModel.birds);
 		assertEquals(true, testModel.getTryAgain());
 	}
-	
+
 	//GET SCALED TESTS
 	@Test
 	public void getScaledWidthTest() {
 		int width = 10;
+		double number = (double) width;
+		double expected = (number / 1440) * testModel.screenWidth;
 		width = testModel.getScaledWidth(width);
-		assertEquals(17, width);
+		assertEquals((int) expected, width);
 	}
+	
 	@Test
 	public void getScaledHeightTest() {
 		int height = 10;
+		double number = (double) height;
+		double expected = (number / 900) * testModel.screenHeight;
 		height = testModel.getScaledHeight(height);
-		assertEquals(16, height);
+		assertEquals((int) expected, height);
 	}
 	
 	//UPDATE TESTS
