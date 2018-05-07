@@ -40,7 +40,10 @@ public class FishingGameModel extends Model {
 	 * @return true if a fish has been caught, false if not
 	 */
 	public boolean getDisplayCatch(){return displayCatch;}
-	
+	/**
+	 * adds a proportional amount of trash to the game according to the pollution level
+	 * @param a double between 0 and 1 the ratio of pollution to max pollution
+	 */
 	public void setPollutionLevel(double pl){
 		piecesOfTrash = (int) (pl * MAX_TRASH);
 		for(int i = 0; i < piecesOfTrash; i++){
