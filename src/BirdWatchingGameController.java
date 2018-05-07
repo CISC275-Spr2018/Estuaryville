@@ -28,55 +28,80 @@ public class BirdWatchingGameController {
 	@SuppressWarnings("serial")
 	public BirdWatchingGameController() {
 		birdView = new BirdWatchingGameView();
-		birdModel = new BirdWatchingGameModel(BirdWatchingGameView.getScreenWidth(), BirdWatchingGameView.getScreenHeight());
-		birdView.searchingFor = birdModel.searchingFor;
+		birdModel = new BirdWatchingGameModel(birdView.getScreenWidth(), birdView.getScreenHeight());
+		birdView.setSearchingFor(birdModel.getSearchingFor());
 		birdView.getPanel().addKeyListener(new KeyListener() {
+			/**
+			 * Overrides the keyPressed method from KeyListener. This method
+			 * looks for keys to be pressed within the Bird Watching game and
+			 * performs actions accordingly.
+			 */
 			@Override
 			public void keyPressed(KeyEvent ke) {
 				switch (ke.getKeyCode()) {
 				case KeyEvent.VK_UP:
-					birdModel.camera.setYSpeed(birdModel.getScaledHeight(-15));
+					if (birdModel.getToDisplayInfo() == null && !birdModel.getGameOver())
+						birdModel.getCamera().setYSpeed(birdModel.getScaledHeight(-15));
 					break;
 				case KeyEvent.VK_DOWN:
-					birdModel.camera.setYSpeed(birdModel.getScaledHeight(15));
+					if (birdModel.getToDisplayInfo() == null && !birdModel.getGameOver())
+						birdModel.getCamera().setYSpeed(birdModel.getScaledHeight(15));
 					break;
 				case KeyEvent.VK_LEFT:
-					birdModel.camera.setXSpeed(birdModel.getScaledWidth(-15));
+					if (birdModel.getToDisplayInfo() == null && !birdModel.getGameOver())
+						birdModel.getCamera().setXSpeed(birdModel.getScaledWidth(-15));
 					break;
 				case KeyEvent.VK_RIGHT:
-					birdModel.camera.setXSpeed(birdModel.getScaledWidth(15));
+					if (birdModel.getToDisplayInfo() == null && !birdModel.getGameOver())
+						birdModel.getCamera().setXSpeed(birdModel.getScaledWidth(15));
 					break;
 				case KeyEvent.VK_SPACE:
-					birdModel.wrongBird = false;
-					birdModel.tryAgain = false;
-					birdModel.takePicture(birdModel.searchingFor, birdModel.birds);
-					birdView.searchingFor = birdModel.searchingFor;
+					birdModel.setWrongBird(false);
+					birdModel.setTryAgain(false);
+					if (birdModel.getToDisplayInfo() == null) {
+						birdModel.takePicture(birdModel.getSearchingFor(), birdModel.getBirds());
+						birdView.setSearchingFor(birdModel.getSearchingFor());
+					}
 					break;
 				case KeyEvent.VK_ENTER:
-					if (birdView.gameOver) {
-						birdView.panel.setVisible(false);
+					if (birdView.getToDisplayInfo() != null) {
+						birdView.setToDisplayInfo(null);
+						birdModel.setToDisplayInfo(null);
+						//birdView.pauseGame = false;
+						//birdView.repaintCount = 0;
+					}
+					else if (birdView.getGameOver()) {
+						birdView.getPanel().setVisible(false);
 					}
 					
 				}
-				birdView.gameOver = birdModel.gameOver;	
-				birdView.wrongBird = birdModel.wrongBird;
-				birdView.tryAgain = birdModel.tryAgain;
+				birdView.setGameOver(birdModel.getGameOver());	
+				birdView.setWrongBird(birdModel.getWrongBird());
+				birdView.setTryAgain(birdModel.getTryAgain());
 			}
 
+			/**
+			 * Overrides the keyReleased method from KeyListener. This method
+			 * looks for keys to be released in the Bird Watching Game and 
+			 * performs actions accordingly.
+			 */
 			@Override
 			public void keyReleased(KeyEvent ke) {
 				switch(ke.getKeyCode()){
 				case KeyEvent.VK_UP:
 				case KeyEvent.VK_DOWN:
-					birdModel.camera.setYSpeed(0);
+					birdModel.getCamera().setYSpeed(0);
 					break;
 				case KeyEvent.VK_LEFT:
 				case KeyEvent.VK_RIGHT:
-					birdModel.camera.setXSpeed(0);
+					birdModel.getCamera().setXSpeed(0);
 					break;
 				}
 			}
 
+			/**
+			 * Overrides the keyTyped method from KeyListener.
+			 */
 			@Override
 			public void keyTyped(KeyEvent ke) {
 
@@ -105,7 +130,7 @@ public class BirdWatchingGameController {
 
 	public void redraw() {
 		birdModel.update();
-		birdView.update(birdModel.getBirds(), birdModel.getCamera(), birdModel.isFlash());
+		birdView.update(birdModel.getBirds(), birdModel.getCamera(), birdModel.isFlash(), birdModel.getToDisplayInfo());
 	}
 
 }

@@ -1,10 +1,15 @@
+
+/**
+ * This is the class that is used to run the game.
+ * @author Riley
+ */
 public class Runner {
-	public static void main(String [] args){
-		ResearchGameView view = new ResearchGameView();
-		ResearchGameModel model = new ResearchGameModel(view.getWidth(), view.getHeight(), view.getImageWidth(), view.getImageHeight());
-		ResearchGameController myC = new ResearchGameController();
-		myC.start();
+	/**
+	 * Creates an instance of Controller and begins the MVC controller.
+	 * @param args Arguments to be passed into Controller
+	 */
+	public static void main(String args[]) {
+		Controller con = new Controller();
+		con.start();
 	}
 }
-
-

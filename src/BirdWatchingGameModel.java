@@ -12,7 +12,6 @@ import java.util.Random;
  */
 public class BirdWatchingGameModel extends Model {
 	
-	static int score;
 	static Camera camera;
 	ArrayList<Bird> birds;
 	Bird searchingFor;
@@ -23,6 +22,7 @@ public class BirdWatchingGameModel extends Model {
 	boolean gameOver = false;
 	boolean wrongBird = false;
 	boolean tryAgain = false;
+	Bird toDisplayInfo = null;
 	
 	/**
 	 * Creates an instance of the BirdWatchingGameModel class.
@@ -47,21 +47,6 @@ public class BirdWatchingGameModel extends Model {
 	}
 	
 	/**
-	 * Gets the array of birds within the BirdWatchingGameModel
-	 * @return the array of Bird objects
-	 */
-	public ArrayList<Bird> getBirds(){
-		return birds;
-	}
-	/**
-	 * Gets the camera within the BirdWatchingGameModel
-	 * @return the camera within the BirdWatchingGameModel
-	 */
-	public Camera getCamera(){
-		return camera;
-	}
-	
-	/**
 	 * Updates the movement of the objects in the model by detecting collisions. 
 	 */
 	@Override
@@ -74,7 +59,7 @@ public class BirdWatchingGameModel extends Model {
 		for (int i = 0; i < birds.size(); i++) {
 			b = birds.get(i);
 			checkBounds(b);
-			b.rect.setLocation(b.getXPos(), b.getYPos());
+			b.getRect().setLocation(b.getXPos(), b.getYPos());
 		}
 		checkBounds(camera);
 		camera.rect.setLocation(camera.getXPos(), camera.getYPos());
@@ -86,7 +71,7 @@ public class BirdWatchingGameModel extends Model {
 	 */
 	public void checkBounds(Bird b){
 		Random rand = new Random();
-		if (b.species == Bird.Species.SANDPIPER) {
+		if (b.getSpecies() == Bird.Species.SANDPIPER) {
 			switch(b.getDirection()) {
 			case EAST:
 				if(b.getXPos() + b.getXSpeed() > getScaledWidth(930)) {
@@ -139,6 +124,7 @@ public class BirdWatchingGameModel extends Model {
 					b.setXPos(b.getXPos() + b.getXSpeed());
 				break;
 			case SOUTHWEST:
+			default:
 				if(b.getYPos() - b.getYSpeed() > getScaledHeight(570)) {
 					b.setDirection(BDirection.values()[3 + rand.nextInt(2)]);
 				}
@@ -146,13 +132,9 @@ public class BirdWatchingGameModel extends Model {
 					b.setYPos(b.getYPos() + b.getYSpeed());
 				if(b.getXPos() + b.getXSpeed() < getScaledWidth(775)) {
 					b.setDirection(BDirection.values()[rand.nextInt(3)]);
-					//b.setXPos(b.getXPos() - b.getXSpeed());
-					//b.setXSpeed(b.getXSpeed() * -1);
 				}
 				else
 					b.setXPos(b.getXPos() - b.getXSpeed());
-				break;
-			default:
 				break;
 			}
 		}
@@ -201,6 +183,7 @@ public class BirdWatchingGameModel extends Model {
 					b.setXPos(b.getXPos() + b.getXSpeed());
 				break;
 			case SOUTHWEST:
+			default:
 				if(b.getYPos() + b.getYSpeed() > screenHeight - 50)
 					b.setYPos(0);
 				else
@@ -210,11 +193,10 @@ public class BirdWatchingGameModel extends Model {
 				else
 					b.setXPos(b.getXPos() - b.getXSpeed());
 				break;
-			default:
-				break;
 			}
 		}
 	}
+	
 	/**
 	 * Checks to see if a given Camera is within the bounds of the screen
 	 * @param c the Camera to check the position of
@@ -234,13 +216,18 @@ public class BirdWatchingGameModel extends Model {
 		}
 	}
 	
+	/**
+	 * Takes a picture of the screen. Tells whether the player has taken a 
+	 * picture of the bird they are looking for, the incorrect bird, or just
+	 * the background.
+	 * @param target The Bird that the player is searching for.
+	 * @param birdList The list of birds within the model.
+	 */
 	public void takePicture(Bird target, ArrayList<Bird> birdList) {
 		if (!birds.isEmpty()) {
 			takePicFrame = 1;
 			if (isOnTarget(target)) {
-				System.out.println("got it");
-				score += 100;
-				displayInfo(target);
+				toDisplayInfo = target;
 				birds.remove(birds.indexOf(target)); //remove target bird
 				if (birds.isEmpty()) {
 					gameOver = true;
@@ -256,25 +243,24 @@ public class BirdWatchingGameModel extends Model {
 				for (Bird b : birdList) {
 					if (isOnTarget(b)) {
 						//display wrong bird
-						System.out.println("wrong bird");
 						wrongBird = true;
 						return;
 					}
 				}
 				//display look again
-				System.out.println("try again");
 				tryAgain = true;
 			}
 		}
 	}
 	
+	/**
+	 * Checks whether the bird hitbox is within the camera hitbox.
+	 * @param b The bird to use as a target
+	 * @return A boolean to tell if the camera is over the target bird.
+	 */
 	public static boolean isOnTarget(Bird b) {
 		//collision detection
-		return camera.rect.contains(b.rect);
-	}
-	
-	public static void displayInfo(Bird b) {
-		
+		return camera.getRect().contains(b.getRect());
 	}
 	
 	/**
@@ -286,16 +272,128 @@ public class BirdWatchingGameModel extends Model {
 		return takePicFrame > 0;
 	}
 	
+	/**
+	 * Gets the scaled width to use for an object. 
+	 * @param n The number to use within the scale.
+	 * @return An int to use as the scaled width metric.
+	 */
 	public int getScaledWidth(int n) {
 		double number = (double)n;
 		double position = (number / 1440) * screenWidth;
 		return (int) position;
 	}
 	
+	/**
+	 * Gets the scaled height to use for an object. 
+	 * @param n The number to use within the scale.
+	 * @return An int to use as the scaled height metric.
+	 */
 	public int getScaledHeight(int n) {
 		double number = (double)n;
 		double position = (number / 900) * screenHeight;
 		return (int) position;
 	}
 	
+	/**
+	 * Gets the gameOver variable of the View to tell if the game has ended.
+	 * @return A boolean to tell if the game has ended. 
+	 */
+	public boolean getGameOver() {
+		return gameOver;
+	}
+	
+	/**
+	 * Sets the gameOver variable of the View, which tells if the game has ended.
+	 * @param g The boolean to set the gameOver variable to.
+	 */
+	public void setGameOver(boolean g) {
+		gameOver = g;
+	}
+	
+	/**
+	 * Gets the wrongBird variable of the View to tell if the player has taken
+	 * a picture of the wrong bird.
+	 * @return A boolean to tell if a picture of a wrong bird has been taken. 
+	 */
+	public boolean getWrongBird() {
+		return wrongBird;
+	}
+	
+	/**
+	 * Sets the wrongBird variable of the View, which tells if the player has taken
+	 * a picture of the wrong bird.
+	 * @param g The boolean to set the wrongBird variable to.
+	 */
+	public void setWrongBird(boolean w) {
+		wrongBird = w;
+	}
+	
+	/**
+	 * Gets the tryAgain variable of the View to tell if the player has taken
+	 * a picture of the background.
+	 * @return A boolean to tell if a picture of the background has been taken. 
+	 */
+	public boolean getTryAgain() {
+		return tryAgain;
+	}
+	
+	/**
+	 * Sets the tryAgain variable of the View, which tells if the player has taken
+	 * a picture of the background.
+	 * @param g The boolean to set the tryAgain variable to.
+	 */
+	public void setTryAgain(boolean t) {
+		tryAgain = t;
+	}
+	
+	/**
+	 * Gets the searchingFor variable of the View to tell what Bird the player
+	 * is searching for. 
+	 * @return A boolean to tell what bird the player is searching for. 
+	 */
+	public Bird getSearchingFor() {
+		return searchingFor;
+	}
+	
+	/**
+	 * Sets the searchingFor variable of the View, which tells what Bird the 
+	 * player is searching for.
+	 * @param g The Bird to set the searchingFor variable to.
+	 */
+	public void setSearchingFor(Bird b) {
+		searchingFor = b;
+	}
+	
+	/**
+	 * Gets the toDisplayInfo variable of the View to tell what Bird to display
+	 * the information screen for. 
+	 * @return A boolean to tell what bird to display the information screen for. 
+	 */
+	public Bird getToDisplayInfo() {
+		return toDisplayInfo;
+	}
+	
+	/**
+	 * Sets the toDisplayInfo variable of the View, which tells what Bird to display
+	 * the information screen of. 
+	 * @param g The Bird to set the toDisplayInfo variable to.
+	 */
+	public void setToDisplayInfo(Bird b) {
+		toDisplayInfo = b;
+	}
+	
+	/**
+	 * Gets the array of birds within the BirdWatchingGameModel
+	 * @return the array of Bird objects
+	 */
+	public ArrayList<Bird> getBirds(){
+		return birds;
+	}
+	/**
+	 * Gets the camera within the BirdWatchingGameModel
+	 * @return the camera within the BirdWatchingGameModel
+	 */
+	public Camera getCamera(){
+		return camera;
+	}
 }

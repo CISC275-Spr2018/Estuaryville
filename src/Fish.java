@@ -71,7 +71,7 @@ public class Fish extends Mover{
 			mouth.setLocation(x + (int)(.75* FishingGameView.FISH_WIDTH),
 							  y + (int)(.4 * FishingGameView.FISH_HEIGHT));
 		}else if(dir == Direction.WEST){
-			mouth.setLocation(x, y + (int)(.4 * FishingGameView.FISH_HEIGHT));
+			mouth.setLocation(x+(int)(.08* FishingGameView.FISH_WIDTH), y + (int)(.4 * FishingGameView.FISH_HEIGHT));
 		}
 	}
 	
@@ -93,10 +93,10 @@ public class Fish extends Mover{
 		if(dir == Direction.EAST){
 			mouth = new Rectangle(xPos + (int)(.75*FishingGameView.FISH_WIDTH),
 					yPos + (int)(.4 * FishingGameView.FISH_HEIGHT), 
-					20, 
-					20);
+					FishingGameView.FISH_WIDTH/5, 
+					FishingGameView.FISH_HEIGHT/5);
 		}else{
-			mouth = new Rectangle(xPos, yPos + (int)(.4 * FishingGameView.FISH_HEIGHT), 20, 20);
+			mouth = new Rectangle(xPos+(int)(.08* FishingGameView.FISH_WIDTH), yPos + (int)(.4 * FishingGameView.FISH_HEIGHT), FishingGameView.FISH_WIDTH/5, FishingGameView.FISH_HEIGHT/5);
 		}
 		hookedFor = 0;
 	}

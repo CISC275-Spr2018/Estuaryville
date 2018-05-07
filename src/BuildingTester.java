@@ -15,14 +15,7 @@ public class BuildingTester {
 		assertEquals(b.getName(),"Factory");
 		
 		BufferedImage img = new BufferedImage(1,1,1);
-		b.setCost(1);
 		b.setImage(img);
-		b.setName("");
-		b.setQualityNeeded(1);
-		
-		assertEquals(b.getCost(),1);
-		assertEquals(b.getQualityNeeded(),1);
-		assertEquals(b.getName(),"");
 		assertEquals(b.getImage(),img);
 	}
 	@Test
@@ -36,6 +29,12 @@ public class BuildingTester {
 		Building b1 = new Building(0,0,"Factory","factory");
 		Building b2 = new Building(0,0,"Factory","factory");
 		assertEquals(b1.equals(b2),true);
+	}
+	@Test
+	public void equalsTest3() {
+		Building b1 = null;
+		Building b2 = new Building(0,0,"Factory","factory");
+		assertEquals(b2.equals(b1),false);
 	}
 	
 	@Test
