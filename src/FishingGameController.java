@@ -1,7 +1,5 @@
-import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
@@ -9,8 +7,6 @@ import java.awt.event.MouseListener;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Timer;
-
-import org.w3c.dom.events.MouseEvent;
 
 /**
  * 
@@ -38,10 +34,7 @@ public class FishingGameController {
 			public void mouseClicked(java.awt.event.MouseEvent e) {}
 			public void mouseReleased(java.awt.event.MouseEvent e) {}
 			public void mouseEntered(java.awt.event.MouseEvent e) {}
-			public void mouseExited(java.awt.event.MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void mouseExited(java.awt.event.MouseEvent e) {}
 		});
 		fishView.getPanel().addKeyListener(new KeyListener() {
 			@Override
@@ -115,7 +108,7 @@ public class FishingGameController {
 
 	public void redraw() {
 		fishModel.update();
-		fishView.update(fishModel.getFish(), fishModel.getHook(), fishModel.caught, fishModel.gameOver);
+		fishView.update(fishModel.getFish(), fishModel.getHook(), fishModel.getCaught(), fishModel.getGameOver(), fishModel.getDisplayCatch());
 	}
 
 }

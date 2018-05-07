@@ -20,8 +20,28 @@ public class FishingGameModel extends Model {
 	int fishCaughtX;
 	int fishCaughtY;
 	Fish caught;
+	int timeSinceCatch;
+	boolean displayCatch;
 	boolean gameOver;
-
+	// GETTERS
+	/**
+	 * returns the Fish that is on the hook currently
+	 * @return the caught Fish
+	 */
+	public Fish getCaught(){return caught;}
+	/**
+	 * a boolean telling whether the mini game is done
+	 * @return true if game is over, false if not
+	 */
+	public boolean getGameOver(){return gameOver;}
+	/**
+	 * a boolean telling whether a fish has been reeled in
+	 * @return true if a fish has been caught, false if not
+	 */
+	public boolean getDisplayCatch(){return displayCatch;}
+	
+	
+	
 	/**
 	 * Creates a new instance of FishingGameModel Adds an interactive hook and
 	 * fish to the screen.
@@ -34,7 +54,7 @@ public class FishingGameModel extends Model {
 	public FishingGameModel(int w, int h) {
 		super(w, h);
 		fishes = new ArrayList<Fish>();
-		for (int i = 0; i < 79; i++) {
+		for (int i = 0; i < 12; i++) {
 			fishes.add(new Fish(Fish.Species.values()[i % 3], 9, 2, (i % 2 == 0 ? Direction.EAST : Direction.WEST)));
 		}
 		hook = new Hook();
@@ -42,6 +62,7 @@ public class FishingGameModel extends Model {
 		hook.setYSpeed(0);
 		caught = null;
 		gameOver = false;
+		timeSinceCatch = -1;
 	}
 
 	/**
@@ -86,6 +107,16 @@ public class FishingGameModel extends Model {
 			caught = null;
 			checkBounds(); // checks the hook
 		}
+		if(timeSinceCatch >= 0){
+			displayCatch = true;
+			timeSinceCatch++;
+		}
+		if(timeSinceCatch > 30){
+			displayCatch = false;
+			hook.setXPos((int) (500.0/1100.0 * FishingGameView.getWidth()));
+			hook.setYPos((int) (450.0/700.0 * FishingGameView.getHeight()));
+			timeSinceCatch = -1;
+		}
 		hook.setHitbox(hook.getXPos(), hook.getYPos());
 
 		for (i = 0; i < fishes.size(); i++) {
@@ -99,18 +130,16 @@ public class FishingGameModel extends Model {
 	}
 
 	public void reelItIn(Fish f) {
-		int xDiff = (FishingGameView.ROD_X - fishCaughtX) / 5;
-		int yDiff = (FishingGameView.ROD_Y - fishCaughtY) / 5;
+		int xDiff = (FishingGameView.ROD_X - hook.getXPos()) / 7;
+		int yDiff = (FishingGameView.ROD_Y - hook.getYPos()) / 7;
 		f.setXPos(f.getXPos() + xDiff);
 		f.setYPos(f.getYPos() + yDiff);
 		hook.setXPos(hook.getXPos() + xDiff);
 		hook.setYPos(hook.getYPos() + yDiff);
-		if(Math.abs(f.getXPos() - FishingGameView.ROD_X) < 5 && Math.abs(f.getYPos() - FishingGameView.ROD_Y) < 5){
+		if(Math.abs(hook.getXPos() - FishingGameView.ROD_X) < 7 && Math.abs(hook.getYPos() - FishingGameView.ROD_Y) < 7){
 			fishes.remove(f);
-			hook.setXPos((int) (500.0/1100.0 * FishingGameView.getWidth()));
-			hook.setYPos((int) (450.0/700.0 * FishingGameView.getHeight()));
+			timeSinceCatch = 0;
 		}
-		// System.out.println();
 	}
 
 	/**
@@ -128,9 +157,9 @@ public class FishingGameModel extends Model {
 				f.setXPos(f.getXPos() + (int)(5*f.getXSpeed()));
 				break;
 			case WEST:
+				default:
 				f.setXPos(f.getXPos() - (int)(5*f.getXSpeed()));
 				break;
-			default: break;
 			}
 			if (f.getXPos() < (-1 * FishingGameView.FISH_WIDTH)
 					|| f.getXPos() > (FishingGameView.FISH_WIDTH + FishingGameView.WIDTH)) {
@@ -138,14 +167,14 @@ public class FishingGameModel extends Model {
 			}
 		} else {
 			switch (f.getDirection()) {
-			case NORTH:
+			/*case NORTH:
 				if (f.getYPos() - f.getYSpeed() < 300)
 					f.setDirection(Direction.SOUTH);
 				else {
 					f.setYPos(f.getYPos() - f.getYSpeed());
 					f.setMouth(f.getXPos(), f.getYPos(), f.getDirection());
 				}
-				break;
+				break;*/
 			case EAST:
 				if (f.getXPos() + f.getXSpeed() > FishingGameView.getWidth() - 50)
 					f.setDirection(Direction.WEST);
@@ -155,6 +184,7 @@ public class FishingGameModel extends Model {
 				}
 				break;
 			case WEST:
+				default:
 				if (f.getXPos() - f.getXSpeed() < -50)
 					f.setDirection(Direction.EAST);
 				else {
@@ -162,7 +192,7 @@ public class FishingGameModel extends Model {
 					f.setMouth(f.getXPos(), f.getYPos(), f.getDirection());
 				}
 				break;
-			case SOUTH:
+			/*case SOUTH:
 				if (f.getYPos() + f.getYSpeed() > FishingGameView.getHeight() - 100)
 					f.setDirection(Direction.NORTH);
 				else {
@@ -171,7 +201,7 @@ public class FishingGameModel extends Model {
 				}
 				break;
 			default:
-				break;
+				break;*/
 			}
 		}
 	}
