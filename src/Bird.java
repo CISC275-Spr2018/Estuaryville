@@ -65,23 +65,31 @@ public class Bird {
 	/**
 	 * This enumeration is used to represent species of Birds.
 	 * @author Tyler
-	 *
 	 */
 	public enum Species{		
 		BLUE_HERON("great-blue-heron"),
 		SANDPIPER("least-sandpiper"),
 		OSPREY("osprey");
 		
+		String name;
+		int width;
+		int height;
+		
 		/**
 		 * Creates an instance of the Species enumeration. This constructor assigns
 		 * a name to the Species of Bird. 
 		 * @param n The name to assign to the Species of Bird. 
 		 */
-		String name;
-		int width;
-		int height;
 		private Species(String n) {
 			this.name = n;
+		}
+		
+		/**
+		 * Gets the name associated with the Species.
+		 * @return A string, the name associated with the Species.
+		 */
+		public String getName() {
+			return name;
 		}
 	}
 	
@@ -125,7 +133,7 @@ public class Bird {
 	 * Gets the Species of the Bird.
 	 * @return The Species of the Bird.
 	 */
-	public Species getspecies(){return species;}
+	public Species getSpecies(){return species;}
 	
 	/**
 	 * Sets the species attribute of a Bird.
@@ -156,13 +164,60 @@ public class Bird {
 	 * @param yp The position to assign to the y position attribute of the Bird. 
 	 */
 	public void setYPos(int yp){yPos = yp;}
+		
+	/**
+	 * Gets the Rectangle of the Bird, which represents the hitbox of the Bird.
+	 * @return The Rectangle hitbox of the bird.
+	 */
+	public Rectangle getRect() {return rect;}
 	
+	/**
+	 * Sets the Rectangle for the bird, which represents the hitbox of the bird
+	 * @param r The Rectangle to assign as the hitbox for the bird.
+	 */
+	public void setRect(Rectangle r) {rect = r;}
+	
+	/**
+	 * Gets the width of the Bird.
+	 * @return The width of the Bird.
+	 */
+	public int getBWidth() {return bWidth;}
+	
+	/**
+	 * Sets the width of the Bird.
+	 * @param w The value to set the width of the Bird to.
+	 */
+	public void setBWidth(int w) {bWidth = w;}
+
+	/**
+	 * Gets the height of the Bird.
+	 * @return The height of the Bird.
+	 */
+	public int getBHeight() {return bWidth;}
+	
+	/**
+	 * Sets the height of the Bird.
+	 * @param w The value to set the height of the Bird to.
+	 */
+	public void setBHeight(int h) {bHeight = h;}
+	
+	
+	/**
+	 * Gets the scaled width to use for a Bird. 
+	 * @param n The number to use within the scale.
+	 * @return An int to use as the scaled width metric.
+	 */
 	public int getScaledWidth(int n) {
 		double number = (double)n;
 		double position = (number / 1440) * screenWidth;
 		return (int) position;
 	}
 	
+	/**
+	 * Gets the scaled height to use for a Bird. 
+	 * @param n The number to use within the scale.
+	 * @return An int to use as the scaled height metric.
+	 */
 	public int getScaledHeight(int n) {
 		double number = (double)n;
 		double position = (number / 900) * screenHeight;
