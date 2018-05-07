@@ -222,26 +222,28 @@ public class Controller {
 					//Way to simplify?? using enum string etc?
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						switch(model.getBuild()) {
-						case PORT:
-							model.build(model.getBuildingTypes().get("Port"), x, y);
-							break;
-						case BIRD:
-							activePanel = model.build(model.getBuildingTypes().get("Bird"), x, y);
-							break;
-						case FACTORY:
-							model.build(model.getBuildingTypes().get("Factory"), x, y);
-							break;
-						case RESEARCH:
-							activePanel = model.build(model.getBuildingTypes().get("Research"), x, y);
-							break;
-						case FISH:
-							activePanel = model.build(model.getBuildingTypes().get("Fish"), x, y);
-							break;
-						case REMOVE:
-							model.removeBuilding(x, y);
-						default:
-							break;
+						if(activePanel == Active.MAIN) {
+							switch(model.getBuild()) {
+							case PORT:
+								model.build(model.getBuildingTypes().get("Port"), x, y);
+								break;
+							case BIRD:
+								activePanel = model.build(model.getBuildingTypes().get("Bird"), x, y);
+								break;
+							case FACTORY:
+								model.build(model.getBuildingTypes().get("Factory"), x, y);
+								break;
+							case RESEARCH:
+								activePanel = model.build(model.getBuildingTypes().get("Research"), x, y);
+								break;
+							case FISH:
+								activePanel = model.build(model.getBuildingTypes().get("Fish"), x, y);
+								break;
+							case REMOVE:
+								model.removeBuilding(x, y);
+							default:
+								break;
+							}
 						}
 					}
 				});
@@ -254,7 +256,8 @@ public class Controller {
 		view.getSidebarButtons().get("Port").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.setBuild(BuildState.PORT);
+				if(activePanel == Active.MAIN)
+					model.setBuild(BuildState.PORT);
 			}
 		});
 		
@@ -262,7 +265,8 @@ public class Controller {
 		view.getSidebarButtons().get("Bird Watching Tower").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.setBuild(BuildState.BIRD);
+				if(activePanel == Active.MAIN)
+					model.setBuild(BuildState.BIRD);
 			}
 		});
 		
@@ -270,7 +274,8 @@ public class Controller {
 		view.getSidebarButtons().get("Factory").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.setBuild(BuildState.FACTORY);
+				if(activePanel == Active.MAIN)
+					model.setBuild(BuildState.FACTORY);
 			}
 		});
 		
@@ -278,7 +283,8 @@ public class Controller {
 		view.getSidebarButtons().get("Research Station").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.setBuild(BuildState.RESEARCH);
+				if(activePanel == Active.MAIN)
+					model.setBuild(BuildState.RESEARCH);
 			}
 		});
 		
@@ -286,7 +292,8 @@ public class Controller {
 		view.getSidebarButtons().get("Fishing Pier").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.setBuild(BuildState.FISH);
+				if(activePanel == Active.MAIN)
+					model.setBuild(BuildState.FISH);
 			}
 		});
 		
@@ -294,7 +301,8 @@ public class Controller {
 		view.getSidebarButtons().get("Remove").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.setBuild(BuildState.REMOVE);
+				if(activePanel == Active.MAIN)
+					model.setBuild(BuildState.REMOVE);
 			}
 		});
 	}
