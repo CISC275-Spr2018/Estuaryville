@@ -351,7 +351,7 @@ public class Controller {
 					mView.update((double) (mMod.getMoney())/(double) (mMod.MONEY_MAX), (double) (mMod.getPollution()) /(double) (mMod.POLLUTION_MAX), mMod.getMap(), mMod.gameOver());
 					if(mMod.gameOver()) {
 						try {
-							Thread.sleep(5000);
+							Thread.sleep(1500);
 							System.exit(0);
 						} catch (InterruptedException e) {
 							e.printStackTrace();

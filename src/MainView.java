@@ -175,13 +175,7 @@ public class MainView {
 			g2d.setColor(Color.BLACK);
 			g2d.drawString(String.format("$%.2f",moneyRatio*1000), BAR_X, BAR_Y-25);
 			g2d.drawString("Pollution:\n", BAR_X, BAR_Y+BAR_Y_OFFSET-25);
-			g2d.drawString(String.format("%.2f",pollutionRatio*10000), BAR_X, BAR_Y+BAR_Y_OFFSET-10);
-			if(gameOver) {
-				g2d.setFont(new Font("Futura", Font.BOLD, FRAME_HEIGHT/3));
-				g2d.drawString("Game Over", FRAME_WIDTH / 3, FRAME_HEIGHT / 2);
-			}
-			
-			
+			g2d.drawString(String.format("%.2f",pollutionRatio*10000), BAR_X, BAR_Y+BAR_Y_OFFSET-10);			
 		}
 	}
 	/**
