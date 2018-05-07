@@ -73,7 +73,6 @@ public class ResearchGameView{
 	final static int imgHeight = 180;
 	final static int bgWidth = 7000;
 	final static int bgHeight = 2500;
-	JFrame frame;
 	DrawPanel panel = new DrawPanel();
 	
 	/**
@@ -87,15 +86,9 @@ public class ResearchGameView{
 		crabs[2] = crab3;
 		crabs[3] = crab4;
 		crabs[4] = crab5;
-		frame = new JFrame();
 		loadImages();		
-		frame.getContentPane().add(panel);	
 		panel.setFocusable(true);
 		panel.requestFocusInWindow();
-		frame.setBackground(Color.white);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(frameWidth, frameHeight);
-		frame.setVisible(true);	
 	}
 	
 	/**
@@ -134,14 +127,6 @@ public class ResearchGameView{
 		return imgHeight;
 	}
 	
-	/**
-	 * <h1>getFrame</h1> Returns the JFrame frame
-	 * 
-	 * @return frame
-	 */
-	public JFrame getFrame() {
-		return frame;
-	}
 	
 	/**
 	 * <h1>DrawPanel Class</h1> The DrawPanel private class draws all the images and animated sprites to the panel
