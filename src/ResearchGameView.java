@@ -140,17 +140,18 @@ public class ResearchGameView{
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
 		//		BufferedImage currBG = bg.getSubimage(player.getxPos() - playerFixedX, 600+player.getyPos() - playerFixedY, frameWidth, frameHeight);
-				g.drawImage(bg, -player.getxPos(), -player.getyPos(), (int)(frameWidth*4.861), (int)(frameHeight*2.778), this); //background
+				g.drawImage(bg, -player.getxPos(), -player.getyPos()+frameHeight/20, (int)(frameWidth*4.861), (int)(frameHeight*2.778), this); //background
 				
 				for (Crab c : crabs) {
 					g.drawImage(Cpics[CpicNum], -c.getCrabXPos(), -c.getCrabYPos(), this); //crabs
-//					g.drawRect((int)c.getCrabRect().getX(), (int)c.getCrabRect().getY(), (int)c.getCrabRect().getWidth(), (int)c.getCrabRect().getHeight());//crab rects
+					
+					//g.drawRect((int)c.getCrabRect().getX(), (int)c.getCrabRect().getY(), (int)c.getCrabRect().getWidth(), (int)c.getCrabRect().getHeight());//crab rects
 			}
 				g.drawImage(pics[picNum], playerFixedX, playerFixedY, this); //player
-//				g.drawRect((int)player.getPlayerRect().getX(), (int)player.getPlayerRect().getY(), (int)player.getPlayerRect().getWidth(), (int)player.getPlayerRect().getHeight());
-//				for (Rectangle re : rects) {
-//					g.drawRect((int)re.getX(), (int)re.getY(),(int) re.getWidth(), (int)re.getHeight());
-//				}
+				//g.drawRect((int)player.getPlayerRect().getX(), (int)player.getPlayerRect().getY(), (int)player.getPlayerRect().getWidth(), (int)player.getPlayerRect().getHeight());
+				//for (Rectangle re : rects) {
+					//g.drawRect((int)re.getX(), (int)re.getY(),(int) re.getWidth(), (int)re.getHeight());
+				//}
 
 			g.setFont(new Font("Arial", Font.PLAIN, 40));
 			g.drawString("Lives: " + player.getLives(), getScaledWidth(100), getScaledHeight(100));
