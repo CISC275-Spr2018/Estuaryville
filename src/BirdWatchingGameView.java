@@ -24,7 +24,7 @@ import javax.swing.JPanel;
  * @author Tyler
  * @see #Bird
  */
-public class BirdWatchingGameView extends View{
+public class BirdWatchingGameView {
 
 	int frameCount = 0;
 	boolean flash = false;
@@ -44,8 +44,6 @@ public class BirdWatchingGameView extends View{
 	boolean wrongBird = false;
 	boolean tryAgain = false;
 	Bird toDisplayInfo = null;
-	//boolean pauseGame = false;
-	//int repaintCount = 0;
 	
 	/**
 	 * Creates an instance of the BirdWatchingGameView class. This constructor creates
@@ -66,7 +64,6 @@ public class BirdWatchingGameView extends View{
 	    screenHeight = d.height;
 	    frame.setSize(d.width, d.height);
 		loadSprites();
-	    //frame.setSize(background.getWidth(), background.getHeight());
 		frame.setVisible(true);
 		camera = new Camera(screenWidth, screenHeight); 
 	    birds = new ArrayList<Bird>();
@@ -81,7 +78,8 @@ public class BirdWatchingGameView extends View{
 	@SuppressWarnings("serial")
 	public class DrawPanel extends JPanel{
 		/**
-		 * Paints the birds, camera, and background onto the JPanel.
+		 * Overrides the paintComponent method of JPanel. This method
+		 * paints the birds, camera, and background onto the JPanel.
 		 * @param g The graphics object used to draw the images
 		 * @see #Graphics
 		 */
@@ -92,17 +90,17 @@ public class BirdWatchingGameView extends View{
 			for (int i = 0; i < birds.size(); i++) {
 				Bird b = birds.get(i);
 				if(b.getDirection().name().contains("WEST"))
-					g.drawImage(bird_sprites[b.species.ordinal() * 2][frameCount], b.getXPos(), b.getYPos(), this);
+					g.drawImage(bird_sprites[b.getSpecies().ordinal() * 2][frameCount], b.getXPos(), b.getYPos(), this);
 				else
-					g.drawImage(bird_sprites[b.species.ordinal()*2 + 1][frameCount], b.getXPos(), b.getYPos(), this);
+					g.drawImage(bird_sprites[b.getSpecies().ordinal()*2 + 1][frameCount], b.getXPos(), b.getYPos(), this);
 			}
 			g.drawImage(camera_sprite, camera.getXPos(), camera.getYPos(), this);
 			g.setFont(new Font("Futura", Font.BOLD, getScaledWidth(50)));
 			//draw target bird
 			if (!gameOver) {
 				g.drawString("Look for the", getScaledWidth(950), getScaledHeight(45));
-				g.drawString(searchingFor.species.toString().toLowerCase().replaceAll("_", " "), getScaledWidth(950), getScaledHeight(95));
-				g.drawImage(bird_sprites[searchingFor.species.ordinal() * 2][0], getScaledWidth(1250), getScaledHeight(5), this);
+				g.drawString(searchingFor.getSpecies().toString().toLowerCase().replaceAll("_", " "), getScaledWidth(950), getScaledHeight(95));
+				g.drawImage(bird_sprites[searchingFor.getSpecies().ordinal() * 2][0], getScaledWidth(1250), getScaledHeight(5), this);
 			}
 			if(flash) {
 				g.setColor(Color.WHITE);
@@ -120,7 +118,7 @@ public class BirdWatchingGameView extends View{
 				g.drawString("Try Again!", getScaledWidth(800), getScaledHeight(350));
 			}
 			if (toDisplayInfo != null) {
-				g.drawImage(bird_info_screens[toDisplayInfo.species.ordinal()], (screenWidth / 2) - (getScaledWidth(900) / 2), (screenHeight / 2) - (getScaledHeight(400) / 2), this);
+				g.drawImage(bird_info_screens[toDisplayInfo.getSpecies().ordinal()], (screenWidth / 2) - (getScaledWidth(900) / 2), (screenHeight / 2) - (getScaledHeight(400) / 2), this);
 			}
 			
 		}
@@ -143,9 +141,9 @@ public class BirdWatchingGameView extends View{
 			bird_info_screens = new BufferedImage[numSpecies];
 			String nextLine = "";
 			for (int i = 0; i < numSpecies; i++) {
-				while (!nextLine.contains(Bird.Species.values()[i].name)) {
+				while (!nextLine.contains(Bird.Species.values()[i].getName())) {
 					nextLine = scan.next();
-					if (nextLine.contains(Bird.Species.values()[i].name)) {
+					if (nextLine.contains(Bird.Species.values()[i].getName())) {
 						imgWidths[i] = scan.nextInt();
 						imgHeights[i] = scan.nextInt();
 					}
@@ -169,10 +167,7 @@ public class BirdWatchingGameView extends View{
 			//resize birds for screen
 			for (int i = 0; i < 6; i++) {
 				for (int j = 0; j < 16; j++) {
-				//if(b.getDirection().equals(Direction.WEST))
 					bird_sprites[i][j] = resizeImg(bird_sprites[i][j], getScaledWidth(imgWidths[i / 2]), getScaledHeight(imgHeights[i / 2]));
-				//else
-					//g.drawImage(bird_sprites[b.species.ordinal()*2+1][frameCount], b.getXPos(), b.getYPos(), this);
 				}
 			}
 			scan.close();
@@ -189,7 +184,7 @@ public class BirdWatchingGameView extends View{
 	 * @throws IOException
 	 */
 	private void loadBirdSheet(Bird.Species species, int index, int isEast) throws IOException{
-		String filePath = "assets/bird-game/birds/" + species.name;
+		String filePath = "assets/bird-game/birds/" + species.getName();
 		if (isEast > 0)
 			filePath += "-east";
 		filePath += "-sheet.png";
@@ -197,15 +192,19 @@ public class BirdWatchingGameView extends View{
 		int numSubImages = 16;	
 		bird_sprites[index * 2 + isEast] = new BufferedImage[numSubImages];
 		for(int i = 0; i < numSubImages; i++){
-			//for (int j = 0; j < imgWidths.length; j++) {
-			//}
-			//System.out.println(imgWidths[index] * i + imgWidths[index]);
 			bird_sprites[index * 2 + isEast][i] = birdSheet.getSubimage(imgWidths[index] * i, 0, imgWidths[index], imgHeights[index]);
 		}
 	}
 	
+	/**
+	 * Loads the info screen of a Bird into the bird_info_screens array from the
+	 * users directory. 
+	 * @param species The species of bird to load the screen for
+	 * @param index The index of the array to place the bird screen into
+	 * @throws IOException
+	 */
 	private void loadBirdInfoScreen(Bird.Species species, int index) throws IOException {
-		String filePath = "assets/bird-game/bird-info/" + species.name + "-info.png";
+		String filePath = "assets/bird-game/bird-info/" + species.getName() + "-info.png";
 		BufferedImage infoScreen = ImageIO.read(new File(filePath));
 		bird_info_screens[index] = infoScreen;
 	}
@@ -221,55 +220,22 @@ public class BirdWatchingGameView extends View{
 		frameCount = (frameCount + 1) % 16;
 		flash = f;
 		toDisplayInfo = b;
-		/*if (pauseGame) {
-			while (repaintCount < 2) {
-				panel.repaint();
-				repaintCount++;
-			}
+		panel.repaint();
+		try {
+			Thread.sleep(30);
 		}
-		else if (!pauseGame) {*/
-			panel.repaint();
-			try {
-				Thread.sleep(30);
-			}
-			catch (InterruptedException e){
-				e.printStackTrace();
-			}
-		//}
+		catch (InterruptedException e){
+			e.printStackTrace();
+		}
 	}
 	
 	/**
-	 * Gets the width of the background within the BirdWatchingGameView.
-	 * @return The width of the background in the view.
+	 * creates a copy of a BufferedImage resized with new dimensions.
+	 * @param img the old image
+	 * @param newW the new width
+	 * @param newH the new height
+	 * @return a BufferedImage of width: newW and height: newH
 	 */
-	public static int getScreenWidth(){
-		return screenWidth;
-	}
-	/**
-	 * Gets the height of the background within the BirdWatchingGameView.
-	 * @return The height of the background in the view.
-	 */
-	public static int getScreenHeight(){
-		return screenHeight;
-	}
-	/**
-	 * Gets the frame being used in the BirdWatchingGameView.
-	 * @return The frame in the view.
-	 */
-	public JFrame getFrame() {
-		return frame;
-	}
-	
-	@Override
-	public void update() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override public BufferedImage[] getSprites() {
-		return all_sprites;
-	}
-	
 	public static BufferedImage resizeImg(BufferedImage img, int newW, int newH) { 
 	    Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
 	    BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
@@ -279,19 +245,136 @@ public class BirdWatchingGameView extends View{
 	    return dimg;
 	}  
 	
+	/**
+	 * Gets the scaled width to use for an image. 
+	 * @param n The number to use within the scale.
+	 * @return An int to use as the scaled width metric.
+	 */
 	public int getScaledWidth(int n) {
 		double number = (double)n;
 		double position = (number / background.getWidth()) * screenWidth;
 		return (int) position;
 	}
 	
+	/**
+	 * Gets the scaled height to use for an image. 
+	 * @param n The number to use within the scale.
+	 * @return An int to use as the scaled height metric.
+	 */
 	public int getScaledHeight(int n) {
 		double number = (double)n;
 		double position = (number / background.getHeight()) * screenHeight;
 		return (int) position;
 	}
 	
+	/**
+	 * Gets the panel of the View.
+	 * @return A panel.
+	 */
 	public DrawPanel getPanel() {
 		return this.panel;
+	}
+	
+	/**
+	 * Gets the width of the background within the BirdWatchingGameView.
+	 * @return The width of the background in the view.
+	 */
+	public int getScreenWidth(){
+		return screenWidth;
+	}
+	/**
+	 * Gets the height of the background within the BirdWatchingGameView.
+	 * @return The height of the background in the view.
+	 */
+	public int getScreenHeight(){
+		return screenHeight;
+	}
+	
+	/**
+	 * Gets the gameOver variable of the View to tell if the game has ended.
+	 * @return A boolean to tell if the game has ended. 
+	 */
+	public boolean getGameOver() {
+		return gameOver;
+	}
+	
+	/**
+	 * Sets the gameOver variable of the View, which tells if the game has ended.
+	 * @param g The boolean to set the gameOver variable to.
+	 */
+	public void setGameOver(boolean g) {
+		gameOver = g;
+	}
+	
+	/**
+	 * Gets the wrongBird variable of the View to tell if the player has taken
+	 * a picture of the wrong bird.
+	 * @return A boolean to tell if a picture of a wrong bird has been taken. 
+	 */
+	public boolean getWrongBird() {
+		return wrongBird;
+	}
+	
+	/**
+	 * Sets the wrongBird variable of the View, which tells if the player has taken
+	 * a picture of the wrong bird.
+	 * @param g The boolean to set the wrongBird variable to.
+	 */
+	public void setWrongBird(boolean w) {
+		wrongBird = w;
+	}
+	
+	/**
+	 * Gets the tryAgain variable of the View to tell if the player has taken
+	 * a picture of the background.
+	 * @return A boolean to tell if a picture of the background has been taken. 
+	 */
+	public boolean getTryAgain() {
+		return tryAgain;
+	}
+	
+	/**
+	 * Sets the tryAgain variable of the View, which tells if the player has taken
+	 * a picture of the background.
+	 * @param g The boolean to set the tryAgain variable to.
+	 */
+	public void setTryAgain(boolean t) {
+		tryAgain = t;
+	}
+	
+	/**
+	 * Gets the searchingFor variable of the View to tell what Bird the player
+	 * is searching for. 
+	 * @return A boolean to tell what bird the player is searching for. 
+	 */
+	public Bird getSearchingFor() {
+		return searchingFor;
+	}
+	
+	/**
+	 * Sets the searchingFor variable of the View, which tells what Bird the 
+	 * player is searching for.
+	 * @param g The Bird to set the searchingFor variable to.
+	 */
+	public void setSearchingFor(Bird b) {
+		searchingFor = b;
+	}
+	
+	/**
+	 * Gets the toDisplayInfo variable of the View to tell what Bird to display
+	 * the information screen for. 
+	 * @return A boolean to tell what bird to display the information screen for. 
+	 */
+	public Bird getToDisplayInfo() {
+		return toDisplayInfo;
+	}
+	
+	/**
+	 * Sets the toDisplayInfo variable of the View, which tells what Bird to display
+	 * the information screen of. 
+	 * @param g The Bird to set the toDisplayInfo variable to.
+	 */
+	public void setToDisplayInfo(Bird b) {
+		toDisplayInfo = b;
 	}
 }

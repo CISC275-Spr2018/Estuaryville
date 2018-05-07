@@ -3,7 +3,6 @@ import java.awt.Rectangle;
 /**
  * This is a class used to represent a camera in the Bird Watching Game.
  * @author Tyler
- *
  */
 public class Camera {
 	private int cXPos;
@@ -79,21 +78,58 @@ public class Camera {
 	 */
 	public void setYSpeed(int y){cYIncr = y;}
 	
+	/**
+	 * Gets the Rectangle of the Bird, which represents the hitbox of the Bird.
+	 * @return The Rectangle hitbox of the bird.
+	 */
 	public Rectangle getRect() {return rect;}
+	
+	/**
+	 * Sets the Rectangle for the bird, which represents the hitbox of the bird
+	 * @param r The Rectangle to assign as the hitbox for the bird.
+	 */
 	public void setRect(Rectangle r) {rect = r;}
 	
+	/**
+	 * Gets the width of the Camera.
+	 * @return The width of the Camera.
+	 */
 	public int getCWidth() {return cWidth;}
+	
+	/**
+	 * Sets the width of the Camera.
+	 * @param w The value to set the width of the Camera to.
+	 */
 	public void setCWidth(int w) {cWidth = w;}
 
+	/**
+	 * Gets the height of the Camera.
+	 * @return The height of the Camera.
+	 */
 	public int getCHeight() {return cWidth;}
+	
+	/**
+	 * Sets the height of the Camera.
+	 * @param w The value to set the height of the Camera to.
+	 */
 	public void setCHeight(int h) {cHeight = h;}
 	
+	/**
+	 * Gets the scaled width to use for a Bird. 
+	 * @param n The number to use within the scale.
+	 * @return An int to use as the scaled width metric.
+	 */
 	public int getScaledWidth(int n) {
 		double number = (double)n;
 		double position = (number / 1440) * screenWidth;
 		return (int) position;
 	}
 	
+	/**
+	 * Gets the scaled height to use for a Camera. 
+	 * @param n The number to use within the scale.
+	 * @return An int to use as the scaled height metric.
+	 */
 	public int getScaledHeight(int n) {
 		double number = (double)n;
 		double position = (number / 900) * screenHeight;
