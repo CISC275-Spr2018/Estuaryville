@@ -3,7 +3,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -12,7 +11,6 @@ import javax.swing.Timer;
 
 public class Controller {
 	static Active activePanel = Active.MAIN;
-	
 
 	MainView mView = new MainView();
 	MainModel mMod = new MainModel(mView.getBoard());
@@ -22,6 +20,7 @@ public class Controller {
 
 	FishingGameView fView = new FishingGameView();
 	FishingGameModel fMod = new FishingGameModel(MainView.FRAME_WIDTH, MainView.FRAME_HEIGHT);
+	boolean firstFrame = true;
 	
 	ResearchGameView rView = new ResearchGameView();
 	ResearchGameModel rMod = new ResearchGameModel(MainView.FRAME_WIDTH, MainView.FRAME_HEIGHT,0,0);
@@ -55,48 +54,85 @@ public class Controller {
 		generateMapListeners(mMod, mView);
 		generateSidebarListeners(mMod, mView);
 		
-			bView.getPanel().addKeyListener(new KeyListener() {
-				@Override
-				public void keyPressed(KeyEvent ke) {
-					switch (ke.getKeyCode()) {
-					case KeyEvent.VK_UP:
-						bMod.camera.setYSpeed(-15);
-						break;
-					case KeyEvent.VK_DOWN:
-						bMod.camera.setYSpeed(15);
-						break;
-					case KeyEvent.VK_LEFT:
-						bMod.camera.setXSpeed(-15);
-						break;
-					case KeyEvent.VK_RIGHT:
-						bMod.camera.setXSpeed(15);
-						break;
-					case KeyEvent.VK_T:
-						BirdWatchingGameModel.takePicture();
-						break;
+		bView.setSearchingFor(bMod.getSearchingFor());
+		bView.getPanel().addKeyListener(new KeyListener() {
+			/**
+			 * Overrides the keyPressed method from KeyListener. This method
+			 * looks for keys to be pressed within the Bird Watching game and
+			 * performs actions accordingly.
+			 */
+			@Override
+			public void keyPressed(KeyEvent ke) {
+				switch (ke.getKeyCode()) {
+				case KeyEvent.VK_UP:
+					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
+						bMod.getCamera().setYSpeed(bMod.getScaledHeight(-15));
+					break;
+				case KeyEvent.VK_DOWN:
+					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
+						bMod.getCamera().setYSpeed(bMod.getScaledHeight(15));
+					break;
+				case KeyEvent.VK_LEFT:
+					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
+						bMod.getCamera().setXSpeed(bMod.getScaledWidth(-15));
+					break;
+				case KeyEvent.VK_RIGHT:
+					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
+						bMod.getCamera().setXSpeed(bMod.getScaledWidth(15));
+					break;
+				case KeyEvent.VK_SPACE:
+					bMod.setWrongBird(false);
+					bMod.setTryAgain(false);
+					if (bMod.getToDisplayInfo() == null) {
+						bMod.takePicture(bMod.getSearchingFor(), bMod.getBirds());
+						bView.setSearchingFor(bMod.getSearchingFor());
+					}
+					break;
+				case KeyEvent.VK_ENTER:
+					if (bView.getToDisplayInfo() != null) {
+						bView.setToDisplayInfo(null);
+						bMod.setToDisplayInfo(null);
+						//bView.pauseGame = false;
+						//bView.repaintCount = 0;
+					}
+					else if (bView.getGameOver()) {
+						bView.getPanel().setVisible(false);
+						activePanel = Active.MAIN;
 					}
 					
 				}
+				bView.setGameOver(bMod.getGameOver());	
+				bView.setWrongBird(bMod.getWrongBird());
+				bView.setTryAgain(bMod.getTryAgain());
+			}
 
-				@Override
-				public void keyReleased(KeyEvent ke) {
-					switch(ke.getKeyCode()){
-					case KeyEvent.VK_UP:
-					case KeyEvent.VK_DOWN:
-						bMod.camera.setYSpeed(0);
-						break;
-					case KeyEvent.VK_LEFT:
-					case KeyEvent.VK_RIGHT:
-						bMod.camera.setXSpeed(0);
-						break;
-					}
+			/**
+			 * Overrides the keyReleased method from KeyListener. This method
+			 * looks for keys to be released in the Bird Watching Game and 
+			 * performs actions accordingly.
+			 */
+			@Override
+			public void keyReleased(KeyEvent ke) {
+				switch(ke.getKeyCode()){
+				case KeyEvent.VK_UP:
+				case KeyEvent.VK_DOWN:
+					bMod.getCamera().setYSpeed(0);
+					break;
+				case KeyEvent.VK_LEFT:
+				case KeyEvent.VK_RIGHT:
+					bMod.getCamera().setXSpeed(0);
+					break;
 				}
+			}
 
-				@Override
-				public void keyTyped(KeyEvent ke) {
+			/**
+			 * Overrides the keyTyped method from KeyListener.
+			 */
+			@Override
+			public void keyTyped(KeyEvent ke) {
 
-				}
-			});
+			}
+		});
 			
 			fView.getPanel().addKeyListener(new KeyListener() {
 				@Override
@@ -186,27 +222,28 @@ public class Controller {
 					//Way to simplify?? using enum string etc?
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						System.out.println("MAP["+x+"]["+y+"]: "+model.getMap()[x][y].tState);
-						switch(model.getBuild()) {
-						case PORT:
-							model.build(model.getBuildingTypes().get("Port"), x, y);
-							break;
-						case BIRD:
-							activePanel = model.build(model.getBuildingTypes().get("Bird"), x, y);
-							break;
-						case FACTORY:
-							model.build(model.getBuildingTypes().get("Factory"), x, y);
-							break;
-						case RESEARCH:
-							activePanel = model.build(model.getBuildingTypes().get("Research"), x, y);
-							break;
-						case FISH:
-							activePanel = model.build(model.getBuildingTypes().get("Fish"), x, y);
-							break;
-						case REMOVE:
-							model.removeBuilding(x, y);
-						default:
-							break;
+						if(activePanel == Active.MAIN) {
+							switch(model.getBuild()) {
+							case PORT:
+								model.build(model.getBuildingTypes().get("Port"), x, y);
+								break;
+							case BIRD:
+								activePanel = model.build(model.getBuildingTypes().get("Bird"), x, y);
+								break;
+							case FACTORY:
+								model.build(model.getBuildingTypes().get("Factory"), x, y);
+								break;
+							case RESEARCH:
+								activePanel = model.build(model.getBuildingTypes().get("Research"), x, y);
+								break;
+							case FISH:
+								activePanel = model.build(model.getBuildingTypes().get("Fish"), x, y);
+								break;
+							case REMOVE:
+								model.removeBuilding(x, y);
+							default:
+								break;
+							}
 						}
 					}
 				});
@@ -219,7 +256,8 @@ public class Controller {
 		view.getSidebarButtons().get("Port").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.setBuild(BuildState.PORT);
+				if(activePanel == Active.MAIN)
+					model.setBuild(BuildState.PORT);
 			}
 		});
 		
@@ -227,7 +265,8 @@ public class Controller {
 		view.getSidebarButtons().get("Bird Watching Tower").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.setBuild(BuildState.BIRD);
+				if(activePanel == Active.MAIN)
+					model.setBuild(BuildState.BIRD);
 			}
 		});
 		
@@ -235,7 +274,8 @@ public class Controller {
 		view.getSidebarButtons().get("Factory").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.setBuild(BuildState.FACTORY);
+				if(activePanel == Active.MAIN)
+					model.setBuild(BuildState.FACTORY);
 			}
 		});
 		
@@ -243,7 +283,8 @@ public class Controller {
 		view.getSidebarButtons().get("Research Station").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.setBuild(BuildState.RESEARCH);
+				if(activePanel == Active.MAIN)
+					model.setBuild(BuildState.RESEARCH);
 			}
 		});
 		
@@ -251,7 +292,8 @@ public class Controller {
 		view.getSidebarButtons().get("Fishing Pier").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.setBuild(BuildState.FISH);
+				if(activePanel == Active.MAIN)
+					model.setBuild(BuildState.FISH);
 			}
 		});
 		
@@ -259,7 +301,8 @@ public class Controller {
 		view.getSidebarButtons().get("Remove").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.setBuild(BuildState.REMOVE);
+				if(activePanel == Active.MAIN)
+					model.setBuild(BuildState.REMOVE);
 			}
 		});
 	}
@@ -285,19 +328,23 @@ public class Controller {
 				activePanel = Active.BIRD;
 				bView.getPanel().requestFocusInWindow();
 				bMod.update();
-				bView.update(bMod.getBirds(),bMod.getCamera());
+				bView.update(bMod.getBirds(),bMod.getCamera(),bMod.isFlash(), bMod.toDisplayInfo);
 				break;
 			case FISH:
+				if(firstFrame) {
+					fMod.setPollutionLevel((double) mMod.getPollution()/(double) mMod.POLLUTION_MAX);
+					firstFrame = false;
+				}
 				activePanel = Active.FISH;
 				fView.getPanel().requestFocusInWindow();
 				fMod.update();
-				fView.update(fMod.getFish(),fMod.getHook());
+				fView.update(fMod.getFish(),fMod.getHook(),fMod.getCaught(), fMod.getGameOver(), fMod.getDisplayCatch());
 				break;
 			case RESEARCH:
 				activePanel = Active.RESEARCH;
 				rView.getPanel().requestFocusInWindow();
 				rMod.updateLocationAndDirection();
-				rView.update(rMod);
+				rView.update(rMod.getPlayer(), rMod.getCrabs(), rMod.getRects());
 				break;
 			default:
 				break;
