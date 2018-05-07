@@ -151,6 +151,11 @@ public class Controller {
 					case KeyEvent.VK_RIGHT:
 						fMod.hook.setXSpeed(15);
 						break;
+					case KeyEvent.VK_ENTER:
+						if (fMod.getGameOver()) {
+							fView.getPanel().setVisible(false);
+							activePanel = Active.MAIN;
+						}
 					}
 				}
 
@@ -190,6 +195,11 @@ public class Controller {
 						case KeyEvent.VK_RIGHT:
 							rMod.player.setDirection(RDirection.EAST);
 							break;
+						case KeyEvent.VK_ENTER:
+							if (rMod.endCheck()) {
+								rView.getPanel().setVisible(false);
+								activePanel = Active.MAIN;
+							}
 					}
 				}
 				@Override
@@ -339,7 +349,7 @@ public class Controller {
 				activePanel = Active.FISH;
 				fView.getPanel().requestFocusInWindow();
 				fMod.update();
-				fView.update(fMod.getFish(),fMod.getHook(),fMod.getCaught(), fMod.getGameOver(), fMod.getDisplayCatch());
+				fView.update(fMod.getFish(),fMod.getTrash(),fMod.getHook(),fMod.getCaught(), fMod.getGameOver(), fMod.getDisplayCatch());
 				break;
 			case RESEARCH:
 				activePanel = Active.RESEARCH;
