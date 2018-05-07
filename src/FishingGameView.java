@@ -28,7 +28,6 @@ import javax.swing.JPanel;
  * @author Joel
  */
 public class FishingGameView{
-	JFrame frame;
 	static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	final static int WIDTH = screenSize.width;// 1100;//786;//
 	final static int HEIGHT = screenSize.height; // 500;//
@@ -71,13 +70,8 @@ public class FishingGameView{
 		trashAL.add(new Trash(Trash.Type.CAN));
 		hook = new Hook();
 		loadSprites();
-		frame = new JFrame();
-		frame.getContentPane().add(panel);
 		panel.setFocusable(true);
 		panel.requestFocusInWindow();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(WIDTH, HEIGHT);
-		frame.setVisible(true);
 		reeling = false;
 		gameOver = false;
 	}
