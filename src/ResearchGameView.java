@@ -2,6 +2,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -22,18 +24,34 @@ import javax.swing.*;
  *   @version beta
  */
 public class ResearchGameView{
-	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	int frameCount;
+	int crabFrames = 2;
 	int picNum = 0;
 	int CpicNum = 0;
 	
 	Crab[] crabs;
 	
-	Crab crab1 = new Crab(-700, -400, 25); //normal
-	Crab crab2 = new Crab(-2500, -800, 25); //normal
-	Crab crab3 = new Crab(-3500, -800, 20); //slow
-	Crab crab4 = new Crab(-2700, -900, 25); //normal
-	Crab crab5 = new Crab(-3900, -750, 28); //speedy
+	Crab crab1 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab2 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab3 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab4 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab5 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab6 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab7 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab8 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab9 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab10 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab11 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab12 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab13 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab14 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab15 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab16 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab17 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab18 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab19 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab20 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
+	Crab crab21 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
 
 	Rectangle[] rects;
 	BufferedImage[] pics, images;
@@ -43,13 +61,18 @@ public class ResearchGameView{
 	BufferedImage[][] Canimation;
 	Researcher player = new Researcher(10, 10, RDirection.IDLE, 3); // intitalizing so doesnt crash until loaded from model
 	
-	final int playerFixedX = (int)screenSize.getWidth() / 8;
-	final int playerFixedY = (int)screenSize.getHeight() / 3;
+	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	
 	final int frameWidth = (int) screenSize.getWidth();
 	final int frameHeight = (int) screenSize.getHeight();
+	
+	final int playerFixedX = (int)screenSize.getWidth() / 8;
+	final int playerFixedY = (int)screenSize.getHeight() / 3;
+	
 	final static int imgWidth = 180;
 	final static int imgHeight = 180;
+	final static int bgWidth = 7000;
+	final static int bgHeight = 2500;
 	JFrame frame;
 	DrawPanel panel = new DrawPanel();
 	
@@ -71,10 +94,7 @@ public class ResearchGameView{
 		panel.requestFocusInWindow();
 		frame.setBackground(Color.white);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		screenSize.getWidth();
-		screenSize.getHeight();
 		frame.setSize(frameWidth, frameHeight);
-//		frame.setSize(1440, 900);
 		frame.setVisible(true);	
 	}
 	
@@ -134,7 +154,8 @@ public class ResearchGameView{
 		@Override
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
-				g.drawImage(bg, -player.getxPos(), -player.getyPos(), 7000, 2500, this); //background
+		//		BufferedImage currBG = bg.getSubimage(player.getxPos() - playerFixedX, 600+player.getyPos() - playerFixedY, frameWidth, frameHeight);
+				g.drawImage(bg, -player.getxPos(), -player.getyPos(), (int)(frameWidth*4.861), (int)(frameHeight*2.778), this); //background
 				
 				for (Crab c : crabs) {
 					g.drawImage(Cpics[CpicNum], -c.getCrabXPos(), -c.getCrabYPos(), this); //crabs
@@ -147,7 +168,7 @@ public class ResearchGameView{
 //				}
 
 			g.setFont(new Font("Arial", Font.PLAIN, 40));
-			g.drawString("Lives: " + player.getLives(), 100, 100);
+			g.drawString("Lives: " + player.getLives(), getScaledWidth(100), getScaledHeight(100));
 		}
 	}
 	
@@ -161,13 +182,14 @@ public class ResearchGameView{
 			images[i] = createImage(RDirection.values()[i]);
 			animation[i] = new BufferedImage[images[i].getWidth()/imgWidth];
 			loadAnimatedImg(images[i],animation[i],animation[i].length);
+			
 		}
 		Cimages = new BufferedImage[5];
 		Canimation = new BufferedImage[5][0];
 		for(int i = 0; i < 5; i++) {
 			Cimages[i] = createCrabImage();
 			Canimation[i] = new BufferedImage[Cimages[i].getWidth()/imgWidth];
-			loadAnimatedImg(Cimages[i],Canimation[i],2);
+			loadAnimatedImg(Cimages[i],Canimation[i],crabFrames);
 		}
 		Cpics = Canimation[0];
 		pics = animation[RDirection.IDLE.ordinal()];
@@ -197,6 +219,7 @@ public class ResearchGameView{
 		try {
 			bufferedImage = ImageIO.read(new File("assets/research-game/female-scientist-" + direction.getName() + ".png"));
 			bg = ImageIO.read(new File("assets/research-game/research-background" + ".png"));
+		//	bg = resizeImg(bg, 7500, 3500);
 			return bufferedImage;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -249,7 +272,7 @@ public class ResearchGameView{
 
 		}
 		picNum = (picNum + 1) % frameCount;
-		CpicNum = (CpicNum + 1) % 2;
+		CpicNum = (CpicNum + 1) % crabFrames;
 		panel.repaint();
 		try {
 			Thread.sleep(80);
@@ -261,5 +284,38 @@ public class ResearchGameView{
 	public JPanel getPanel() {
 		// TODO Auto-generated method stub
 		return panel;
+	}
+	
+	/**
+	 * Scales the width for any screen
+	 * 
+	 * @param n the width that looks good on the screen
+	 * @return a width that fits all screens
+	 */
+	public int getScaledWidth(int n) {
+		double number = (double)n;
+		double position = (number / 1440) * frameWidth;
+		return (int) position;
+	}
+	
+	/**
+	 * Scales the height for any screen
+	 * 
+	 * @param n the height that looks good on the screen
+	 * @return a height that fits all screens
+	 */
+	public int getScaledHeight(int n) {
+		double number = (double)n;
+		double position = (number / 900) * frameHeight;
+		return (int) position;
+	}
+	
+	public static BufferedImage resizeImg(BufferedImage img, int newW, int newH) { 
+	    Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+	    BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D g2d = dimg.createGraphics();
+	    g2d.drawImage(tmp, 0, 0, null);
+	    g2d.dispose();
+	    return dimg;
 	}
 }

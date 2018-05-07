@@ -1,4 +1,6 @@
+import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 /**
  *   <h1>Crab Class</h1> This is the Crab class. These are specifically Blue Crab crabs. They are the 'enemies' of the game as in they subtract from the player lives, but they are not 
  *   bad guys. When the player steps on them, they dont die but they certainly are upset. There is a set number of crabs in the game and they walk along the platforms for the player to avoid at varying speeds.
@@ -17,6 +19,11 @@ public class Crab{
 	int crabRectWidth = 80;
 	int crabRectHeight = 50;
 	
+	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	
+	final int frameWidth = (int) screenSize.getWidth();
+	final int frameHeight = (int) screenSize.getHeight();
+	
 /**
  * <h1>Crab Constructor</h1>A Crab is made by a x position, a y position, and a speed value. Besides that they have a Rectangle used for collisions that is mapped witht eh x and y, and a boolean that always starts as false but if 
  * the player collides with the Crabs Rectangle it turns true, used so each crab can only take one life from a player. 
@@ -25,9 +32,9 @@ public class Crab{
  * @param y the x position of the Crab
  */
 	public Crab(int x, int y, int speed) {
-		this.crabXPos = x;
-		this.crabYPos = y;
-		this.crabRect = new Rectangle((x + rectangleOffset), (y + rectangleOffset), crabRectWidth, crabRectHeight);
+		this.crabXPos = getScaledWidth(x);
+		this.crabYPos = getScaledHeight(y);
+		this.crabRect = new Rectangle((getScaledWidth(x) + getScaledWidth(rectangleOffset)), (getScaledHeight(y) + getScaledHeight(rectangleOffset)), (getScaledWidth(crabRectWidth)), (getScaledHeight(crabRectHeight)));
 		this.speed = speed;
 		steppedOn = false;
 	}
@@ -127,6 +134,30 @@ public class Crab{
 		else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Scales the width for any screen
+	 * 
+	 * @param n the width that looks good on the screen
+	 * @return a width that fits all screens
+	 */
+	public int getScaledWidth(int n) {
+		double number = (double)n;
+		double position = (number / 1440) * frameWidth;
+		return (int) position;
+	}
+	
+	/**
+	 * Scales the height for any screen
+	 * 
+	 * @param n the height that looks good on the screen
+	 * @return a height that fits all screens
+	 */
+	public int getScaledHeight(int n) {
+		double number = (double)n;
+		double position = (number / 900) * frameHeight;
+		return (int) position;
 	}
 	
 }

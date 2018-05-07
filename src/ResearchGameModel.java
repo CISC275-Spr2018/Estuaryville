@@ -17,6 +17,10 @@ public class ResearchGameModel{
 	final int xIncr = 15;
     final int yIncr = 14; //originally 14
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	
+	final int frameWidth = (int) screenSize.getWidth();
+	final int frameHeight = (int) screenSize.getHeight();
+	
 	final int playerStartingX = (int)screenSize.getWidth() / 8;
 	final int playerStartingY = (int)screenSize.getHeight() / 3;
 	final int startingLives = 3;
@@ -31,6 +35,26 @@ public class ResearchGameModel{
 	Crab crab3;
 	Crab crab4;
 	Crab crab5;
+	Crab crab6;
+	Crab crab7;
+	Crab crab8;
+	Crab crab9;
+	Crab crab10;
+	Crab crab11;
+	Crab crab12;
+	Crab crab13;
+	Crab crab14;
+	Crab crab15;
+	Crab crab16;
+	Crab crab17;
+	Crab crab18;
+	Crab crab19;
+	Crab crab20;
+	Crab crab21;
+	Crab crab22;
+	Crab crab23;
+	Crab crab24;
+	Crab crab25;
 	public Crab[] crabs;
 	
 	Rectangle rect1;
@@ -60,21 +84,61 @@ public class ResearchGameModel{
 		crab3 = new Crab(-3500, -800, 20); //slow
 		crab4 = new Crab(-2700, -900, 25); //normal
 		crab5 = new Crab(-3900, -750, 28); //speedy
-		crabs = new Crab[5];
+		crab6 = new Crab(-3800, -820, 20); //slow
+		crab7 = new Crab(-4900, -910, 25); //normal
+		crab8 = new Crab(-8550, -850, 28); //speedy
+		crab9 = new Crab(-800, -840, 20); //slow
+		crab10 = new Crab(-900, -820, 20); //slow
+		crab11 = new Crab(-1200, -910, 25); //normal
+		crab12 = new Crab(-6000, -910, 25); //normal
+		crab13 = new Crab(-2500, -1380, 20); //slow
+		crab14 = new Crab(-3000, -1440, 25); //normal
+		crab15 = new Crab(-4000, -1460, 25); //normal
+		crab16 = new Crab(-800, -840, 20); //slow
+		crab17 = new Crab(-900, -820, 20); //slow
+		crab18 = new Crab(-7000, -910, 25); //normal
+		crab19 = new Crab(-8000, -910, 25); //normal
+		crab20 = new Crab(-8000, -1300, 20); //slow
+		crab21 = new Crab(-8500, -1400, 20); //slow
+		crab22 = new Crab(-4550, -375, 20); //slow
+		crab23 = new Crab(-4700, -390, 20); //slow
+		crab24 = new Crab(-5150, -320, 20); //slow
+		crab25 = new Crab(-5460, -390, 20); //slow
+		crabs = new Crab[25];
 		crabs[0] = crab1;
 		crabs[1] = crab2;
 		crabs[2] = crab3;
 		crabs[3] = crab4;
 		crabs[4] = crab5;
+		crabs[5] = crab6;
+		crabs[6] = crab7;
+		crabs[7] = crab8;
+		crabs[8] = crab9;
+		crabs[9] = crab10;
+		crabs[10] = crab11;
+		crabs[11] = crab12;
+		crabs[12] = crab13;
+		crabs[13] = crab14;
+		crabs[14] = crab15;
+		crabs[15] = crab16;
+		crabs[16] = crab17;
+		crabs[17] = crab18;
+		crabs[18] = crab19;
+		crabs[19] = crab20;
+		crabs[20] = crab21;
+		crabs[21] = crab22;
+		crabs[22] = crab23;
+		crabs[23] = crab24;
+		crabs[24] = crab25;
 		
-		rect1 = new Rectangle(0, 0, 6000, 330); //locked
-		rect2 = new Rectangle(0, 550, 550, 330); //locked
-		rect3 = new Rectangle(1360, 0, 1190, 825); //locked
-		rect4 = new Rectangle(2180, 1050, 300, 300); //locked
-		rect5 = new Rectangle(3260, 1050, 1650, 300); //locked
-		rect6 = new Rectangle(0, 1060, 1350, 300); //locked
-		rect7 = new Rectangle(4215, 540, 580, 290); //locked
-		rect8 = new Rectangle(0, 1590, 6000, 290); //locked
+		rect1 = new Rectangle(0, 0, getScaledWidth(6000), getScaledHeight(330)); //locked
+		rect2 = new Rectangle(0, getScaledHeight(550), getScaledWidth(550), getScaledHeight(330)); //locked
+		rect3 = new Rectangle(getScaledWidth(1360), 0, getScaledWidth(1190), getScaledHeight(825)); //locked
+		rect4 = new Rectangle(getScaledWidth(2180), getScaledHeight(1050), getScaledWidth(300), getScaledHeight(300)); //locked
+		rect5 = new Rectangle(getScaledWidth(3260), getScaledHeight(1050), getScaledWidth(1650), getScaledHeight(300)); //locked
+		rect6 = new Rectangle(0, getScaledHeight(1060), getScaledWidth(1350), getScaledHeight(300)); //locked
+		rect7 = new Rectangle(getScaledWidth(4215), getScaledHeight(540), getScaledWidth(580), getScaledHeight(290)); //locked
+		rect8 = new Rectangle(0, getScaledHeight(1590), getScaledWidth(6000), getScaledHeight(290)); //locked
 			
 		rects = new Rectangle[8];
 		rects[0] = rect1;
@@ -146,7 +210,7 @@ public class ResearchGameModel{
 	 * @return boolean value of it game is over (true) and should be brought back to main screen
 	 */
 	public Boolean endCheck() {
-		if (player.getxPos() >= 5500) {
+		if (player.getxPos() >= getScaledWidth(5500)) {
 			return true;
 			//System.out.print("game over back to main");
 			//add sending back to main screen
@@ -229,6 +293,30 @@ public class ResearchGameModel{
 			}
 		}
 		
+	}
+	
+	/**
+	 * Scales the width for any screen
+	 * 
+	 * @param n the width that looks good on the screen
+	 * @return a width that fits all screens
+	 */
+	public int getScaledWidth(int n) {
+		double number = (double)n;
+		double position = (number / 1440) * frameWidth;
+		return (int) position;
+	}
+	
+	/**
+	 * Scales the height for any screen
+	 * 
+	 * @param n the height that looks good on the screen
+	 * @return a height that fits all screens
+	 */
+	public int getScaledHeight(int n) {
+		double number = (double)n;
+		double position = (number / 900) * frameHeight;
+		return (int) position;
 	}
 	
 }
