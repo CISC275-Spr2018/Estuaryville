@@ -20,6 +20,11 @@ public class Researcher {
 	
 	int xOffsetToFeet = 40;
 	int yOffsetToFeet = 160;
+	
+	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	
+	final int frameWidth = (int) screenSize.getWidth();
+	final int frameHeight = (int) screenSize.getHeight();
 /**
  * <h1>Researcher Contructor</h1>The Researcher contructor is set by a x and y position, a direction, and the lives. There is also a rectangle that is associated with the the characters feet, used for collision of crabs
  * and out of bounds
@@ -33,11 +38,11 @@ public class Researcher {
  * Going off the platforms results in lose of all 3 lives, where the game restarts
  */
 	public Researcher(int x, int y, RDirection direction, int lives) {
-		this.xPos = x;
-		this.yPos = y;
+		this.xPos = getScaledWidth(x);
+		this.yPos = getScaledHeight(y);
 		this.direction = direction;
 		this.lives = lives;
-		this.playerRect = new Rectangle(x + xOffsetToFeet, y + yOffsetToFeet, 100, 25);
+		this.playerRect = new Rectangle(getScaledWidth(x) + getScaledWidth(xOffsetToFeet), getScaledHeight(y) + getScaledHeight(yOffsetToFeet), getScaledWidth(100), getScaledHeight(25));
 	}
 /**
  * <h1>SetDirection</h1>Sets the direction of the Researcher, used in the Controller to set which direction the player wants the character to be moving in.
@@ -130,6 +135,30 @@ public class Researcher {
 		else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Scales the width for any screen
+	 * 
+	 * @param n the width that looks good on the screen
+	 * @return a width that fits all screens
+	 */
+	public int getScaledWidth(int n) {
+		double number = (double)n;
+		double position = (number / 1440) * frameWidth;
+		return (int) position;
+	}
+	
+	/**
+	 * Scales the height for any screen
+	 * 
+	 * @param n the height that looks good on the screen
+	 * @return a height that fits all screens
+	 */
+	public int getScaledHeight(int n) {
+		double number = (double)n;
+		double position = (number / 900) * frameHeight;
+		return (int) position;
 	}
 	
 }

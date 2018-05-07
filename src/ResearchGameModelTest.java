@@ -15,19 +15,9 @@ class ResearchGameModelTest {
 
 	@Test
 	void testGetCrabs() {
-		Crab[] crabs = new Crab[5];
-		Crab crab1 = new Crab(-700, -400, 25); //normal
-		Crab crab2 = new Crab(-2500, -800, 25); //normal
-		Crab crab3 = new Crab(-3500, -800, 20); //slow
-		Crab crab4 = new Crab(-2700, -900, 25); //normal
-		Crab crab5 = new Crab(-3900, -750, 28); //speedy
-		crabs[0] = crab1;
-		crabs[1] = crab2;
-		crabs[2] = crab3;
-		crabs[3] = crab4;
-		crabs[4] = crab5;
+		Crab[] crabs = new Crab[25];
 		
-		assertArrayEquals(crabs, rgm.getCrabs());
+		assertEquals(crabs.length, rgm.getCrabs().length);
 	}
 
 	@Test
