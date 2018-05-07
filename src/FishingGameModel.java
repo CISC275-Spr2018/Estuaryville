@@ -289,7 +289,6 @@ public class FishingGameModel extends Model {
 	 */
 	public boolean fishCaught(Fish f) {
 		if (f.getMouth().intersects(hook.getHitbox())) {
-			System.out.println("The " + f.getSpecies().getName() + " is HOOKED");
 			f.setHooked(true);
 			return true;
 		} else {
