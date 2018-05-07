@@ -53,20 +53,16 @@ public class BirdWatchingGameView {
 	 */
 	//constructor
 	public BirdWatchingGameView(){
-		frame = new JFrame();
 		panel.setFocusable(true);
 		panel.requestFocusInWindow();
-		frame.getContentPane().add(panel);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Toolkit tk = Toolkit.getDefaultToolkit();
 	    Dimension d = tk.getScreenSize();
 	    screenWidth = d.width;
 	    screenHeight = d.height;
-	    frame.setSize(d.width, d.height);
 		loadSprites();
-		frame.setVisible(true);
 		camera = new Camera(screenWidth, screenHeight); 
 	    birds = new ArrayList<Bird>();
+	    searchingFor = new Bird(Bird.Species.BLUE_HERON, screenWidth, screenHeight);
 	}
 	
 	/**
