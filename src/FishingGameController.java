@@ -86,6 +86,7 @@ public class FishingGameController {
 			}
 		});*/
 		fishModel = new FishingGameModel(FishingGameView.WIDTH, FishingGameView.HEIGHT);
+		fishModel.setPollutionLevel(.5);
 		FishingGameController c = this;
 		drawAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -108,7 +109,7 @@ public class FishingGameController {
 
 	public void redraw() {
 		fishModel.update();
-		fishView.update(fishModel.getFish(), fishModel.getHook(), fishModel.getCaught(), fishModel.getGameOver(), fishModel.getDisplayCatch());
+		fishView.update(fishModel.getFish(), fishModel.getTrash(), fishModel.getHook(), fishModel.getCaught(), fishModel.getGameOver(), fishModel.getDisplayCatch());
 	}
 
 }
