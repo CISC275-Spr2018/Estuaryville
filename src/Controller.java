@@ -28,6 +28,9 @@ public class Controller {
 
 	public Action drawAction;
 
+	/**
+	 * Creates an instance of Controller
+	 */
 	@SuppressWarnings("serial")
 	public Controller() {
 		
@@ -223,7 +226,11 @@ public class Controller {
 			}
 		};
 	}
-	
+	/**
+	 * Adds listeners to the main map of the main screen.
+	 * @param model The Main Screen Model.
+	 * @param view The Main Screen View.
+	 */
 	public static void generateMapListeners(MainModel model, MainView view) {
 		for(int i = 0; i < view.getBoard().length; i++) {
 			for(int j = 0; j < view.getBoard()[0].length; j++) {
@@ -261,7 +268,11 @@ public class Controller {
 			}
 		}
 	}
-	
+	/**
+	 * Generates Listeners for the sidebar.
+	 * @param model The Main Screen Model.
+	 * @param view The Main Screen View.
+	 */
 	public static void generateSidebarListeners(MainModel model, MainView view) {//
 		view.getSidebarButtons().get("Port").setMnemonic(KeyEvent.VK_P);
 		view.getSidebarButtons().get("Port").addActionListener(new ActionListener() {
@@ -317,7 +328,9 @@ public class Controller {
 			}
 		});
 	}
-
+	/**
+	 * Runs games on 30 millisecond tick speed.
+	 */
 	public void start() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -326,14 +339,24 @@ public class Controller {
 			}
 		});
 	}
-
+	/**
+	 * Redraws the active panel to animate and update games.
+	 */
 	public void redraw() {
 		switch(activePanel) {
 			case MAIN:
-				activePanel = Active.MAIN;
-				mView.getPanel().requestFocusInWindow();
-				mMod.update();
-				mView.update((double) (mMod.getMoney())/(double) (mMod.MONEY_MAX), (double) (mMod.getPollution()) /(double) (mMod.POLLUTION_MAX), mMod.getMap());
+					activePanel = Active.MAIN;
+					mView.getPanel().requestFocusInWindow();
+					mMod.update();
+					mView.update((double) (mMod.getMoney())/(double) (mMod.MONEY_MAX), (double) (mMod.getPollution()) /(double) (mMod.POLLUTION_MAX), mMod.getMap(), mMod.gameOver());
+					if(mMod.gameOver()) {
+						try {
+							Thread.sleep(5000);
+							System.exit(0);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
 				break;
 			case BIRD:
 				activePanel = Active.BIRD;
@@ -363,7 +386,7 @@ public class Controller {
 					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight());
 				}
 				if (rMod.endCheck()) {
-					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight());
+					activePanel = Active.MAIN;
 				}
 				break;
 			default:

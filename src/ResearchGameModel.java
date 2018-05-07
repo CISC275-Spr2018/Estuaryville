@@ -242,8 +242,8 @@ public class ResearchGameModel{
 			
 			for (Crab c : crabs) {
 				c.setCrabXPos(c.getCrabXPos() + c.getSpeed());
-				c.setCrabRect(c.crabXPos, c.crabYPos);
-			}
+				//c.setCrabRect(c.crabXPos, c.crabYPos);
+				c.setCrabRect(c.getCrabXPos(), c.getCrabYPos());			}
 			
 			for (Rectangle re : rects) {
 				re.setLocation((int)re.getX() - xIncr, (int)re.getY());
@@ -260,7 +260,6 @@ public class ResearchGameModel{
 				c.setCrabXPos(c.getCrabXPos() + c.getSpeed());
 				c.setCrabRect(c.getCrabXPos(), c.getCrabYPos());
 			}
-			
 			for (Rectangle re : rects) {
 				re.setLocation((int)re.getX() - xIncr, (int)re.getY() - yIncr);
 			}
@@ -273,8 +272,7 @@ public class ResearchGameModel{
 			for (Crab c : crabs) {
 				c.setCrabYPos(c.getCrabYPos() - yIncr);
 				c.setCrabXPos(c.getCrabXPos() + c.getSpeed());
-				c.setCrabRect(c.getCrabXPos(), c.getCrabYPos());
-			}
+				c.setCrabRect(c.getCrabXPos(), c.getCrabYPos());			}
 			
 			for (Rectangle re : rects) {
 				re.setLocation((int)re.getX() - xIncr, (int)re.getY() + yIncr);
@@ -282,6 +280,7 @@ public class ResearchGameModel{
 		}
 		
 		if (player.direction.getName().contains("idle-sheet")) {
+			
 			
 			for (Crab c: crabs) {
 				c.setCrabXPos(c.getCrabXPos() + (c.getSpeed() - xIncr));
