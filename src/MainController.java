@@ -141,7 +141,7 @@ public class MainController {
 
 	public void redraw() {
 		model.update();
-		view.update((double) (model.getMoney())/(double) (model.MONEY_MAX), (double) (model.getPollution()) /(double) (model.POLLUTION_MAX), model.getMap());
+		view.update((double) (model.getMoney())/(double) (model.MONEY_MAX), (double) (model.getPollution()) /(double) (model.POLLUTION_MAX), model.getMap(),model.gameOver());
 		//System.out.println("MONEY: "+model.getMoney()+" MAX: "+model.MONEY_MAX+" RATIO: "+model.getMoney()/model.MONEY_MAX+"| POLLUTION: "+model.getPollution()+" MAX: "+model.POLLUTION_MAX+" RATIO: "+model.getPollution()/model.POLLUTION_MAX);
 	}
 }

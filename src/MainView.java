@@ -1,6 +1,7 @@
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -61,6 +62,7 @@ public class MainView {
 	private JFrame frame;
 	private DrawPanel panel;
 	private JLayeredPane mainPanel;
+	private boolean gameOver;
 	final String[] buildingNames = {"Port","Bird Watching Tower","Factory","Research Station","Fishing Pier"};
 	private MapSpot[][] board = new MapSpot[NUM_MAP_BUTTONS_X][NUM_MAP_BUTTONS_Y];
 	private HashMap<String,JButton> sidebarButtons = new HashMap<String,JButton>();
@@ -171,9 +173,15 @@ public class MainView {
 			g2d.fillRoundRect(xPos, (int) (yPos+yOffset+(BAR_HEIGHT*(1-pollutionRatio))), BAR_WIDTH, (int) (BAR_HEIGHT - (BAR_HEIGHT*(1-pollutionRatio))),BAR_ROUND,BAR_ROUND);
 			
 			g2d.setColor(Color.BLACK);
-			g2d.drawString("$"+moneyRatio*1000+"0", BAR_X, BAR_Y-25);
+			g2d.drawString(String.format("$%.2f",moneyRatio*1000), BAR_X, BAR_Y-25);
 			g2d.drawString("Pollution:\n", BAR_X, BAR_Y+BAR_Y_OFFSET-25);
-			g2d.drawString(""+pollutionRatio*10000, BAR_X, BAR_Y+BAR_Y_OFFSET-10);
+			g2d.drawString(String.format("%.2f",pollutionRatio*10000), BAR_X, BAR_Y+BAR_Y_OFFSET-10);
+			if(gameOver) {
+				g2d.setFont(new Font("Futura", Font.BOLD, FRAME_HEIGHT/3));
+				g2d.drawString("Game Over", FRAME_WIDTH / 3, FRAME_HEIGHT / 2);
+			}
+			
+			
 		}
 	}
 	/**
@@ -198,6 +206,7 @@ public class MainView {
 		frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		frame.setVisible(true);
 		frame.setResizable(false);
+		gameOver = false;
 	}
 	/**
 	 * Creates side bar buttons and adds them to the panel.
@@ -396,10 +405,11 @@ public class MainView {
 	 * @param poll The current pollution level.
 	 * @param map The current state of the main grid.
 	 */
-	public void update(double money, double poll, MapSpot[][] map) {
+	public void update(double money, double poll, MapSpot[][] map, boolean gOver) {
 		updateBoard();
 		updateBars(money, poll);
 		this.board = map;
+		gameOver = gOver;
 		panel.repaint();
 	}
 	/**

@@ -13,7 +13,7 @@ public class MainModel {
 	private final int MAP_WIDTH = 10;
 	private MapSpot[][] map = new MapSpot[MAP_HEIGHT][MAP_WIDTH];
 	private HashMap<String,Building> buildingTypes;
-	private int pollIncr = 1;
+	private int pollIncr = 5;
 	private int moneyIncr = 1;
 	private BuildState build = BuildState.NONE;
 	private boolean[] placedBuildings = new boolean[BuildState.values().length];
@@ -116,11 +116,11 @@ public class MainModel {
 	 */
 	public HashMap<String,Building> loadBuildingTypes() {
 		HashMap<String,Building> types = new HashMap<String,Building>();
-		types.put("Bird",new Building(0,10000,"Bird Watching Tower","bird-tower"));
-		types.put("Research",new Building(0,10000,"Research Center","research"));
-		types.put("Fish",new Building(0,10000,"Fishing Pier","pier"));
-		types.put("Factory",new Building(0,10000,"Factory","factory"));
-		types.put("Port",new Building(0,10000,"Port","port"));
+		types.put("Bird",new Building(150,8000,"Bird Watching Tower","bird-tower"));
+		types.put("Research",new Building(400,90000,"Research Center","research"));
+		types.put("Fish",new Building(250,10000,"Fishing Pier","pier"));
+		types.put("Factory",new Building(100,10000,"Factory","factory"));
+		types.put("Port",new Building(50,10000,"Port","port"));
 		return types;
 	}
 	/**
@@ -140,7 +140,17 @@ public class MainModel {
 			case BIRD:
 				return Active.BIRD;
 			case RESEARCH:
+				pollIncr -= 5;
+				moneyIncr -= 1;
 				return Active.RESEARCH;
+			case FACTORY:
+				pollIncr += 10;
+				moneyIncr += 1;
+				break;
+			case PORT:
+				pollIncr += 5;
+				money += 50;
+				break;
 			default:
 				return Active.MAIN;
 			}
@@ -190,7 +200,10 @@ public class MainModel {
 	 * Updates the state of the main model by changing pollution and money.
 	 */
 	public void update() {
-		pollution += pollIncr;
-		money += moneyIncr;
+		if(!gameOver()) {
+			if(pollution >= 0)
+				pollution += pollIncr;
+			money += moneyIncr;
+		}
 	}
 }
