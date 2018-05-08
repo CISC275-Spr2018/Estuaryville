@@ -6,17 +6,23 @@ import java.util.HashMap;
  */
 public class MainModel {
 	public final int POLLUTION_MAX = 10000;
-	public final int MONEY_MAX = 1000;
+	public final int MONEY_MAX = 10000;
 	private int pollution = 1;
-	private int money = 100;
+	private int money = 250;
 	private final int MAP_HEIGHT = 10;
 	private final int MAP_WIDTH = 10;
 	private MapSpot[][] map = new MapSpot[MAP_HEIGHT][MAP_WIDTH];
 	private HashMap<String,Building> buildingTypes;
 	private int pollIncr = 5;
-	private int moneyIncr = 1;
+	private int moneyIncr = 3;
 	private BuildState build = BuildState.NONE;
 	private boolean[] placedBuildings = new boolean[BuildState.values().length];
+    private int FACTORY_MONEY_INCR  = 10;
+    private int FACTORY_POLL_INCR  = 12;
+    private int PORT_MONEY_INCR  = 5;
+    private int PORT_POLL_INCR  = 5;
+    private int RESEARCH_MONEY_INCR  = -2;
+    private int RESEARCH_POLL_INCR  = -10;
 
 	/**
 	 * Returns a Map with the keys being the Building's name and the Value being the Building.
@@ -116,11 +122,11 @@ public class MainModel {
 	 */
 	public HashMap<String,Building> loadBuildingTypes() {
 		HashMap<String,Building> types = new HashMap<String,Building>();
-		types.put("Bird",new Building(150,8000,"Bird Watching Tower","bird-tower"));
-		types.put("Research",new Building(400,90000,"Research Center","research"));
+		types.put("Bird",new Building(150,10000,"Bird Watching Tower","bird-tower"));
+		types.put("Research",new Building(400,10000,"Research Center","research"));
 		types.put("Fish",new Building(250,10000,"Fishing Pier","pier"));
-		types.put("Factory",new Building(100,10000,"Factory","factory"));
-		types.put("Port",new Building(50,10000,"Port","port"));
+		types.put("Factory",new Building(200,10000,"Factory","factory"));
+		types.put("Port",new Building(150,10000,"Port","port"));
 		return types;
 	}
 	/**
@@ -130,33 +136,43 @@ public class MainModel {
 	 * @param yPos The y location to build. 
 	 * @return
 	 */
-	public Active build(Building structure, int xPos, int yPos) {
+	public BuildReturn build(Building structure, int xPos, int yPos) {
 		if(!placedBuildings[build.ordinal()] && isValidPlacement(xPos, yPos, structure) && isConstructable(structure)) {
 			placedBuildings[build.ordinal()] = true;
 			map[xPos][yPos].setB(structure);
 			switch(build) {
 			case FISH:
-				return Active.FISH;
+				return new BuildReturn(BuildError.NONE, Active.FISH);
 			case BIRD:
-				return Active.BIRD;
+				return new BuildReturn(BuildError.NONE,Active.BIRD);
 			case RESEARCH:
-				pollIncr -= 5;
-				moneyIncr -= 1;
-				return Active.RESEARCH;
+				pollIncr += RESEARCH_POLL_INCR;
+				moneyIncr += RESEARCH_MONEY_INCR;
+				return new BuildReturn(BuildError.NONE,Active.RESEARCH);
 			case FACTORY:
-				pollIncr += 10;
-				moneyIncr += 1;
+				pollIncr += FACTORY_POLL_INCR;
+				moneyIncr += FACTORY_MONEY_INCR;
 				break;
 			case PORT:
-				pollIncr += 5;
-				money += 50;
+				pollIncr += PORT_POLL_INCR;
+				moneyIncr += PORT_MONEY_INCR;
 				break;
 			default:
-				return Active.MAIN;
+				return new BuildReturn(BuildError.NONE,Active.MAIN);
 			}
 		}
+		else {
+			if(placedBuildings[build.ordinal()])
+				return new BuildReturn(BuildError.PLACED,Active.MAIN);
+			else if(!isValidPlacement(xPos,yPos,structure))
+				return new BuildReturn(BuildError.SPOT,Active.MAIN);
+			else if(structure.getCost() > money)
+				return new BuildReturn(BuildError.COST,Active.MAIN);
+			else if(structure.getQualityNeeded() < pollution)
+				return new BuildReturn(BuildError.POLLUTION,Active.MAIN);
+		}
 		build = BuildState.NONE;
-		return Active.MAIN;
+		return new BuildReturn(BuildError.NONE,Active.MAIN);
 	}
 	/**
 	 * Removes a building.
@@ -164,6 +180,20 @@ public class MainModel {
 	 * @param yPos The y position to remove building from.
 	 */
 	public void removeBuilding(int xPos, int yPos) {
+		if(map[xPos][yPos].getB().getName().equals("Factory")) {
+			moneyIncr -= FACTORY_MONEY_INCR;
+			pollIncr -= FACTORY_POLL_INCR;
+			placedBuildings[BuildState.FACTORY.ordinal()] = false;
+		}
+		else if(map[xPos][yPos].getB().getName().equals("Port")) {
+			moneyIncr -= PORT_MONEY_INCR;
+			pollIncr -= PORT_POLL_INCR;
+			placedBuildings[BuildState.PORT.ordinal()] = false;
+		}
+		else if(map[xPos][yPos].getB().getName().equals("Research Station")) {
+			moneyIncr -= RESEARCH_MONEY_INCR;
+			pollIncr -= RESEARCH_POLL_INCR;
+		}
 		map[xPos][yPos].setB(null);
 		build = BuildState.NONE;
 	}
@@ -194,7 +224,7 @@ public class MainModel {
 	 * @return if the game is over.
 	 */
 	public boolean gameOver() {
-		return this.pollution == POLLUTION_MAX || this.money == MONEY_MAX;
+		return this.pollution+pollIncr >= POLLUTION_MAX || this.money+moneyIncr >= MONEY_MAX;
 	}
 	/**
 	 * Updates the state of the main model by changing pollution and money.
@@ -203,7 +233,8 @@ public class MainModel {
 		if(!gameOver()) {
 			if(pollution >= 0)
 				pollution += pollIncr;
-			money += moneyIncr;
+			if(moneyIncr >= 0 || money > 0)
+				money += moneyIncr;
 		}
 	}
 }

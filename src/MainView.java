@@ -9,6 +9,7 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
@@ -62,10 +63,12 @@ public class MainView {
 	private JFrame frame;
 	private DrawPanel panel;
 	private JLayeredPane mainPanel;
-	private boolean gameOver;
+	private BuildError bError = BuildError.NONE;
 	final String[] buildingNames = {"Port","Bird Watching Tower","Factory","Research Station","Fishing Pier"};
 	private MapSpot[][] board = new MapSpot[NUM_MAP_BUTTONS_X][NUM_MAP_BUTTONS_Y];
 	private HashMap<String,JButton> sidebarButtons = new HashMap<String,JButton>();
+	private int moneyIncr = 0;
+	private int pollIncr = 0;
 	
 	//setters/getters
 	/**
@@ -169,13 +172,51 @@ public class MainView {
 			g2d.drawRoundRect(xPos, yPos+yOffset, BAR_WIDTH, BAR_HEIGHT,BAR_ROUND,BAR_ROUND);
 			g2d.setColor(Color.YELLOW);
 			g2d.fillRoundRect(xPos, (int) (yPos+(BAR_HEIGHT*(1-moneyRatio))), BAR_WIDTH, (int) (BAR_HEIGHT - (BAR_HEIGHT*(1-moneyRatio))),BAR_ROUND,BAR_ROUND);
-			g2d.setColor(Color.GREEN);
+			g2d.setColor(new Color((int) (pollutionRatio*255),(int) (255-(255*pollutionRatio)),0));
 			g2d.fillRoundRect(xPos, (int) (yPos+yOffset+(BAR_HEIGHT*(1-pollutionRatio))), BAR_WIDTH, (int) (BAR_HEIGHT - (BAR_HEIGHT*(1-pollutionRatio))),BAR_ROUND,BAR_ROUND);
 			
+			int fontSize = 30;
+			g2d.setFont(new Font("Monospaced", Font.BOLD, fontSize));
+			DecimalFormat plusMinus = new DecimalFormat("+#;-#");
+			if(moneyIncr > 0)
+				g2d.setColor(Color.GREEN);
+			else
+				g2d.setColor(Color.RED);
+			g2d.drawString(String.format("%s",plusMinus.format(moneyIncr)), BAR_X, BAR_Y-25);
+			//g2d.drawString(String.format("$%.2f",moneyRatio*1000), BAR_X, BAR_Y-25);
+			//g2d.drawString("Pollution:\n", BAR_X, BAR_Y+BAR_Y_OFFSET-25);
+			if(pollIncr >= 10)
+				g2d.setColor(Color.RED);
+			else
+				g2d.setColor(Color.GREEN);
+			g2d.drawString(String.format("%s",plusMinus.format(pollIncr)), BAR_X, BAR_Y+BAR_Y_OFFSET-25);	
+			//g2d.drawString(String.format("%.2f",pollutionRatio*10000), BAR_X, BAR_Y+BAR_Y_OFFSET-10);		
+			
 			g2d.setColor(Color.BLACK);
-			g2d.drawString(String.format("$%.2f",moneyRatio*1000), BAR_X, BAR_Y-25);
-			g2d.drawString("Pollution:\n", BAR_X, BAR_Y+BAR_Y_OFFSET-25);
-			g2d.drawString(String.format("%.2f",pollutionRatio*10000), BAR_X, BAR_Y+BAR_Y_OFFSET-10);			
+			switch(bError) {
+			case NONE:
+				g2d.drawString("",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET));
+				break;
+			case SPOT:
+				g2d.drawString("  NOT  A  ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
+				g2d.drawString("VALID SPOT",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
+				break;
+			case POLLUTION:
+				g2d.drawString("TOO  MUCH",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
+				g2d.drawString("POLLUTION",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
+				break;
+			case COST:
+				g2d.drawString("NOT  ENOUGH",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
+				g2d.drawString("   MONEY   ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
+				break;
+			case PLACED:
+				g2d.drawString(" BUILDING ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
+				g2d.drawString("  EXISTS  ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
+				break;
+			default:
+				g2d.drawString("",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET));
+				break;
+			}
 		}
 	}
 	/**
@@ -200,7 +241,6 @@ public class MainView {
 		frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		frame.setVisible(true);
 		frame.setResizable(false);
-		gameOver = false;
 	}
 	/**
 	 * Creates side bar buttons and adds them to the panel.
@@ -312,7 +352,7 @@ public class MainView {
 						state = TerrainState.OCEAN;
 					}
 					else if (2 <= j && j <= 6) {
-						state = TerrainState.BEACH;
+						state = TerrainState.NORMAL;
 					}
 					else {
 						state = TerrainState.FOREST;
@@ -399,12 +439,14 @@ public class MainView {
 	 * @param poll The current pollution level.
 	 * @param map The current state of the main grid.
 	 */
-	public void update(double money, double poll, MapSpot[][] map, boolean gOver) {
+	public void update(double money, double poll, MapSpot[][] map, boolean gOver,int moneyIncr, int pollIncr,BuildError be) {
 		updateBoard();
 		updateBars(money, poll);
 		this.board = map;
-		gameOver = gOver;
 		panel.repaint();
+		this.moneyIncr = moneyIncr;
+		this.pollIncr = pollIncr;
+		this.bError = be;
 	}
 	/**
 	 * Displays image of building if one exists or deletes Image if it is removed from a Spot.

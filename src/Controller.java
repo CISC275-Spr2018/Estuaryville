@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -12,6 +13,7 @@ import javax.swing.Timer;
 
 public class Controller {
 	static Active activePanel = Active.MAIN;
+	static BuildError buildProblem = BuildError.NONE;
 
 	MainView mView = new MainView();
 	MainModel mMod = new MainModel(mView.getBoard());
@@ -240,22 +242,33 @@ public class Controller {
 					//Way to simplify?? using enum string etc?
 					@Override
 					public void actionPerformed(ActionEvent e) {
+						BuildReturn br;
 						if(activePanel == Active.MAIN) {
 							switch(model.getBuild()) {
 							case PORT:
-								model.build(model.getBuildingTypes().get("Port"), x, y);
+								br = model.build(model.getBuildingTypes().get("Port"), x, y);
+								activePanel = br.getActive();
+								buildProblem = br.getBuildError();
 								break;
 							case BIRD:
-								activePanel = model.build(model.getBuildingTypes().get("Bird"), x, y);
+								br = model.build(model.getBuildingTypes().get("Bird"), x, y);
+								activePanel = br.getActive();
+								buildProblem = br.getBuildError();
 								break;
 							case FACTORY:
-								model.build(model.getBuildingTypes().get("Factory"), x, y);
+								br = model.build(model.getBuildingTypes().get("Factory"), x, y);
+								activePanel = br.getActive();
+								buildProblem = br.getBuildError();
 								break;
 							case RESEARCH:
-								activePanel = model.build(model.getBuildingTypes().get("Research"), x, y);
+								br = model.build(model.getBuildingTypes().get("Research"), x, y);
+								activePanel = br.getActive();
+								buildProblem = br.getBuildError();
 								break;
 							case FISH:
-								activePanel = model.build(model.getBuildingTypes().get("Fish"), x, y);
+								br = model.build(model.getBuildingTypes().get("Fish"), x, y);
+								activePanel = br.getActive();
+								buildProblem = br.getBuildError();
 								break;
 							case REMOVE:
 								model.removeBuilding(x, y);
@@ -345,10 +358,15 @@ public class Controller {
 	public void redraw() {
 		switch(activePanel) {
 			case MAIN:
-					activePanel = Active.MAIN;
 					mView.getPanel().requestFocusInWindow();
 					mMod.update();
-					mView.update((double) (mMod.getMoney())/(double) (mMod.MONEY_MAX), (double) (mMod.getPollution()) /(double) (mMod.POLLUTION_MAX), mMod.getMap(), mMod.gameOver());
+					mView.update((double) (mMod.getMoney())/(double) (mMod.MONEY_MAX),
+							(double) (mMod.getPollution()) /(double) (mMod.POLLUTION_MAX),
+							mMod.getMap(),
+							mMod.gameOver(),
+							mMod.getMoneyIncr(),
+							mMod.getPollIncr(),
+							buildProblem);
 					if(mMod.gameOver()) {
 						try {
 							Thread.sleep(1500);
@@ -359,7 +377,6 @@ public class Controller {
 					}
 				break;
 			case BIRD:
-				activePanel = Active.BIRD;
 				bView.getPanel().requestFocusInWindow();
 				bMod.update();
 				bView.update(bMod.getBirds(),bMod.getCamera(),bMod.isFlash(), bMod.toDisplayInfo);
@@ -369,13 +386,11 @@ public class Controller {
 					fMod.setPollutionLevel((double) mMod.getPollution()/(double) mMod.POLLUTION_MAX);
 					firstFrame = false;
 				}
-				activePanel = Active.FISH;
 				fView.getPanel().requestFocusInWindow();
 				fMod.update();
 				fView.update(fMod.getFish(),fMod.getTrash(),fMod.getHook(),fMod.getCaught(), fMod.getGameOver(), fMod.getDisplayCatch());
 				break;
 			case RESEARCH:
-				activePanel = Active.RESEARCH;
 				rView.getPanel().requestFocusInWindow();
 				rMod.updateLocationAndDirection();
 				rMod.crabCollisionChecker();
