@@ -114,19 +114,19 @@ public class MapSpot implements Serializable{
 	 * @return If the Building can be placed on this MapSpot
 	 */
 	public boolean isValid(Building structure) {
-		if(structure.getName().equals("Factory")) {
+		if(structure.getName() == BuildingName.FACTORY) {
 			return ((tState == TerrainState.RIVER || tState == TerrainState.NORMAL || tState == TerrainState.FOREST || tState == TerrainState.BEACH) && b == null);
 		}
-		else if(structure.getName().equals("Bird Watching Tower")) {
+		else if(structure.getName() == BuildingName.BIRD) {
 			return ((tState == TerrainState.RIVER || tState == TerrainState.NORMAL || tState == TerrainState.FOREST || tState == TerrainState.BEACH) && b == null);
 		}
-		else if(structure.getName().equals("Fishing Pier")) {
+		else if(structure.getName() == BuildingName.FISH) {
 			return (tState == TerrainState.BEACH && b == null);
 		}
-		else if(structure.getName().equals("Research Station")) {
+		else if(structure.getName() == BuildingName.RESEARCH) {
 			return ((tState == TerrainState.RIVER || tState == TerrainState.NORMAL || tState == TerrainState.FOREST || tState == TerrainState.BEACH) && b == null);
 		}
-		else if(structure.getName().equals("Port")) {
+		else if(structure.getName() == BuildingName.PORT) {
 			return ((tState == TerrainState.BEACH || tState == TerrainState.OCEAN) && b == null);
 		}
 		else {
