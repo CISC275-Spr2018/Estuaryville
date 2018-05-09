@@ -41,6 +41,9 @@ public class Controller{
 	 */
 	@SuppressWarnings("serial")
 	public Controller() {		
+		
+		load();
+		
 		mView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
 		bView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
 		fView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
@@ -249,7 +252,7 @@ public class Controller{
 	 * @param model The Main Screen Model.
 	 * @param view The Main Screen View.
 	 */
-	public static void generateMapListeners(MainModel model, MainView view) {
+	public void generateMapListeners(MainModel model, MainView view) {
 		for(int i = 0; i < view.getBoard().length; i++) {
 			for(int j = 0; j < view.getBoard()[0].length; j++) {
 				final int x = i;
@@ -262,27 +265,28 @@ public class Controller{
 						if(activePanel == Active.MAIN) {
 							switch(model.getBuild()) {
 							case PORT:
-								br = model.build(model.getBuildingTypes().get("Port"), x, y);
+								br = model.build(model.getBuildingTypes().get(BuildingName.PORT), x, y);
 								activePanel = br.getActive();
 								buildProblem = br.getBuildError();
+								save();
 								break;
 							case BIRD:
-								br = model.build(model.getBuildingTypes().get("Bird"), x, y);
+								br = model.build(model.getBuildingTypes().get(BuildingName.BIRD), x, y);
 								activePanel = br.getActive();
 								buildProblem = br.getBuildError();
 								break;
 							case FACTORY:
-								br = model.build(model.getBuildingTypes().get("Factory"), x, y);
+								br = model.build(model.getBuildingTypes().get(BuildingName.FACTORY), x, y);
 								activePanel = br.getActive();
 								buildProblem = br.getBuildError();
 								break;
 							case RESEARCH:
-								br = model.build(model.getBuildingTypes().get("Research"), x, y);
+								br = model.build(model.getBuildingTypes().get(BuildingName.RESEARCH), x, y);
 								activePanel = br.getActive();
 								buildProblem = br.getBuildError();
 								break;
 							case FISH:
-								br = model.build(model.getBuildingTypes().get("Fish"), x, y);
+								br = model.build(model.getBuildingTypes().get(BuildingName.FISH), x, y);
 								activePanel = br.getActive();
 								buildProblem = br.getBuildError();
 								break;

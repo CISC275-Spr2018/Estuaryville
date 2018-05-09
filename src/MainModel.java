@@ -17,7 +17,7 @@ public class MainModel implements Serializable {
 	private final int MAP_HEIGHT = 10;
 	private final int MAP_WIDTH = 10;
 	private MapSpot[][] map = new MapSpot[MAP_HEIGHT][MAP_WIDTH];
-	private HashMap<String,Building> buildingTypes;
+	private HashMap<BuildingName,Building> buildingTypes;
 	private int pollIncr = 5;
 	private int moneyIncr = 3;
 	private BuildState build = BuildState.NONE;
@@ -33,7 +33,7 @@ public class MainModel implements Serializable {
 	 * Returns a Map with the keys being the Building's name and the Value being the Building.
 	 * @return a Map with the keys being the Building's name and the Value being the Building.
 	 */
-	public HashMap<String,Building> getBuildingTypes() {
+	public HashMap<BuildingName,Building> getBuildingTypes() {
 		return buildingTypes;
 	}
 	/**
@@ -125,13 +125,13 @@ public class MainModel implements Serializable {
 	 * Creates the different Buildings to use through game.
 	 * @return the different Buildings to use through game.
 	 */
-	public HashMap<String,Building> loadBuildingTypes() {
-		HashMap<String,Building> types = new HashMap<String,Building>();
-		types.put("Bird",new Building(150,10000,"Bird Watching Tower","bird-tower"));
-		types.put("Research",new Building(400,10000,"Research Center","research"));
-		types.put("Fish",new Building(250,10000,"Fishing Pier","pier"));
-		types.put("Factory",new Building(200,10000,"Factory","factory"));
-		types.put("Port",new Building(150,10000,"Port","port"));
+	public HashMap<BuildingName,Building> loadBuildingTypes() {
+		HashMap<BuildingName,Building> types = new HashMap<BuildingName,Building>();
+		types.put(BuildingName.BIRD,new Building(150,10000,BuildingName.BIRD,"bird-tower"));
+		types.put(BuildingName.RESEARCH,new Building(400,10000,BuildingName.RESEARCH,"research"));
+		types.put(BuildingName.FISH,new Building(250,10000,BuildingName.FISH,"pier"));
+		types.put(BuildingName.FACTORY,new Building(200,10000,BuildingName.FACTORY,"factory"));
+		types.put(BuildingName.PORT,new Building(150,10000,BuildingName.PORT,"port"));
 		return types;
 	}
 	/**
@@ -142,7 +142,7 @@ public class MainModel implements Serializable {
 	 * @return
 	 */
 	public BuildReturn build(Building structure, int xPos, int yPos) {
-		if(!placedBuildings[build.ordinal()] && isValidPlacement(xPos, yPos, structure) && isConstructable(structure)) {
+		if(!placedBuildings[build.ordinal()] && isValidPlacement(xPos, yPos, structure) && isConstructable(structure) && map[xPos][yPos].getB() == null) {
 			placedBuildings[build.ordinal()] = true;
 			map[xPos][yPos].setB(structure);
 			switch(build) {

@@ -16,7 +16,7 @@ public class Building implements Serializable{
 	private static final long serialVersionUID = 78168390982917751L;
 	private int cost;
 	private int qualityNeeded;
-	private String name;
+	private BuildingName name;
 	private String filename;
 	/**
 	 * Creates an instance of a Building.
@@ -25,7 +25,7 @@ public class Building implements Serializable{
 	 * @param name The name of the building.
 	 * @param filename The name of the image file for the building.
 	 */
-	public Building(int cost, int quality, String name, String filename) {
+	public Building(int cost, int quality, BuildingName name, String filename) {
 		this.cost = cost;
 		this.qualityNeeded = quality;
 		this.name = name;
@@ -38,7 +38,7 @@ public class Building implements Serializable{
 	 * Returns the name of the building.
 	 * @return The name of the building.
 	 */
-	public String getName() {
+	public BuildingName getName() {
 		return name;
 	}
 	/**

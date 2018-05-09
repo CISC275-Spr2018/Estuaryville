@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -65,10 +67,9 @@ public class MainView {
 	private JLayeredPane mainPanel;
 	private BuildError bError = BuildError.NONE;
 	final String[] buildingNames = {"Port","Bird Watching Tower","Factory","Research Station","Fishing Pier"};
-	final String[] buildingKeys = {"Port","Bird","Factory","Research","Fish"};
 	private MapSpot[][] board = new MapSpot[NUM_MAP_BUTTONS_X][NUM_MAP_BUTTONS_Y];
 	private HashMap<String,JButton> sidebarButtons = new HashMap<String,JButton>();
-	private HashMap<String,BufferedImage> buildingImages = new HashMap<String,BufferedImage>();
+	private HashMap<BuildingName,BufferedImage> buildingImages = new HashMap<BuildingName,BufferedImage>();
 	private int moneyIncr = 0;
 	private int pollIncr = 0;
 	private boolean firstFrame = true;
@@ -177,6 +178,7 @@ public class MainView {
 			g2d.fillRoundRect(xPos, (int) (yPos+(BAR_HEIGHT*(1-moneyRatio))), BAR_WIDTH, (int) (BAR_HEIGHT - (BAR_HEIGHT*(1-moneyRatio))),BAR_ROUND,BAR_ROUND);
 			g2d.setColor(new Color((int) (pollutionRatio*255),(int) (255-(255*pollutionRatio)),0));
 			g2d.fillRoundRect(xPos, (int) (yPos+yOffset+(BAR_HEIGHT*(1-pollutionRatio))), BAR_WIDTH, (int) (BAR_HEIGHT - (BAR_HEIGHT*(1-pollutionRatio))),BAR_ROUND,BAR_ROUND);
+			
 			
 			int fontSize = 30;
 			g2d.setFont(new Font("Monospaced", Font.BOLD, fontSize));
@@ -457,16 +459,16 @@ public class MainView {
 	 * @param poll The current pollution level.
 	 * @param map The current state of the main grid.
 	 */
-	public void update(double money, double poll, MapSpot[][] map, boolean gOver,int moneyIncr, int pollIncr,BuildError be,HashMap<String,Building> buildTypes) {
+	public void update(double money, double poll, MapSpot[][] map, boolean gOver,int moneyIncr, int pollIncr,BuildError be,HashMap<BuildingName,Building> buildTypes) {
 		if(firstFrame) {
-			for(String name : buildingKeys) {
+			for(BuildingName name : BuildingName.values()) {
 				buildingImages.put(name, loadBuildingImage(buildTypes.get(name)));
 			}
 			firstFrame = false;
 		}
+		this.board = map;
 		updateBoard();
 		updateBars(money, poll);
-		this.board = map;
 		panel.repaint();
 		this.moneyIncr = moneyIncr;
 		this.pollIncr = pollIncr;
@@ -475,16 +477,53 @@ public class MainView {
 	/**
 	 * Displays image of building if one exists or deletes Image if it is removed from a Spot.
 	 */
+	//USELESS
+	JFrame frame2 = new JFrame();
+	private JPanel panelGreen = new JPanel();
+    private JButton button = new JButton();
+    private MapSpot rand = new MapSpot(button, TerrainState.NORMAL, new ImageIcon());
+    private boolean firstFrame1 = true;
+    //REAL CODE BELOW
 	public void updateBoard() {
-		for(MapSpot[] ms_arr : board) {
-			for(MapSpot ms : ms_arr) {
-				if(ms.getB() != null) {
-					BufferedImage bImage = resize(buildingImages.get(ms.getB().getName()),MAP_BUTTON_HEIGHT,MAP_BUTTON_HEIGHT);
-					BuildingImage bi = new BuildingImage(ms.getBackground(),new ImageIcon(bImage));
-					ms.setShowImage(bi);
+		//USELESS
+		//if(firstFrame1) {
+			BufferedImage bImage3 = resize(buildingImages.get(board[6][0].getB().getName()),MAP_BUTTON_HEIGHT,MAP_BUTTON_HEIGHT);
+			BuildingImage bi3 = new BuildingImage(board[6][0].getBackground(),new ImageIcon(bImage3));
+			rand.setShowImage(bi3);
+			button.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					
+				}
+	        	
+	        });
+			panelGreen.add(button);
+			frame2.setBackground(new Color(100, 153, 239));
+			frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame2.setResizable(false);
+			frame2.getContentPane().add(panelGreen);
+			frame2.setSize(800, 800);
+			frame2.setVisible(true);
+			firstFrame1 = false;
+		//}
+		//BufferedImage bImage2 = resize(buildingImages.get(board[6][0].getB().getName()),MAP_BUTTON_HEIGHT,MAP_BUTTON_HEIGHT);
+		//BuildingImage bi2 = new BuildingImage(board[6][0].getBackground(),new ImageIcon(bImage2));
+		//board[6][0].getButton().setIcon(bi2);
+		//REAL CODE BELOW
+		for(int i = 0; i < board.length; i++) {
+			for(int j = 0; j < board[0].length; j++) {
+				BuildingImage bi = null;
+				if(board[i][j] != null && board[i][j].getB() != null) {
+					BufferedImage bImage = resize(buildingImages.get(board[i][j].getB().getName()),MAP_BUTTON_HEIGHT,MAP_BUTTON_HEIGHT);
+					bi = new BuildingImage(board[i][j].getBackground(),new ImageIcon(bImage));
+					board[i][j].setShowImage(bi);
 				}
 				else {
-					ms.setShowImage(ms.getBackground());
+					board[i][j].setShowImage(board[i][j].getBackground());
+				}
+				if(board[i][j] != null && board[i][j].getB() != null && board[i][j].getShowImage() == bi) {
+					System.out.println(i+" "+j+" WORKING");
 				}
 			}
 		}
