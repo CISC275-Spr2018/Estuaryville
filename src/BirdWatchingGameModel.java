@@ -1,5 +1,4 @@
 
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -268,7 +267,7 @@ public class BirdWatchingGameModel extends Model {
 	 * of takePicFrame.
 	 * @return True to display camera flash, false to not display flash. 
 	 */
-	public static boolean isFlash() {
+	public boolean isFlash() {
 		return takePicFrame > 0;
 	}
 	
