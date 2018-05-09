@@ -1,17 +1,15 @@
 import java.awt.EventQueue;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JLayeredPane;
 import javax.swing.Timer;
 
-public class Controller {
+public class Controller{
 	static Active activePanel = Active.MAIN;
 	static BuildError buildProblem = BuildError.NONE;
 
@@ -29,6 +27,7 @@ public class Controller {
 	ResearchGameModel rMod = new ResearchGameModel(MainView.FRAME_WIDTH, MainView.FRAME_HEIGHT,0,0);
 
 	public Action drawAction;
+	private boolean paused = false;
 
 	/**
 	 * Creates an instance of Controller
@@ -45,7 +44,9 @@ public class Controller {
 			@Override
 			public void keyPressed(KeyEvent ke) {
 				switch(ke.getKeyCode()) {
-
+				case KeyEvent.VK_P:
+					paused = !paused;
+					break;
 				}
 			}
 			@Override
@@ -105,7 +106,10 @@ public class Controller {
 						bView.getPanel().setVisible(false);
 						activePanel = Active.MAIN;
 					}
-					
+					break;
+				case KeyEvent.VK_P:
+					paused = !paused;
+					break;
 				}
 				bView.setGameOver(bMod.getGameOver());	
 				bView.setWrongBird(bMod.getWrongBird());
@@ -161,6 +165,9 @@ public class Controller {
 							fView.getPanel().setVisible(false);
 							activePanel = Active.MAIN;
 						}
+					case KeyEvent.VK_P:
+						paused = !paused;
+						break;
 					}
 				}
 
@@ -205,6 +212,9 @@ public class Controller {
 								rView.getPanel().setVisible(false);
 								activePanel = Active.MAIN;
 							}
+						case KeyEvent.VK_P:
+							paused = !paused;
+							break;
 					}
 				}
 				@Override
@@ -287,7 +297,6 @@ public class Controller {
 	 * @param view The Main Screen View.
 	 */
 	public static void generateSidebarListeners(MainModel model, MainView view) {//
-		view.getSidebarButtons().get("Port").setMnemonic(KeyEvent.VK_P);
 		view.getSidebarButtons().get("Port").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -296,7 +305,6 @@ public class Controller {
 			}
 		});
 		
-		view.getSidebarButtons().get("Bird Watching Tower").setMnemonic(KeyEvent.VK_B);
 		view.getSidebarButtons().get("Bird Watching Tower").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -305,7 +313,6 @@ public class Controller {
 			}
 		});
 		
-		view.getSidebarButtons().get("Factory").setMnemonic(KeyEvent.VK_F);
 		view.getSidebarButtons().get("Factory").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -314,7 +321,6 @@ public class Controller {
 			}
 		});
 		
-		view.getSidebarButtons().get("Research Station").setMnemonic(KeyEvent.VK_S);
 		view.getSidebarButtons().get("Research Station").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -323,7 +329,6 @@ public class Controller {
 			}
 		});
 		
-		view.getSidebarButtons().get("Fishing Pier").setMnemonic(KeyEvent.VK_I);
 		view.getSidebarButtons().get("Fishing Pier").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -332,7 +337,6 @@ public class Controller {
 			}
 		});
 		
-		view.getSidebarButtons().get("Remove").setMnemonic(KeyEvent.VK_R);
 		view.getSidebarButtons().get("Remove").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -356,6 +360,7 @@ public class Controller {
 	 * Redraws the active panel to animate and update games.
 	 */
 	public void redraw() {
+		if(!paused) {
 		switch(activePanel) {
 			case MAIN:
 					mView.getPanel().requestFocusInWindow();
@@ -407,6 +412,7 @@ public class Controller {
 			default:
 				break;
 
+		}
 		}
 	}
 }

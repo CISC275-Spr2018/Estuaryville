@@ -1,8 +1,6 @@
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  *   <h1>ResearchGameModel Class</h1> Going by the MVC design pattern, this is the Model class. This is more or less the brain of the ResearchGame. Everything that is needs to be 
