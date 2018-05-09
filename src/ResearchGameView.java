@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -6,14 +5,12 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.JPanel;
 
 /**
  *   <h1>ResearchGameView Class</h1> Going by the MVC design pattern, this is the View class. It handles all the printing and output to the screen, while getting
@@ -28,7 +25,6 @@ public class ResearchGameView{
 	int crabFrames = 2;
 	int picNum = 0;
 	int CpicNum = 0;
-	Boolean isPaused = true;
 	
 	Crab[] crabs;
 	
@@ -55,14 +51,11 @@ public class ResearchGameView{
 	Crab crab21 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
 
 	Rectangle[] rects;
-	BufferedImage[] pics, images; //player pics
-	BufferedImage[] cPics, cImages; //crab pics
-	BufferedImage[] aCPics, aCImages; //angry crab pics
+	BufferedImage[] pics, images;
+	BufferedImage[] Cpics, Cimages;
 	BufferedImage bg;
-	BufferedImage title;
-	BufferedImage[][] animation; //player animation
-	BufferedImage[][] cAnimation; //crab animation
-	BufferedImage[][] aCAnimation; //angry crab animation
+	BufferedImage[][] animation;
+	BufferedImage[][] Canimation;
 	Researcher player = new Researcher(10, 10, RDirection.IDLE, 3); // intitalizing so doesnt crash until loaded from model
 	
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -143,46 +136,23 @@ public class ResearchGameView{
 		@Override
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
-			
-			g.setFont(new Font("Arial", Font.PLAIN, 45));
-			g.setColor(Color.WHITE);
-				g.drawImage(bg, -player.getxPos(), -player.getyPos(), getScaledWidth(7000), getScaledHeight(2500), this); //background
+		//		BufferedImage currBG = bg.getSubimage(player.getxPos() - playerFixedX, 600+player.getyPos() - playerFixedY, frameWidth, frameHeight);
+				g.drawImage(bg, -player.getxPos(), -player.getyPos()+frameHeight/20, (int)(frameWidth*4.861), (int)(frameHeight*2.778), this); //background
 				
 				for (Crab c : crabs) {
-					if (c.getSteppedOn()) {
-						g.drawImage(aCPics[CpicNum], -c.getCrabXPos(), -c.getCrabYPos(), this); //angry crabs
-						g.drawString("Ouch!", -c.getCrabXPos(), -c.getCrabYPos());
-						
-					}
-					else {
-						g.drawImage(cPics[CpicNum], -c.getCrabXPos(), -c.getCrabYPos(), this); //crabs
-					}
-//					g.drawRect((int)c.getCrabRect().getX(), (int)c.getCrabRect().getY(), (int)c.getCrabRect().getWidth(), (int)c.getCrabRect().getHeight());//crab rects
+					g.drawImage(Cpics[CpicNum], -c.getCrabXPos(), -c.getCrabYPos(), this); //crabs
+					
+					//g.drawRect((int)c.getCrabRect().getX(), (int)c.getCrabRect().getY(), (int)c.getCrabRect().getWidth(), (int)c.getCrabRect().getHeight());//crab rects
 			}
 				g.drawImage(pics[picNum], playerFixedX, playerFixedY, this); //player
-//				g.drawRect((int)player.getPlayerRect().getX(), (int)player.getPlayerRect().getY(), (int)player.getPlayerRect().getWidth(), (int)player.getPlayerRect().getHeight());
-//				for (Rectangle re : rects) {
-//					g.drawRect((int)re.getX(), (int)re.getY(),(int) re.getWidth(), (int)re.getHeight());
-//				}
-			
-			if (isPaused) {
-				g.setFont(new Font("Arial", Font.PLAIN, 25));
-				g.drawImage(resizeImg(title, getScaledWidth(600), getScaledHeight(500)), frameWidth / 2, 0, this);
-				g.drawString("Dodge the Blue Crabs and get to the end to collect a water smaple!", getScaledWidth(600), getScaledHeight(420));
-				g.drawString("If you step on 3 Blue Crabs or go out of bounds its Game Over!", getScaledWidth(600), getScaledHeight(450));
-				g.drawString("Use the Right Arrow Key to move to the left", getScaledWidth(600), getScaledHeight(480));
-				g.drawString("Use the Up Arrow Key to move up ", getScaledWidth(600), getScaledHeight(510));
-				g.drawString("Use the Down Arrow Key to move down", getScaledWidth(600), getScaledHeight(540));
-				g.drawString("Use the Left Arrow Key to stand still", getScaledWidth(600), getScaledHeight(570));
-				g.drawString("Press the P key at any time to pause the game and see this page", getScaledWidth(600), getScaledHeight(600));
-				g.drawString("Press the Enter key to Start", getScaledWidth(600), getScaledHeight(630));
-			}
-			else {
-				g.setFont(new Font("Arial", Font.PLAIN, 45));
-				g.drawString("Crabs Stepped On: " + (3 - player.getLives()), getScaledWidth(100), getScaledHeight(100));
-			}
+				//g.drawRect((int)player.getPlayerRect().getX(), (int)player.getPlayerRect().getY(), (int)player.getPlayerRect().getWidth(), (int)player.getPlayerRect().getHeight());
+				//for (Rectangle re : rects) {
+					//g.drawRect((int)re.getX(), (int)re.getY(),(int) re.getWidth(), (int)re.getHeight());
+				//}
+
+			g.setFont(new Font("Arial", Font.PLAIN, 40));
+			g.drawString("Lives: " + player.getLives(), getScaledWidth(100), getScaledHeight(100));
 		}
-			
 	}
 	
 	/**
@@ -197,22 +167,14 @@ public class ResearchGameView{
 			loadAnimatedImg(images[i],animation[i],animation[i].length);
 			
 		}
-		cImages = new BufferedImage[5];
-		cAnimation = new BufferedImage[5][0];
+		Cimages = new BufferedImage[5];
+		Canimation = new BufferedImage[5][0];
 		for(int i = 0; i < 5; i++) {
-			cImages[i] = createCrabImage();
-			cAnimation[i] = new BufferedImage[cImages[i].getWidth()/imgWidth];
-			loadAnimatedImg(cImages[i],cAnimation[i],crabFrames);
+			Cimages[i] = createCrabImage();
+			Canimation[i] = new BufferedImage[Cimages[i].getWidth()/imgWidth];
+			loadAnimatedImg(Cimages[i],Canimation[i],crabFrames);
 		}
-		aCImages = new BufferedImage[5];
-		aCAnimation = new BufferedImage[5][0];
-		for(int i = 0; i < 5; i++) {
-			aCImages[i] = createAngryCrabImage();
-			aCAnimation[i] = new BufferedImage[aCImages[i].getWidth()/imgWidth];
-			loadAnimatedImg(aCImages[i],aCAnimation[i],crabFrames);
-		}
-		cPics = cAnimation[0];
-		aCPics = aCAnimation[0];
+		Cpics = Canimation[0];
 		pics = animation[RDirection.IDLE.ordinal()];
 	}
 	
@@ -240,7 +202,6 @@ public class ResearchGameView{
 		try {
 			bufferedImage = ImageIO.read(new File("assets/research-game/female-scientist-" + direction.getName() + ".png"));
 			bg = ImageIO.read(new File("assets/research-game/research-background" + ".png"));
-			title = ImageIO.read(new File("assets/research-game/research-title.png"));
 		//	bg = resizeImg(bg, 7500, 3500);
 			return bufferedImage;
 		} catch (IOException e) {
@@ -256,23 +217,6 @@ public class ResearchGameView{
 		BufferedImage bufferedImage = null;
 		try {
 			bufferedImage = ImageIO.read(new File("assets/research-game/crab-sheet.png"));
-//			ac = ImageIO.read(new File("assets/research-game/angry-crab-sheet.png"));
-			return bufferedImage;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	/**
-	 * <h1>createCrabImage</h1> create the BufferedImage for the angry crab from the path to assets, once stepped on by player
-	 * @return the bufferedImage with the newly create angry crab image from path
-	 */
-	private BufferedImage createAngryCrabImage() {
-		BufferedImage bufferedImage = null;
-		try {
-			bufferedImage = ImageIO.read(new File("assets/research-game/angry-crab-sheet.png"));
-//			ac = ImageIO.read(new File("assets/research-game/angry-crab-sheet.png"));
 			return bufferedImage;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -287,11 +231,10 @@ public class ResearchGameView{
 	 * @param crabs pulled in from the model for the most current state of all the crabs in the crabs list, accompanied by all the methods needed to get crabs methods
 	 * @param rects pulls in from model, the most current state of the rectangle
 	 */
-	public void update(Researcher player, Crab[] crabs, Rectangle[] rects, Boolean isPaused){
+	public void update(Researcher player, Crab[] crabs, Rectangle[] rects){
 		this.player = player;
 		this.crabs = crabs;	
 		this.rects = rects;
-		this.isPaused = isPaused;
 		switch(player.getDirection()){
 			case IDLE:	
 				frameCount = animation[RDirection.IDLE.ordinal()].length;	

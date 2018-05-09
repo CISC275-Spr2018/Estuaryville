@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -6,7 +8,11 @@ import javax.swing.JButton;
  * @author Riley
  *
  */
-public class MapSpot {
+public class MapSpot implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5749687621654165794L;
 	JButton button;
 	Building b;
 	ImageIcon background;

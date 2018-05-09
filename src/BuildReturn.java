@@ -1,5 +1,10 @@
+import java.io.Serializable;
 
-public class BuildReturn {
+public class BuildReturn implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4047089187268782226L;
 	BuildError be;
 	Active a;
 	public BuildReturn(BuildError be, Active a) {

@@ -65,10 +65,13 @@ public class MainView {
 	private JLayeredPane mainPanel;
 	private BuildError bError = BuildError.NONE;
 	final String[] buildingNames = {"Port","Bird Watching Tower","Factory","Research Station","Fishing Pier"};
+	final String[] buildingKeys = {"Port","Bird","Factory","Research","Fish"};
 	private MapSpot[][] board = new MapSpot[NUM_MAP_BUTTONS_X][NUM_MAP_BUTTONS_Y];
 	private HashMap<String,JButton> sidebarButtons = new HashMap<String,JButton>();
+	private HashMap<String,BufferedImage> buildingImages = new HashMap<String,BufferedImage>();
 	private int moneyIncr = 0;
 	private int pollIncr = 0;
+	private boolean firstFrame = true;
 	
 	//setters/getters
 	/**
@@ -433,13 +436,34 @@ public class MainView {
 		}
 		return bgImages;
 	}
+	
+	/**
+	 * Loads the images for the Building based off of the file name.
+	 * @return A BufferedImage of the building's image.
+	 */
+	public BufferedImage loadBuildingImage(Building build) {
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(new File("assets/main-screen/buildings/"+build.getFileName()+".png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return img;
+	}
+	
 	/**
 	 * Updates the image to reflect the money and pollution levels
 	 * @param money The current money amount.
 	 * @param poll The current pollution level.
 	 * @param map The current state of the main grid.
 	 */
-	public void update(double money, double poll, MapSpot[][] map, boolean gOver,int moneyIncr, int pollIncr,BuildError be) {
+	public void update(double money, double poll, MapSpot[][] map, boolean gOver,int moneyIncr, int pollIncr,BuildError be,HashMap<String,Building> buildTypes) {
+		if(firstFrame) {
+			for(String name : buildingKeys) {
+				buildingImages.put(name, loadBuildingImage(buildTypes.get(name)));
+			}
+			firstFrame = false;
+		}
 		updateBoard();
 		updateBars(money, poll);
 		this.board = map;
@@ -455,7 +479,7 @@ public class MainView {
 		for(MapSpot[] ms_arr : board) {
 			for(MapSpot ms : ms_arr) {
 				if(ms.getB() != null) {
-					BufferedImage bImage = resize(ms.getB().getImage(),MAP_BUTTON_HEIGHT,MAP_BUTTON_HEIGHT);
+					BufferedImage bImage = resize(buildingImages.get(ms.getB().getName()),MAP_BUTTON_HEIGHT,MAP_BUTTON_HEIGHT);
 					BuildingImage bi = new BuildingImage(ms.getBackground(),new ImageIcon(bImage));
 					ms.setShowImage(bi);
 				}
