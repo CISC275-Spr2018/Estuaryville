@@ -212,8 +212,11 @@ public class Controller{
 								rView.getPanel().setVisible(false);
 								activePanel = Active.MAIN;
 							}
+//							rMod.setIsPaused(false);
+							break;
 						case KeyEvent.VK_P:
 							paused = !paused;
+//							rMod.setIsPaused(!(rMod.getIsPaused()));
 							break;
 					}
 				}
@@ -397,11 +400,14 @@ public class Controller{
 				break;
 			case RESEARCH:
 				rView.getPanel().requestFocusInWindow();
+				if (rMod.getIsPaused()) {
+					rMod.paused();
+				} 
 				rMod.updateLocationAndDirection();
 				rMod.crabCollisionChecker();
 				rMod.boundsCollisionChecker();
 				rMod.endCheck();
-				rView.update(rMod.getPlayer(), rMod.getCrabs(), rMod.getRects());
+				rView.update(rMod.getPlayer(), rMod.getCrabs(), rMod.getRects(), rMod.getIsPaused());
 				if (rMod.lifeCheck()) {
 					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight());
 				}
