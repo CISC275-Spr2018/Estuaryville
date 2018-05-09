@@ -1,5 +1,6 @@
 import java.awt.Component;
 import java.awt.Graphics;
+import java.io.Serializable;
 
 import javax.swing.Icon;
 /**
@@ -7,7 +8,11 @@ import javax.swing.Icon;
  * @author Riley
  *
  */
-public class BuildingImage implements Icon {
+public class BuildingImage implements Icon, Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4092942893403276253L;
 	Icon building;
 	Icon background;
 	/**

@@ -1,10 +1,15 @@
+import java.io.Serializable;
 import java.util.HashMap;
 /**
  * The model of the main screen. Contains all information about the state of the main screen.
  * @author Riley
  *
  */
-public class MainModel {
+public class MainModel implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4361856093721815033L;
 	public final int POLLUTION_MAX = 10000;
 	public final int MONEY_MAX = 10000;
 	private int pollution = 1;
@@ -23,7 +28,7 @@ public class MainModel {
     private int PORT_POLL_INCR  = 5;
     private int RESEARCH_MONEY_INCR  = -2;
     private int RESEARCH_POLL_INCR  = -10;
-
+    
 	/**
 	 * Returns a Map with the keys being the Building's name and the Value being the Building.
 	 * @return a Map with the keys being the Building's name and the Value being the Building.

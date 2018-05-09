@@ -3,6 +3,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -10,6 +16,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.Timer;
 
 public class Controller{
+	private String FILEPATH = "data.bin";
 	static Active activePanel = Active.MAIN;
 	static BuildError buildProblem = BuildError.NONE;
 
@@ -22,7 +29,7 @@ public class Controller{
 	FishingGameView fView = new FishingGameView();
 	FishingGameModel fMod = new FishingGameModel(MainView.FRAME_WIDTH, MainView.FRAME_HEIGHT);
 	boolean firstFrame = true;
-	
+
 	ResearchGameView rView = new ResearchGameView();
 	ResearchGameModel rMod = new ResearchGameModel(MainView.FRAME_WIDTH, MainView.FRAME_HEIGHT,0,0);
 
@@ -33,13 +40,12 @@ public class Controller{
 	 * Creates an instance of Controller
 	 */
 	@SuppressWarnings("serial")
-	public Controller() {
-		
+	public Controller() {		
 		mView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
 		bView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
 		fView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
 		rView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
-		
+
 		mView.getPanel().addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent ke) {
@@ -60,7 +66,7 @@ public class Controller{
 		});
 		generateMapListeners(mMod, mView);
 		generateSidebarListeners(mMod, mView);
-		
+
 		bView.setSearchingFor(bMod.getSearchingFor());
 		bView.getPanel().addKeyListener(new KeyListener() {
 			/**
@@ -143,92 +149,89 @@ public class Controller{
 
 			}
 		});
-			
-			fView.getPanel().addKeyListener(new KeyListener() {
-				@Override
-				public void keyPressed(KeyEvent ke) {	
-					switch(ke.getKeyCode()){
-					case KeyEvent.VK_UP:
-						fMod.hook.setYSpeed(-15);
-						break;
-					case KeyEvent.VK_DOWN:
-						fMod.hook.setYSpeed(15);
-						break;
-					case KeyEvent.VK_LEFT:
-						fMod.hook.setXSpeed(-15);
-						break;
-					case KeyEvent.VK_RIGHT:
-						fMod.hook.setXSpeed(15);
-						break;
-					case KeyEvent.VK_ENTER:
-						if (fMod.getGameOver()) {
-							fView.getPanel().setVisible(false);
-							activePanel = Active.MAIN;
-						}
-					case KeyEvent.VK_P:
-						paused = !paused;
-						break;
+
+		fView.getPanel().addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent ke) {	
+				switch(ke.getKeyCode()){
+				case KeyEvent.VK_UP:
+					fMod.hook.setYSpeed(-15);
+					break;
+				case KeyEvent.VK_DOWN:
+					fMod.hook.setYSpeed(15);
+					break;
+				case KeyEvent.VK_LEFT:
+					fMod.hook.setXSpeed(-15);
+					break;
+				case KeyEvent.VK_RIGHT:
+					fMod.hook.setXSpeed(15);
+					break;
+				case KeyEvent.VK_ENTER:
+					if (fMod.getGameOver()) {
+						fView.getPanel().setVisible(false);
+						activePanel = Active.MAIN;
 					}
+				case KeyEvent.VK_P:
+					paused = !paused;
+					break;
 				}
+			}
 
-				@Override
-				public void keyReleased(KeyEvent ke) {
-					switch(ke.getKeyCode()){
-					case KeyEvent.VK_UP:
-					case KeyEvent.VK_DOWN:
-						fMod.hook.setYSpeed(0);
-						break;
-					case KeyEvent.VK_LEFT:
-					case KeyEvent.VK_RIGHT:
-						fMod.hook.setXSpeed(0);
-						break;
+			@Override
+			public void keyReleased(KeyEvent ke) {
+				switch(ke.getKeyCode()){
+				case KeyEvent.VK_UP:
+				case KeyEvent.VK_DOWN:
+					fMod.hook.setYSpeed(0);
+					break;
+				case KeyEvent.VK_LEFT:
+				case KeyEvent.VK_RIGHT:
+					fMod.hook.setXSpeed(0);
+					break;
+				}
+			}
+
+			@Override
+			public void keyTyped(KeyEvent ke) {
+
+			}
+		});
+
+		rView.getPanel().addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent ke) {
+				switch(ke.getKeyCode()) {
+				case KeyEvent.VK_UP:
+					rMod.player.setDirection(RDirection.NORTHEAST);
+					break;
+				case KeyEvent.VK_DOWN:
+					rMod.player.setDirection(RDirection.SOUTHEAST);
+					break;
+				case KeyEvent.VK_LEFT:
+					rMod.player.setDirection(RDirection.IDLE);
+					break;
+				case KeyEvent.VK_RIGHT:
+					rMod.player.setDirection(RDirection.EAST);
+					break;
+				case KeyEvent.VK_ENTER:
+					if (rMod.endCheck()) {
+						rView.getPanel().setVisible(false);
+						activePanel = Active.MAIN;
 					}
+				case KeyEvent.VK_P:
+					paused = !paused;
+					break;
 				}
+			}
+			@Override
+			public void keyReleased(KeyEvent ke) {
 
-				@Override
-				public void keyTyped(KeyEvent ke) {
+			}
+			@Override
+			public void keyTyped(KeyEvent ke) {
 
-				}
-			});
-			
-			rView.getPanel().addKeyListener(new KeyListener() {
-				@Override
-				public void keyPressed(KeyEvent ke) {
-					switch(ke.getKeyCode()) {
-						case KeyEvent.VK_UP:
-							rMod.player.setDirection(RDirection.NORTHEAST);
-							break;
-						case KeyEvent.VK_DOWN:
-							rMod.player.setDirection(RDirection.SOUTHEAST);
-							break;
-						case KeyEvent.VK_LEFT:
-							rMod.player.setDirection(RDirection.IDLE);
-							break;
-						case KeyEvent.VK_RIGHT:
-							rMod.player.setDirection(RDirection.EAST);
-							break;
-						case KeyEvent.VK_ENTER:
-							if (rMod.endCheck()) {
-								rView.getPanel().setVisible(false);
-								activePanel = Active.MAIN;
-							}
-//							rMod.setIsPaused(false);
-							break;
-						case KeyEvent.VK_P:
-							paused = !paused;
-//							rMod.setIsPaused(!(rMod.getIsPaused()));
-							break;
-					}
-				}
-				@Override
-				public void keyReleased(KeyEvent ke) {
+			}});
 
-				}
-				@Override
-				public void keyTyped(KeyEvent ke) {
-
-				}});
-		
 		mView.getMainPanel().add(mView.getPanel(),JLayeredPane.DEFAULT_LAYER,-1);
 		mView.getMainPanel().add(bView.getPanel(),JLayeredPane.DEFAULT_LAYER,-1);
 		mView.getMainPanel().add(fView.getPanel(),JLayeredPane.DEFAULT_LAYER,-1);
@@ -307,7 +310,7 @@ public class Controller{
 					model.setBuild(BuildState.PORT);
 			}
 		});
-		
+
 		view.getSidebarButtons().get("Bird Watching Tower").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -315,7 +318,7 @@ public class Controller{
 					model.setBuild(BuildState.BIRD);
 			}
 		});
-		
+
 		view.getSidebarButtons().get("Factory").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -323,7 +326,7 @@ public class Controller{
 					model.setBuild(BuildState.FACTORY);
 			}
 		});
-		
+
 		view.getSidebarButtons().get("Research Station").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -331,7 +334,7 @@ public class Controller{
 					model.setBuild(BuildState.RESEARCH);
 			}
 		});
-		
+
 		view.getSidebarButtons().get("Fishing Pier").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -339,7 +342,7 @@ public class Controller{
 					model.setBuild(BuildState.FISH);
 			}
 		});
-		
+
 		view.getSidebarButtons().get("Remove").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -364,25 +367,27 @@ public class Controller{
 	 */
 	public void redraw() {
 		if(!paused) {
-		switch(activePanel) {
+			switch(activePanel) {
 			case MAIN:
-					mView.getPanel().requestFocusInWindow();
-					mMod.update();
-					mView.update((double) (mMod.getMoney())/(double) (mMod.MONEY_MAX),
-							(double) (mMod.getPollution()) /(double) (mMod.POLLUTION_MAX),
-							mMod.getMap(),
-							mMod.gameOver(),
-							mMod.getMoneyIncr(),
-							mMod.getPollIncr(),
-							buildProblem);
-					if(mMod.gameOver()) {
-						try {
-							Thread.sleep(1500);
-							System.exit(0);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
+				mView.getPanel().requestFocusInWindow();
+				mMod.update();
+				mView.update((double) (mMod.getMoney())/(double) (mMod.MONEY_MAX),
+						(double) (mMod.getPollution()) /(double) (mMod.POLLUTION_MAX),
+						mMod.getMap(),
+						mMod.gameOver(),
+						mMod.getMoneyIncr(),
+						mMod.getPollIncr(),
+						buildProblem,
+						mMod.getBuildingTypes());
+				if(mMod.gameOver()) {
+					save();
+					try {
+						Thread.sleep(1500);
+						System.exit(0);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
 					}
+				}
 				break;
 			case BIRD:
 				bView.getPanel().requestFocusInWindow();
@@ -400,14 +405,11 @@ public class Controller{
 				break;
 			case RESEARCH:
 				rView.getPanel().requestFocusInWindow();
-				if (rMod.getIsPaused()) {
-					rMod.paused();
-				} 
 				rMod.updateLocationAndDirection();
 				rMod.crabCollisionChecker();
 				rMod.boundsCollisionChecker();
 				rMod.endCheck();
-				rView.update(rMod.getPlayer(), rMod.getCrabs(), rMod.getRects(), rMod.getIsPaused());
+				rView.update(rMod.getPlayer(), rMod.getCrabs(), rMod.getRects());
 				if (rMod.lifeCheck()) {
 					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight());
 				}
@@ -418,7 +420,33 @@ public class Controller{
 			default:
 				break;
 
+			}
 		}
+	}
+
+	public void save() {
+		try {
+			ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(FILEPATH));
+			os.writeObject(mMod);
+			os.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void load() {
+		try {
+			ObjectInputStream is = new ObjectInputStream(new FileInputStream(FILEPATH));
+			mMod = (MainModel) is.readObject();
+			is.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
 	}
 }
