@@ -82,19 +82,19 @@ public class Controller{
 				switch (ke.getKeyCode()) {
 				case KeyEvent.VK_UP:
 					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
-						bMod.getCamera().setYSpeed(bMod.getScaledHeight(-15));
+						bMod.getCamera().setYSpeed(bMod.getScaledHeight(-20));
 					break;
 				case KeyEvent.VK_DOWN:
 					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
-						bMod.getCamera().setYSpeed(bMod.getScaledHeight(15));
+						bMod.getCamera().setYSpeed(bMod.getScaledHeight(20));
 					break;
 				case KeyEvent.VK_LEFT:
 					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
-						bMod.getCamera().setXSpeed(bMod.getScaledWidth(-15));
+						bMod.getCamera().setXSpeed(bMod.getScaledWidth(-20));
 					break;
 				case KeyEvent.VK_RIGHT:
 					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
-						bMod.getCamera().setXSpeed(bMod.getScaledWidth(15));
+						bMod.getCamera().setXSpeed(bMod.getScaledWidth(20));
 					break;
 				case KeyEvent.VK_SPACE:
 					bMod.setWrongBird(false);

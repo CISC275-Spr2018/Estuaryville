@@ -1,4 +1,5 @@
 
+
 import java.awt.Rectangle;
 import java.util.Random;
 
@@ -54,8 +55,11 @@ public class Bird {
 			this.xSpd = rand.nextInt(20) + 15;
 			this.ySpd = rand.nextInt(20) + 15;
 			this.xPos = rand.nextInt(screenWidth - getScaledWidth(331)); //keeps inside screen bounds
-			this.yPos = rand.nextInt(screenHeight - getScaledHeight(341)); // keeps inside screen bounds
-			this.direction = BDirection.values()[rand.nextInt(6)];
+			this.yPos = rand.nextInt(getScaledHeight(330)); // keeps above grass level
+			int randStartDir = rand.nextInt(2);
+			if (randStartDir == 1)
+				randStartDir = 3;
+			this.direction = BDirection.values()[randStartDir];
 			this.bWidth = getScaledWidth(160);
 			this.bHeight = getScaledHeight(175);
 			rect = new Rectangle(xPos, yPos, bWidth, bHeight);
