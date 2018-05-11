@@ -256,7 +256,6 @@ public class Controller{
 				final int x = i;
 				final int y = j;
 				view.getBoard()[i][j].getButton().addActionListener(new ActionListener() {
-					//Way to simplify?? using enum string etc?
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						if(!paused) {
@@ -319,7 +318,7 @@ public class Controller{
 		view.getSidebarButtons().get("Port").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN || !paused)
+				if(activePanel == Active.MAIN && !paused)
 					model.setBuild(BuildState.PORT);
 			}
 		});
@@ -327,7 +326,7 @@ public class Controller{
 		view.getSidebarButtons().get("Bird Watching Tower").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN || !paused)
+				if(activePanel == Active.MAIN && !paused)
 					model.setBuild(BuildState.BIRD);
 			}
 		});
@@ -335,7 +334,7 @@ public class Controller{
 		view.getSidebarButtons().get("Factory").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN || !paused)
+				if(activePanel == Active.MAIN && !paused)
 					model.setBuild(BuildState.FACTORY);
 			}
 		});
@@ -343,7 +342,7 @@ public class Controller{
 		view.getSidebarButtons().get("Research Station").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN || !paused)
+				if(activePanel == Active.MAIN && !paused)
 					model.setBuild(BuildState.RESEARCH);
 			}
 		});
@@ -351,7 +350,7 @@ public class Controller{
 		view.getSidebarButtons().get("Fishing Pier").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN || !paused)
+				if(activePanel == Active.MAIN && !paused)
 					model.setBuild(BuildState.FISH);
 			}
 		});
@@ -359,7 +358,7 @@ public class Controller{
 		view.getSidebarButtons().get("Remove").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN || !paused)
+				if(activePanel == Active.MAIN && !paused)
 					model.setBuild(BuildState.REMOVE);
 			}
 		});
@@ -380,9 +379,9 @@ public class Controller{
 	 */
 	public void redraw() {
 		if(!paused) {
-			System.out.println(activePanel);
 			switch(activePanel) {
 			case MAIN:
+				mView.getPanel().requestFocusInWindow();
 				mMod.update();
 				mView.update((double) (mMod.getMoney())/(double) (mMod.MONEY_MAX),
 						(double) (mMod.getPollution()) /(double) (mMod.POLLUTION_MAX),
