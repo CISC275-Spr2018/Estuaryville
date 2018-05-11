@@ -42,7 +42,7 @@ public class Controller{
 	@SuppressWarnings("serial")
 	public Controller() {		
 		
-		load();
+		//load();
 		
 		mView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
 		bView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
@@ -108,8 +108,6 @@ public class Controller{
 					if (bView.getToDisplayInfo() != null) {
 						bView.setToDisplayInfo(null);
 						bMod.setToDisplayInfo(null);
-						//bView.pauseGame = false;
-						//bView.repaintCount = 0;
 					}
 					else if (bView.getGameOver()) {
 						bView.getPanel().setVisible(false);
@@ -158,16 +156,16 @@ public class Controller{
 			public void keyPressed(KeyEvent ke) {	
 				switch(ke.getKeyCode()){
 				case KeyEvent.VK_UP:
-					fMod.hook.setYSpeed(-15);
+					fMod.getHook().setYSpeed(-15);
 					break;
 				case KeyEvent.VK_DOWN:
-					fMod.hook.setYSpeed(15);
+					fMod.getHook().setYSpeed(15);
 					break;
 				case KeyEvent.VK_LEFT:
-					fMod.hook.setXSpeed(-15);
+					fMod.getHook().setXSpeed(-15);
 					break;
 				case KeyEvent.VK_RIGHT:
-					fMod.hook.setXSpeed(15);
+					fMod.getHook().setXSpeed(15);
 					break;
 				case KeyEvent.VK_ENTER:
 					if (fMod.getGameOver()) {
@@ -185,11 +183,11 @@ public class Controller{
 				switch(ke.getKeyCode()){
 				case KeyEvent.VK_UP:
 				case KeyEvent.VK_DOWN:
-					fMod.hook.setYSpeed(0);
+					fMod.getHook().setYSpeed(0);
 					break;
 				case KeyEvent.VK_LEFT:
 				case KeyEvent.VK_RIGHT:
-					fMod.hook.setXSpeed(0);
+					fMod.getHook().setXSpeed(0);
 					break;
 				}
 			}
@@ -205,16 +203,16 @@ public class Controller{
 			public void keyPressed(KeyEvent ke) {
 				switch(ke.getKeyCode()) {
 				case KeyEvent.VK_UP:
-					rMod.player.setDirection(RDirection.NORTHEAST);
+					rMod.getPlayer().setDirection(RDirection.NORTHEAST);
 					break;
 				case KeyEvent.VK_DOWN:
-					rMod.player.setDirection(RDirection.SOUTHEAST);
+					rMod.getPlayer().setDirection(RDirection.SOUTHEAST);
 					break;
 				case KeyEvent.VK_LEFT:
-					rMod.player.setDirection(RDirection.IDLE);
+					rMod.getPlayer().setDirection(RDirection.IDLE);
 					break;
 				case KeyEvent.VK_RIGHT:
-					rMod.player.setDirection(RDirection.EAST);
+					rMod.getPlayer().setDirection(RDirection.EAST);
 					break;
 				case KeyEvent.VK_ENTER:
 					if (rMod.endCheck()) {
@@ -274,6 +272,9 @@ public class Controller{
 								case BIRD:
 									br = model.build(model.getBuildingTypes().get(BuildingName.BIRD), x, y);
 									activePanel = br.getActive();
+									if(activePanel == Active.BIRD) {
+										bView.getPanel().requestFocusInWindow();
+									}
 									buildProblem = br.getBuildError();
 									break;
 								case FACTORY:
@@ -284,11 +285,17 @@ public class Controller{
 								case RESEARCH:
 									br = model.build(model.getBuildingTypes().get(BuildingName.RESEARCH), x, y);
 									activePanel = br.getActive();
+									if(activePanel == Active.RESEARCH) {
+										rView.getPanel().requestFocusInWindow();
+									}
 									buildProblem = br.getBuildError();
 									break;
 								case FISH:
 									br = model.build(model.getBuildingTypes().get(BuildingName.FISH), x, y);
 									activePanel = br.getActive();
+									if(activePanel == Active.FISH) {
+										fView.getPanel().requestFocusInWindow();
+									}
 									buildProblem = br.getBuildError();
 									break;
 								case REMOVE:
@@ -373,9 +380,9 @@ public class Controller{
 	 */
 	public void redraw() {
 		if(!paused) {
+			System.out.println(activePanel);
 			switch(activePanel) {
 			case MAIN:
-				mView.getPanel().requestFocusInWindow();
 				mMod.update();
 				mView.update((double) (mMod.getMoney())/(double) (mMod.MONEY_MAX),
 						(double) (mMod.getPollution()) /(double) (mMod.POLLUTION_MAX),
@@ -396,7 +403,6 @@ public class Controller{
 				}
 				break;
 			case BIRD:
-				bView.getPanel().requestFocusInWindow();
 				bMod.update();
 				bView.update(bMod.getBirds(),bMod.getCamera(),bMod.isFlash(), bMod.toDisplayInfo);
 				break;
@@ -405,12 +411,10 @@ public class Controller{
 					fMod.setPollutionLevel((double) mMod.getPollution()/(double) mMod.POLLUTION_MAX);
 					firstFrame = false;
 				}
-				fView.getPanel().requestFocusInWindow();
 				fMod.update();
 				fView.update(fMod.getFish(),fMod.getTrash(),fMod.getHook(),fMod.getCaught(), fMod.getGameOver(), fMod.getDisplayCatch());
 				break;
 			case RESEARCH:
-				rView.getPanel().requestFocusInWindow();
 				rMod.updateLocationAndDirection();
 				rMod.crabCollisionChecker();
 				rMod.boundsCollisionChecker();
