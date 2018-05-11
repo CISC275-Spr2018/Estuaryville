@@ -42,7 +42,6 @@ public class Controller{
 	@SuppressWarnings("serial")
 	public Controller() {		
 		
-		//load();
 		
 		mView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
 		bView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
@@ -274,7 +273,6 @@ public class Controller{
 									br = model.build(model.getBuildingTypes().get(BuildingName.PORT), x, y);
 									activePanel = br.getActive();
 									buildProblem = br.getBuildError();
-									save();
 									break;
 								case BIRD:
 									br = model.build(model.getBuildingTypes().get(BuildingName.BIRD), x, y);
@@ -400,7 +398,6 @@ public class Controller{
 						buildProblem,
 						mMod.getBuildingTypes());
 				if(mMod.gameOver()) {
-					save();
 					try {
 						Thread.sleep(1500);
 						System.exit(0);
