@@ -29,6 +29,13 @@ public class MainModel implements Serializable {
     private int RESEARCH_MONEY_INCR  = -2;
     private int RESEARCH_POLL_INCR  = -10;
     
+    public void setButtons(MapSpot[][] board) {
+    	for(int i = 0;i < board.length; i++) {
+    		for(int j = 0; j < board[0].length; j++) {
+    			map[i][j].setButton(board[i][j].getButton());
+    		}
+    	}
+    }
 	/**
 	 * Returns a Map with the keys being the Building's name and the Value being the Building.
 	 * @return a Map with the keys being the Building's name and the Value being the Building.
@@ -185,17 +192,17 @@ public class MainModel implements Serializable {
 	 * @param yPos The y position to remove building from.
 	 */
 	public void removeBuilding(int xPos, int yPos) {
-		if(map[xPos][yPos].getB().getName().equals("Factory")) {
+		if(map[xPos][yPos].getB().getName() == BuildingName.FACTORY) {
 			moneyIncr -= FACTORY_MONEY_INCR;
 			pollIncr -= FACTORY_POLL_INCR;
 			placedBuildings[BuildState.FACTORY.ordinal()] = false;
 		}
-		else if(map[xPos][yPos].getB().getName().equals("Port")) {
+		else if(map[xPos][yPos].getB().getName() == BuildingName.PORT) {
 			moneyIncr -= PORT_MONEY_INCR;
 			pollIncr -= PORT_POLL_INCR;
 			placedBuildings[BuildState.PORT.ordinal()] = false;
 		}
-		else if(map[xPos][yPos].getB().getName().equals("Research Station")) {
+		else if(map[xPos][yPos].getB().getName() == BuildingName.RESEARCH) {
 			moneyIncr -= RESEARCH_MONEY_INCR;
 			pollIncr -= RESEARCH_POLL_INCR;
 		}
