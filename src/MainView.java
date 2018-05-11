@@ -180,21 +180,21 @@ public class MainView {
 			g2d.fillRoundRect(xPos, (int) (yPos+yOffset+(BAR_HEIGHT*(1-pollutionRatio))), BAR_WIDTH, (int) (BAR_HEIGHT - (BAR_HEIGHT*(1-pollutionRatio))),BAR_ROUND,BAR_ROUND);
 			
 			
-			int fontSize = 30;
+			int fontSize = FRAME_WIDTH/65;
 			g2d.setFont(new Font("Monospaced", Font.BOLD, fontSize));
 			DecimalFormat plusMinus = new DecimalFormat("+#;-#");
 			if(moneyIncr > 0)
 				g2d.setColor(Color.GREEN);
 			else
 				g2d.setColor(Color.RED);
-			g2d.drawString(String.format("%s",plusMinus.format(moneyIncr)), BAR_X, BAR_Y-25);
+			g2d.drawString(String.format("%s",plusMinus.format(moneyIncr)), BAR_X, BAR_Y-FRAME_HEIGHT/50);
 			//g2d.drawString(String.format("$%.2f",moneyRatio*1000), BAR_X, BAR_Y-25);
 			//g2d.drawString("Pollution:\n", BAR_X, BAR_Y+BAR_Y_OFFSET-25);
 			if(pollIncr >= 10)
 				g2d.setColor(Color.RED);
 			else
 				g2d.setColor(Color.GREEN);
-			g2d.drawString(String.format("%s",plusMinus.format(pollIncr)), BAR_X, BAR_Y+BAR_Y_OFFSET-25);	
+			g2d.drawString(String.format("%s",plusMinus.format(pollIncr)), BAR_X, BAR_Y+BAR_Y_OFFSET-FRAME_HEIGHT/50);	
 			//g2d.drawString(String.format("%.2f",pollutionRatio*10000), BAR_X, BAR_Y+BAR_Y_OFFSET-10);		
 			
 			g2d.setColor(Color.BLACK);
@@ -477,40 +477,7 @@ public class MainView {
 	/**
 	 * Displays image of building if one exists or deletes Image if it is removed from a Spot.
 	 */
-	//USELESS
-	JFrame frame2 = new JFrame();
-	private JPanel panelGreen = new JPanel();
-    private JButton button = new JButton();
-    private MapSpot rand = new MapSpot(button, TerrainState.NORMAL, new ImageIcon());
-    private boolean firstFrame1 = true;
-    //REAL CODE BELOW
 	public void updateBoard() {
-		//USELESS
-		//if(firstFrame1) {
-			BufferedImage bImage3 = resize(buildingImages.get(board[6][0].getB().getName()),MAP_BUTTON_HEIGHT,MAP_BUTTON_HEIGHT);
-			BuildingImage bi3 = new BuildingImage(board[6][0].getBackground(),new ImageIcon(bImage3));
-			rand.setShowImage(bi3);
-			button.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					
-				}
-	        	
-	        });
-			panelGreen.add(button);
-			frame2.setBackground(new Color(100, 153, 239));
-			frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame2.setResizable(false);
-			frame2.getContentPane().add(panelGreen);
-			frame2.setSize(800, 800);
-			frame2.setVisible(true);
-			firstFrame1 = false;
-		//}
-		//BufferedImage bImage2 = resize(buildingImages.get(board[6][0].getB().getName()),MAP_BUTTON_HEIGHT,MAP_BUTTON_HEIGHT);
-		//BuildingImage bi2 = new BuildingImage(board[6][0].getBackground(),new ImageIcon(bImage2));
-		//board[6][0].getButton().setIcon(bi2);
-		//REAL CODE BELOW
 		for(int i = 0; i < board.length; i++) {
 			for(int j = 0; j < board[0].length; j++) {
 				BuildingImage bi = null;
@@ -521,9 +488,6 @@ public class MainView {
 				}
 				else {
 					board[i][j].setShowImage(board[i][j].getBackground());
-				}
-				if(board[i][j] != null && board[i][j].getB() != null && board[i][j].getShowImage() == bi) {
-					System.out.println(i+" "+j+" WORKING");
 				}
 			}
 		}

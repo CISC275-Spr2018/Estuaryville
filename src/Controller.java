@@ -34,7 +34,7 @@ public class Controller{
 	ResearchGameModel rMod = new ResearchGameModel(MainView.FRAME_WIDTH, MainView.FRAME_HEIGHT,0,0);
 
 	public Action drawAction;
-	private boolean paused = false;
+	private static boolean paused = false;
 
 	/**
 	 * Creates an instance of Controller
@@ -82,19 +82,19 @@ public class Controller{
 				switch (ke.getKeyCode()) {
 				case KeyEvent.VK_UP:
 					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
-						bMod.getCamera().setYSpeed(bMod.getScaledHeight(-20));
+						bMod.getCamera().setYSpeed(bMod.getScaledHeight(-15));
 					break;
 				case KeyEvent.VK_DOWN:
 					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
-						bMod.getCamera().setYSpeed(bMod.getScaledHeight(20));
+						bMod.getCamera().setYSpeed(bMod.getScaledHeight(15));
 					break;
 				case KeyEvent.VK_LEFT:
 					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
-						bMod.getCamera().setXSpeed(bMod.getScaledWidth(-20));
+						bMod.getCamera().setXSpeed(bMod.getScaledWidth(-15));
 					break;
 				case KeyEvent.VK_RIGHT:
 					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
-						bMod.getCamera().setXSpeed(bMod.getScaledWidth(20));
+						bMod.getCamera().setXSpeed(bMod.getScaledWidth(15));
 					break;
 				case KeyEvent.VK_SPACE:
 					bMod.setWrongBird(false);
@@ -261,39 +261,41 @@ public class Controller{
 					//Way to simplify?? using enum string etc?
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						BuildReturn br;
-						if(activePanel == Active.MAIN) {
-							switch(model.getBuild()) {
-							case PORT:
-								br = model.build(model.getBuildingTypes().get(BuildingName.PORT), x, y);
-								activePanel = br.getActive();
-								buildProblem = br.getBuildError();
-								save();
-								break;
-							case BIRD:
-								br = model.build(model.getBuildingTypes().get(BuildingName.BIRD), x, y);
-								activePanel = br.getActive();
-								buildProblem = br.getBuildError();
-								break;
-							case FACTORY:
-								br = model.build(model.getBuildingTypes().get(BuildingName.FACTORY), x, y);
-								activePanel = br.getActive();
-								buildProblem = br.getBuildError();
-								break;
-							case RESEARCH:
-								br = model.build(model.getBuildingTypes().get(BuildingName.RESEARCH), x, y);
-								activePanel = br.getActive();
-								buildProblem = br.getBuildError();
-								break;
-							case FISH:
-								br = model.build(model.getBuildingTypes().get(BuildingName.FISH), x, y);
-								activePanel = br.getActive();
-								buildProblem = br.getBuildError();
-								break;
-							case REMOVE:
-								model.removeBuilding(x, y);
-							default:
-								break;
+						if(!paused) {
+							BuildReturn br;
+							if(activePanel == Active.MAIN) {
+								switch(model.getBuild()) {
+								case PORT:
+									br = model.build(model.getBuildingTypes().get(BuildingName.PORT), x, y);
+									activePanel = br.getActive();
+									buildProblem = br.getBuildError();
+									save();
+									break;
+								case BIRD:
+									br = model.build(model.getBuildingTypes().get(BuildingName.BIRD), x, y);
+									activePanel = br.getActive();
+									buildProblem = br.getBuildError();
+									break;
+								case FACTORY:
+									br = model.build(model.getBuildingTypes().get(BuildingName.FACTORY), x, y);
+									activePanel = br.getActive();
+									buildProblem = br.getBuildError();
+									break;
+								case RESEARCH:
+									br = model.build(model.getBuildingTypes().get(BuildingName.RESEARCH), x, y);
+									activePanel = br.getActive();
+									buildProblem = br.getBuildError();
+									break;
+								case FISH:
+									br = model.build(model.getBuildingTypes().get(BuildingName.FISH), x, y);
+									activePanel = br.getActive();
+									buildProblem = br.getBuildError();
+									break;
+								case REMOVE:
+									model.removeBuilding(x, y);
+								default:
+									break;
+								}
 							}
 						}
 					}
@@ -310,7 +312,7 @@ public class Controller{
 		view.getSidebarButtons().get("Port").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN)
+				if(activePanel == Active.MAIN || !paused)
 					model.setBuild(BuildState.PORT);
 			}
 		});
@@ -318,7 +320,7 @@ public class Controller{
 		view.getSidebarButtons().get("Bird Watching Tower").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN)
+				if(activePanel == Active.MAIN || !paused)
 					model.setBuild(BuildState.BIRD);
 			}
 		});
@@ -326,7 +328,7 @@ public class Controller{
 		view.getSidebarButtons().get("Factory").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN)
+				if(activePanel == Active.MAIN || !paused)
 					model.setBuild(BuildState.FACTORY);
 			}
 		});
@@ -334,7 +336,7 @@ public class Controller{
 		view.getSidebarButtons().get("Research Station").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN)
+				if(activePanel == Active.MAIN || !paused)
 					model.setBuild(BuildState.RESEARCH);
 			}
 		});
@@ -342,7 +344,7 @@ public class Controller{
 		view.getSidebarButtons().get("Fishing Pier").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN)
+				if(activePanel == Active.MAIN || !paused)
 					model.setBuild(BuildState.FISH);
 			}
 		});
@@ -350,7 +352,7 @@ public class Controller{
 		view.getSidebarButtons().get("Remove").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN)
+				if(activePanel == Active.MAIN || !paused)
 					model.setBuild(BuildState.REMOVE);
 			}
 		});
@@ -444,6 +446,7 @@ public class Controller{
 		try {
 			ObjectInputStream is = new ObjectInputStream(new FileInputStream(FILEPATH));
 			mMod = (MainModel) is.readObject();
+			mMod.setButtons(mView.getBoard());
 			is.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
