@@ -56,6 +56,14 @@ public class Controller{
 				case KeyEvent.VK_P:
 					paused = !paused;
 					break;
+				case KeyEvent.VK_S:
+					if(ke.isControlDown())
+						save();
+					break;
+				case KeyEvent.VK_L:
+					if(ke.isControlDown())
+						load();
+					break;
 				}
 			}
 			@Override
