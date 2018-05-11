@@ -1,6 +1,8 @@
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *   <h1>ResearchGameModel Class</h1> Going by the MVC design pattern, this is the Model class. This is more or less the brain of the ResearchGame. Everything that is needs to be 
@@ -12,8 +14,8 @@ import java.awt.Toolkit;
  *   @version beta
  */
 public class ResearchGameModel{
-	final int xIncr = 15;
-    final int yIncr = 14; //originally 14
+	final int xIncr = 14;
+    final int yIncr = 13; //originally 14
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	
 	final int frameWidth = (int) screenSize.getWidth();
@@ -65,6 +67,8 @@ public class ResearchGameModel{
 	Rectangle rect8;
 	Rectangle rect9;
 	public Rectangle[] rects;	
+	
+	public boolean isPaused;
 
 	/**
 	 * <h1>ResearcherGameModel Constructor</h1> Constructs the Model. Takes in a width, height, imageWidth, and imageHeight from the views knowledge of screen size and image (sprite) size. Outside of this is creates crabs and adds them 
@@ -151,8 +155,25 @@ public class ResearchGameModel{
 		this.height = height;
 		this.imgHeight = imageHeight;
 		this.imgWidth = imageWidth;
+		
+		isPaused = false;
 	}
 	
+	/**
+	 * returns the Boolean value for the model's isPaused
+	 * @return Boolean value for the model's isPaused
+	 */
+	public Boolean getIsPaused() {
+		return this.isPaused;
+	}
+	
+	/**
+	 * Sets a new Boolean value for the model's isPaused method
+	 * @param b new value for isPaused
+	 */
+	public void setIsPaused(Boolean b) {
+		this.isPaused = b;
+	}
 	/**
 	 * <h1>getCrabs</h1> Returns the array of Crabs create from the Model constructor
 	 * @return an array of Crabs
@@ -240,8 +261,8 @@ public class ResearchGameModel{
 			
 			for (Crab c : crabs) {
 				c.setCrabXPos(c.getCrabXPos() + c.getSpeed());
-				//c.setCrabRect(c.crabXPos, c.crabYPos);
-				c.setCrabRect(c.getCrabXPos(), c.getCrabYPos());			}
+				c.setCrabRect(c.crabXPos, c.crabYPos);
+			}
 			
 			for (Rectangle re : rects) {
 				re.setLocation((int)re.getX() - xIncr, (int)re.getY());
@@ -258,6 +279,7 @@ public class ResearchGameModel{
 				c.setCrabXPos(c.getCrabXPos() + c.getSpeed());
 				c.setCrabRect(c.getCrabXPos(), c.getCrabYPos());
 			}
+			
 			for (Rectangle re : rects) {
 				re.setLocation((int)re.getX() - xIncr, (int)re.getY() - yIncr);
 			}
@@ -270,7 +292,8 @@ public class ResearchGameModel{
 			for (Crab c : crabs) {
 				c.setCrabYPos(c.getCrabYPos() - yIncr);
 				c.setCrabXPos(c.getCrabXPos() + c.getSpeed());
-				c.setCrabRect(c.getCrabXPos(), c.getCrabYPos());			}
+				c.setCrabRect(c.getCrabXPos(), c.getCrabYPos());
+			}
 			
 			for (Rectangle re : rects) {
 				re.setLocation((int)re.getX() - xIncr, (int)re.getY() + yIncr);
@@ -278,7 +301,6 @@ public class ResearchGameModel{
 		}
 		
 		if (player.direction.getName().contains("idle-sheet")) {
-			
 			
 			for (Crab c: crabs) {
 				c.setCrabXPos(c.getCrabXPos() + (c.getSpeed() - xIncr));
@@ -289,6 +311,10 @@ public class ResearchGameModel{
 				re.setLocation((int)re.getX(), (int)re.getY());
 			}
 		}
+		
+	}
+	
+	public void paused() {
 		
 	}
 	

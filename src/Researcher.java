@@ -43,8 +43,6 @@ public class Researcher {
 		this.direction = direction;
 		this.lives = lives;
 		this.playerRect = new Rectangle(getScaledWidth(x) + getScaledWidth(xOffsetToFeet), getScaledHeight(y) + getScaledHeight(yOffsetToFeet), getScaledWidth(100), getScaledHeight(25));
-		this.playerRect = new Rectangle(getScaledWidth(x) - getScaledWidth(xOffsetToFeet/2), getScaledHeight(y) + getScaledHeight(yOffsetToFeet/2), getScaledWidth(100), getScaledHeight(25));
-
 	}
 /**
  * <h1>SetDirection</h1>Sets the direction of the Researcher, used in the Controller to set which direction the player wants the character to be moving in.

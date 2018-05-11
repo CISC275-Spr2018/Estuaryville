@@ -91,7 +91,7 @@ public class Crab{
 	 * @param y the y location of the new rectangle, does not change width and height because it is not needed
 	 */
 	public void setCrabRect(int x, int y) {
-		crabRect = new Rectangle(-(x - 50), -(y - 50), 80, 50);
+		crabRect = new Rectangle(-(getScaledWidth(x) - getScaledHeight(50)), -(getScaledHeight(y) - getScaledHeight(50)), getScaledWidth(80), getScaledHeight(50));
 	}
 	
 	/**
