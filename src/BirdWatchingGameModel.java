@@ -1,4 +1,5 @@
 
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -22,6 +23,7 @@ public class BirdWatchingGameModel extends Model {
 	boolean wrongBird = false;
 	boolean tryAgain = false;
 	Bird toDisplayInfo = null;
+	boolean tutorial = true;
 	
 	/**
 	 * Creates an instance of the BirdWatchingGameModel class.
@@ -41,8 +43,8 @@ public class BirdWatchingGameModel extends Model {
 		}
 		numBirdsNotFound = birds.size();
 		camera = new Camera(w, h);
-		Random rand = new Random();
-		searchingFor = birds.get(rand.nextInt(3));
+		//Random rand = new Random();
+		searchingFor = birds.get(0);
 	}
 	
 	/**
@@ -223,31 +225,44 @@ public class BirdWatchingGameModel extends Model {
 	 * @param birdList The list of birds within the model.
 	 */
 	public void takePicture(Bird target, ArrayList<Bird> birdList) {
-		if (!birds.isEmpty()) {
-			takePicFrame = 1;
-			if (isOnTarget(target)) {
-				toDisplayInfo = target;
-				birds.remove(birds.indexOf(target)); //remove target bird
-				if (birds.isEmpty()) {
-					gameOver = true;
-				}
-				else {
+		if (tutorial) {
+			if (!birds.isEmpty()) {
+				takePicFrame = 1;
+				if (isOnTarget(target)) {
+					toDisplayInfo = target;
 					Random rand = new Random();
-					numBirdsNotFound--;
 					searchingFor = birds.get(rand.nextInt(numBirdsNotFound)); //change target bird			
+					tutorial = false;
 				}
 			}
-			//else if not on target
-			else {
-				for (Bird b : birdList) {
-					if (isOnTarget(b)) {
-						//display wrong bird
-						wrongBird = true;
-						return;
+		}
+		else {
+			if (!birds.isEmpty()) {
+				takePicFrame = 1;
+				if (isOnTarget(target)) {
+					toDisplayInfo = target;
+					birds.remove(birds.indexOf(target)); //remove target bird
+					if (birds.isEmpty()) {
+						gameOver = true;
+					}
+					else {
+						Random rand = new Random();
+						numBirdsNotFound--;
+						searchingFor = birds.get(rand.nextInt(numBirdsNotFound)); //change target bird			
 					}
 				}
-				//display look again
-				tryAgain = true;
+				//else if not on target
+				else {
+					for (Bird b : birdList) {
+						if (isOnTarget(b)) {
+							//display wrong bird
+							wrongBird = true;
+							return;
+						}
+					}
+					//display look again
+					tryAgain = true;
+				}
 			}
 		}
 	}
@@ -394,5 +409,23 @@ public class BirdWatchingGameModel extends Model {
 	 */
 	public Camera getCamera(){
 		return camera;
+	}
+	
+	/**
+	 * Gets the tutorial variable of the view to tell if the player is within the
+	 * tutorial of the game or not.
+	 * @return A boolean to tell if the player is within the tutorial or not. 
+	 */
+	public boolean getTutorial() {
+		return this.tutorial;
+	}
+	
+	/**
+	 * Sets the tutorial variable of the View, which tells if the player is within
+	 * the tutorial of the game or not.
+	 * @param g The Bird to set the tutorial variable to.
+	 */
+	public void setTutorial(boolean b) {
+		tutorial = b;
 	}
 }
