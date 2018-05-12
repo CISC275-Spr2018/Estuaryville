@@ -73,8 +73,9 @@ public class ResearchGameView{
 	final int frameWidth = (int) screenSize.getWidth();
 	final int frameHeight = (int) screenSize.getHeight();
 	
-	final int playerFixedX = (int)screenSize.getWidth() / 8;
-	final int playerFixedY = (int)screenSize.getHeight() / 3;
+	
+	final int playerFixedX = getScaledWidth(180);
+	final int playerFixedY = getScaledHeight(300);
 	
 	final static int imgWidth = 180;
 	final static int imgHeight = 180;
