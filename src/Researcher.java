@@ -26,8 +26,8 @@ public class Researcher {
 	final int frameWidth = (int) screenSize.getWidth();
 	final int frameHeight = (int) screenSize.getHeight();
 	
-	final int playerFixedX = (int)screenSize.getWidth() / 8;
-	final int playerFixedY = (int)screenSize.getHeight() / 3;
+	final int playerFixedX = getScaledWidth(180);
+	final int playerFixedY = getScaledHeight(300);
 	
 /**
  * <h1>Researcher Contructor</h1>The Researcher contructor is set by a x and y position, a direction, and the lives. There is also a rectangle that is associated with the the characters feet, used for collision of crabs
@@ -100,7 +100,7 @@ public class Researcher {
 	 * @param xPos the new value that the Researcher will have for its x position
 	 */
 	public void setxPos(int xPos) {
-		this.xPos = xPos;
+		this.xPos = getScaledWidth(xPos);
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class Researcher {
 	 * @param yPos the new value that the Researcher will have for its y position
 	 */
 	public void setyPos(int yPos) {
-		this.yPos = yPos;
+		this.yPos = getScaledWidth(yPos);
 	}
 
 	/**
