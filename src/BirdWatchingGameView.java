@@ -1,4 +1,5 @@
 
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -29,8 +30,8 @@ public class BirdWatchingGameView {
 	boolean flash = false;
 	public static BufferedImage background, scaledBackground;
 	Camera camera;
-	public static BufferedImage camera_sprite;
-	public BufferedImage[] bird_info_screens, all_sprites;
+	public static BufferedImage camera_sprite, arrow_keys, spacebar, p_key, title, tutorial_complete_screen;
+	public BufferedImage[] bird_info_screens;
 	public BufferedImage[][] bird_sprites;
 	public int imgWidths[];
 	public int imgHeights[];
@@ -42,7 +43,10 @@ public class BirdWatchingGameView {
 	boolean gameOver;
 	boolean wrongBird = false;
 	boolean tryAgain = false;
+	boolean tutorial = true;
 	Bird toDisplayInfo = null;
+	Bird tutorialBird = null;
+	Camera tutorialCamera = null;
 	
 	/**
 	 * Creates an instance of the BirdWatchingGameView class. This constructor creates
@@ -62,6 +66,8 @@ public class BirdWatchingGameView {
 		camera = new Camera(screenWidth, screenHeight); 
 	    birds = new ArrayList<Bird>();
 	    searchingFor = new Bird(Bird.Species.BLUE_HERON, screenWidth, screenHeight);
+	    tutorialBird = new Bird(Bird.Species.BLUE_HERON, screenWidth, screenHeight);
+	    tutorialCamera = new Camera(screenWidth, screenHeight);
 	}
 	
 	/**
@@ -82,38 +88,71 @@ public class BirdWatchingGameView {
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
 			g.drawImage(scaledBackground, 0, 0, Color.gray, this);
-			for (int i = 0; i < birds.size(); i++) {
-				Bird b = birds.get(i);
-				if(b.getDirection().name().contains("WEST"))
-					g.drawImage(bird_sprites[b.getSpecies().ordinal() * 2][frameCount], b.getXPos(), b.getYPos(), this);
+			if (tutorial) {
+				//draw instructions
+				g.setFont(new Font("Futura", Font.BOLD, getScaledWidth(40)));
+				g.drawImage(title, getScaledWidth(700), 0, this);
+				g.drawString("Try to take a picture", getScaledWidth(150), getScaledHeight(100));
+				g.drawString("of the blue heron below", getScaledWidth(150), getScaledHeight(140));
+				g.setFont(new Font("Futura", Font.BOLD, getScaledWidth(30)));
+				g.drawImage(arrow_keys, getScaledWidth(800), getScaledHeight(400), this);
+				g.drawString("Use arrow keys to move", getScaledWidth(1000), getScaledHeight(500));
+				g.drawImage(spacebar, getScaledWidth(775), getScaledHeight(575), this);
+				g.drawString("Use spacebar to take a picture", getScaledWidth(1000), getScaledHeight(625));
+				g.drawImage(p_key, getScaledWidth(800), getScaledHeight(675), this);
+				g.drawString("Use P to pause the game", getScaledWidth(900), getScaledHeight(725));
+				//draw tutorial bird
+				if(tutorialBird.getDirection().name().contains("WEST"))
+					g.drawImage(bird_sprites[tutorialBird.getSpecies().ordinal() * 2][frameCount], tutorialBird.getXPos(), tutorialBird.getYPos(), this);
 				else
-					g.drawImage(bird_sprites[b.getSpecies().ordinal()*2 + 1][frameCount], b.getXPos(), b.getYPos(), this);
+					g.drawImage(bird_sprites[tutorialBird.getSpecies().ordinal()*2 + 1][frameCount], tutorialBird.getXPos(), tutorialBird.getYPos(), this);			
+				//draw tutorial camera
+				g.drawImage(camera_sprite, tutorialCamera.getXPos(), tutorialCamera.getYPos(), this);	
+				//take picture flash
+				if(flash) {
+					g.setColor(Color.WHITE);
+					g.fillRect(0, 0, scaledBackground.getWidth(), scaledBackground.getHeight());
+				}
+				if (toDisplayInfo != null) {
+					g.drawImage(tutorial_complete_screen, (screenWidth / 2) - (getScaledWidth(900) / 2), (screenHeight / 2) - (getScaledHeight(400) / 2), this);
+				}
 			}
-			g.drawImage(camera_sprite, camera.getXPos(), camera.getYPos(), this);
-			g.setFont(new Font("Futura", Font.BOLD, getScaledWidth(50)));
-			//draw target bird
-			if (!gameOver) {
-				g.drawString("Look for the", getScaledWidth(950), getScaledHeight(45));
-				g.drawString(searchingFor.getSpecies().toString().toLowerCase().replaceAll("_", " "), getScaledWidth(950), getScaledHeight(95));
-				g.drawImage(bird_sprites[searchingFor.getSpecies().ordinal() * 2][0], getScaledWidth(1250), getScaledHeight(5), this);
-			}
-			if(flash) {
-				g.setColor(Color.WHITE);
-				g.fillRect(0, 0, scaledBackground.getWidth(), scaledBackground.getHeight());
-			}
-			if (gameOver) {
-				g.drawString("Finished!", getScaledWidth(800), getScaledHeight(300));
-				g.drawString("Press Enter", getScaledWidth(800), getScaledHeight(350));
-				g.drawString("To Continue!", getScaledWidth(800), getScaledHeight(400));
-			}
-			if (wrongBird) {
-				g.drawString("Wrong Bird!", getScaledWidth(800), getScaledHeight(350));
-			}
-			if (tryAgain) {
-				g.drawString("Try Again!", getScaledWidth(800), getScaledHeight(350));
-			}
-			if (toDisplayInfo != null) {
-				g.drawImage(bird_info_screens[toDisplayInfo.getSpecies().ordinal()], (screenWidth / 2) - (getScaledWidth(900) / 2), (screenHeight / 2) - (getScaledHeight(400) / 2), this);
+			
+			//tutorial is completed
+			else {
+				for (int i = 0; i < birds.size(); i++) {
+					Bird b = birds.get(i);
+					if(b.getDirection().name().contains("WEST"))
+						g.drawImage(bird_sprites[b.getSpecies().ordinal() * 2][frameCount], b.getXPos(), b.getYPos(), this);
+					else
+						g.drawImage(bird_sprites[b.getSpecies().ordinal()*2 + 1][frameCount], b.getXPos(), b.getYPos(), this);
+				}
+				g.drawImage(camera_sprite, camera.getXPos(), camera.getYPos(), this);
+				g.setFont(new Font("Futura", Font.BOLD, getScaledWidth(50)));
+				//draw target bird
+				if (!gameOver) {
+					g.drawString("Look for the", getScaledWidth(950), getScaledHeight(45));
+					g.drawString(searchingFor.getSpecies().toString().toLowerCase().replaceAll("_", " "), getScaledWidth(950), getScaledHeight(95));
+					g.drawImage(bird_sprites[searchingFor.getSpecies().ordinal() * 2][0], getScaledWidth(1250), getScaledHeight(5), this);
+				}
+				if(flash) {
+					g.setColor(Color.WHITE);
+					g.fillRect(0, 0, scaledBackground.getWidth(), scaledBackground.getHeight());
+				}
+				if (gameOver) {
+					g.drawString("Finished!", getScaledWidth(800), getScaledHeight(300));
+					g.drawString("Press Enter", getScaledWidth(800), getScaledHeight(350));
+					g.drawString("To Continue!", getScaledWidth(800), getScaledHeight(400));
+				}
+				if (wrongBird) {
+					g.drawString("Wrong Bird!", getScaledWidth(800), getScaledHeight(350));
+				}
+				if (tryAgain) {
+					g.drawString("Try Again!", getScaledWidth(800), getScaledHeight(350));
+				}
+				if (toDisplayInfo != null) {
+					g.drawImage(bird_info_screens[toDisplayInfo.getSpecies().ordinal()], (screenWidth / 2) - (getScaledWidth(900) / 2), (screenHeight / 2) - (getScaledHeight(400) / 2), this);
+				}
 			}
 			
 		}
@@ -129,6 +168,11 @@ public class BirdWatchingGameView {
 		try {
 			background = ImageIO.read(new File("assets/bird-game/birdwatching-background.png"));
 			camera_sprite = ImageIO.read(new File("assets/bird-game/camera.png"));
+			title = ImageIO.read(new File("assets/bird-game/bird-title.png"));
+			arrow_keys = ImageIO.read(new File("assets/bird-game/key-bindings.png"));
+			p_key = ImageIO.read(new File("assets/bird-game/pkey-pic.png"));
+			spacebar = ImageIO.read(new File("assets/bird-game/space-pic.png"));
+			tutorial_complete_screen = ImageIO.read(new File("assets/bird-game/tutorial-completed-screen.png"));
 			Scanner scan = new Scanner(new File("assets/bird-game/info.txt"));
 			imgHeights = new int[numSpecies];
 			imgWidths = new int[numSpecies];
@@ -165,6 +209,13 @@ public class BirdWatchingGameView {
 					bird_sprites[i][j] = resizeImg(bird_sprites[i][j], getScaledWidth(imgWidths[i / 2]), getScaledHeight(imgHeights[i / 2]));
 				}
 			}
+			//resize tutorial pics for screen
+			title = resizeImg(title, getScaledWidth(600), getScaledHeight(300));
+			arrow_keys = resizeImg(arrow_keys, getScaledWidth(180), getScaledHeight(180));
+			p_key = resizeImg(p_key, getScaledWidth(80), getScaledHeight(80));
+			spacebar = resizeImg(spacebar, getScaledWidth(200), getScaledHeight(80));
+			tutorial_complete_screen = resizeImg(tutorial_complete_screen, getScaledWidth(900), getScaledHeight(400));
+			
 			scan.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -210,11 +261,21 @@ public class BirdWatchingGameView {
 	 * @param c The camera used to update the view. 
 	 */
 	public void update(ArrayList<Bird> birdList, Camera c, boolean f, Bird b) {
-		birds = birdList;
-		camera = c;
-		frameCount = (frameCount + 1) % 16;
-		flash = f;
-		toDisplayInfo = b;
+		if (tutorial) {
+			birds = birdList;
+			tutorialCamera = c;
+			tutorialBird = birdList.get(0);
+			frameCount = (frameCount + 1) % 16;
+			flash = f;
+			toDisplayInfo = b;
+		}
+		else {
+			birds = birdList;
+			camera = c;
+			frameCount = (frameCount + 1) % 16;
+			flash = f;
+			toDisplayInfo = b;
+		}
 		panel.repaint();
 		try {
 			Thread.sleep(30);
@@ -372,4 +433,23 @@ public class BirdWatchingGameView {
 	public void setToDisplayInfo(Bird b) {
 		toDisplayInfo = b;
 	}
+	
+	/**
+	 * Gets the tutorial variable of the view to tell if the player is within the
+	 * tutorial of the game or not.
+	 * @return A boolean to tell if the player is within the tutorial or not. 
+	 */
+	public boolean getTutorial() {
+		return tutorial;
+	}
+	
+	/**
+	 * Sets the tutorial variable of the View, which tells if the player is within
+	 * the tutorial of the game or not.
+	 * @param g The Bird to set the tutorial variable to.
+	 */
+	public void setTutorial(boolean b) {
+		tutorial = b;
+	}
+	
 }
