@@ -25,6 +25,10 @@ public class Researcher {
 	
 	final int frameWidth = (int) screenSize.getWidth();
 	final int frameHeight = (int) screenSize.getHeight();
+	
+	final int playerFixedX = (int)screenSize.getWidth() / 8;
+	final int playerFixedY = (int)screenSize.getHeight() / 3;
+	
 /**
  * <h1>Researcher Contructor</h1>The Researcher contructor is set by a x and y position, a direction, and the lives. There is also a rectangle that is associated with the the characters feet, used for collision of crabs
  * and out of bounds
@@ -42,7 +46,7 @@ public class Researcher {
 		this.yPos = getScaledHeight(y);
 		this.direction = direction;
 		this.lives = lives;
-		this.playerRect = new Rectangle(getScaledWidth(x) + getScaledWidth(xOffsetToFeet), getScaledHeight(y) + getScaledHeight(yOffsetToFeet), getScaledWidth(100), getScaledHeight(25));
+		this.playerRect = new Rectangle(playerFixedX + getScaledWidth(xOffsetToFeet), playerFixedY + getScaledHeight(yOffsetToFeet), getScaledWidth(100), getScaledHeight(25));
 	}
 /**
  * <h1>SetDirection</h1>Sets the direction of the Researcher, used in the Controller to set which direction the player wants the character to be moving in.

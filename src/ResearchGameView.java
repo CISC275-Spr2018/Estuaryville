@@ -32,6 +32,9 @@ public class ResearchGameView{
 	
 	Crab[] crabs;
 	
+	int xOffsetToFeet = 40;
+	int yOffsetToFeet = 160;
+	
 	Crab crab1 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
 	Crab crab2 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
 	Crab crab3 = new Crab(0, 0, 0); // intitalizing so doesnt crash until loaded from model
@@ -93,6 +96,7 @@ public class ResearchGameView{
 		loadImages();		
 		panel.setFocusable(true);
 		panel.requestFocusInWindow();
+		
 	}
 	
 	/**
@@ -157,13 +161,16 @@ public class ResearchGameView{
 					else {
 						g.drawImage(cPics[CpicNum], -c.getCrabXPos(), -c.getCrabYPos(), this); //crabs
 					}
-//					g.drawRect((int)c.getCrabRect().getX(), (int)c.getCrabRect().getY(), (int)c.getCrabRect().getWidth(), (int)c.getCrabRect().getHeight());//crab rects
+					g.drawRect((int)c.getCrabRect().getX(), (int)c.getCrabRect().getY(), (int)c.getCrabRect().getWidth(), (int)c.getCrabRect().getHeight());//crab rects
 			}
 				g.drawImage(pics[picNum], playerFixedX, playerFixedY, this); //player
 //				g.drawRect((int)player.getPlayerRect().getX(), (int)player.getPlayerRect().getY(), (int)player.getPlayerRect().getWidth(), (int)player.getPlayerRect().getHeight());
-//				for (Rectangle re : rects) {
-//					g.drawRect((int)re.getX(), (int)re.getY(),(int) re.getWidth(), (int)re.getHeight());
-//				}
+
+				g.drawRect(playerFixedX + getScaledWidth(xOffsetToFeet), playerFixedY + getScaledHeight(yOffsetToFeet), (int)player.getPlayerRect().getWidth(), (int)player.getPlayerRect().getHeight());
+		
+				for (Rectangle re : rects) {
+					g.drawRect((int)re.getX(), (int)re.getY(),(int) re.getWidth(), (int)re.getHeight());
+				}
 			
 			if (isPaused) {
 				g.drawImage(resizeImg(title, getScaledWidth(600), getScaledHeight(500)), frameWidth / 2, 0, this);
