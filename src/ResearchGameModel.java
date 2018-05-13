@@ -14,15 +14,16 @@ import java.util.Collection;
  *   @version beta
  */
 public class ResearchGameModel{
-	final int xIncr = 14;
-    final int yIncr = 13; //originally 14
+	final int xIncr = 11;
+    final int yIncr = 9; //originally 14
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	
 	final int frameWidth = (int) screenSize.getWidth();
 	final int frameHeight = (int) screenSize.getHeight();
 	
-	final int playerStartingX = (int)screenSize.getWidth() / 8;
-	final int playerStartingY = (int)screenSize.getHeight() / 3;
+	final int playerStartingX = getScaledWidth(180);
+	final int playerStartingY = getScaledHeight(300);
+	
 	final int startingLives = 3;
 	final int imgWidth;
 	final int imgHeight;
@@ -68,7 +69,11 @@ public class ResearchGameModel{
 	Rectangle rect9;
 	public Rectangle[] rects;	
 	
-	public boolean isPaused;
+	public boolean tutorial;
+	
+	final int normal = 20;
+	final int slow = 15;
+	final int speedy = 23;
 
 	/**
 	 * <h1>ResearcherGameModel Constructor</h1> Constructs the Model. Takes in a width, height, imageWidth, and imageHeight from the views knowledge of screen size and image (sprite) size. Outside of this is creates crabs and adds them 
@@ -79,59 +84,67 @@ public class ResearchGameModel{
 	 * @param imageWidth width of the images
 	 * @param imageHeight height of the images
 	 */
-	public ResearchGameModel(int width, int height, int imageWidth, int imageHeight){
+	public ResearchGameModel(int width, int height, int imageWidth, int imageHeight, Boolean tutorial){
+		this.tutorial = tutorial;
 		player = new Researcher(playerStartingX, playerStartingY, startDir, startingLives);
-		crab1 = new Crab(-700, -400, 25); //normal
-		crab2 = new Crab(-2500, -800, 25); //normal
-		crab3 = new Crab(-3500, -800, 20); //slow
-		crab4 = new Crab(-2700, -900, 25); //normal
-		crab5 = new Crab(-3900, -750, 28); //speedy
-		crab6 = new Crab(-3800, -820, 20); //slow
-		crab7 = new Crab(-4900, -910, 25); //normal
-		crab8 = new Crab(-8550, -850, 28); //speedy
-		crab9 = new Crab(-800, -840, 20); //slow
-		crab10 = new Crab(-900, -820, 20); //slow
-		crab11 = new Crab(-1200, -910, 25); //normal
-		crab12 = new Crab(-6000, -910, 25); //normal
-		crab13 = new Crab(-2500, -1380, 20); //slow
-		crab14 = new Crab(-3000, -1440, 25); //normal
-		crab15 = new Crab(-4000, -1460, 25); //normal
-		crab16 = new Crab(-800, -840, 20); //slow
-		crab17 = new Crab(-900, -820, 20); //slow
-		crab18 = new Crab(-7000, -910, 25); //normal
-		crab19 = new Crab(-8000, -910, 25); //normal
-		crab20 = new Crab(-8000, -1300, 20); //slow
-		crab21 = new Crab(-8500, -1400, 20); //slow
-		crab22 = new Crab(-4550, -375, 20); //slow
-		crab23 = new Crab(-4700, -390, 20); //slow
-		crab24 = new Crab(-5150, -320, 20); //slow
-		crab25 = new Crab(-5460, -390, 20); //slow
-		crabs = new Crab[25];
-		crabs[0] = crab1;
-		crabs[1] = crab2;
-		crabs[2] = crab3;
-		crabs[3] = crab4;
-		crabs[4] = crab5;
-		crabs[5] = crab6;
-		crabs[6] = crab7;
-		crabs[7] = crab8;
-		crabs[8] = crab9;
-		crabs[9] = crab10;
-		crabs[10] = crab11;
-		crabs[11] = crab12;
-		crabs[12] = crab13;
-		crabs[13] = crab14;
-		crabs[14] = crab15;
-		crabs[15] = crab16;
-		crabs[16] = crab17;
-		crabs[17] = crab18;
-		crabs[18] = crab19;
-		crabs[19] = crab20;
-		crabs[20] = crab21;
-		crabs[21] = crab22;
-		crabs[22] = crab23;
-		crabs[23] = crab24;
-		crabs[24] = crab25;
+		if (tutorial == false) {
+			crab1 = new Crab(getScaledWidth(-700), getScaledHeight(-400), normal); //normal
+			crab2 = new Crab(getScaledWidth(-2500), getScaledHeight(-800), normal); //normal
+			crab3 = new Crab(getScaledWidth(-3500), getScaledHeight(-800), slow); //slow
+			crab4 = new Crab(getScaledWidth(-3000), getScaledHeight(-900), normal); //normal
+			crab5 = new Crab(getScaledWidth(-3900), getScaledHeight(-750), speedy); //speedy
+			crab6 = new Crab(getScaledWidth(-3800), getScaledHeight(-820), slow); //slow
+			crab7 = new Crab(getScaledWidth(-5400), getScaledHeight(-910), normal); //normal
+			crab8 = new Crab(getScaledWidth(-8550), getScaledHeight(-850), speedy); //speedy
+			crab9 = new Crab(getScaledWidth(-800), getScaledHeight(-840), slow); //slow
+			crab10 = new Crab(getScaledWidth(-900), getScaledHeight(-820), slow); //slow
+			crab11 = new Crab(getScaledWidth(-1200), getScaledHeight(-910), normal); //normal
+			crab12 = new Crab(getScaledWidth(-6000), getScaledHeight(-910), normal); //normal
+			crab13 = new Crab(getScaledWidth(-2500), getScaledHeight(-1380), slow); //slow
+			crab14 = new Crab(getScaledWidth(-3000), getScaledHeight(-1440), normal); //normal
+			crab15 = new Crab(getScaledWidth(-4000), getScaledHeight(-1460), normal); //normal
+			crab16 = new Crab(getScaledWidth(-800), getScaledHeight(-840), slow); //slow
+			crab17 = new Crab(getScaledWidth(-900), getScaledHeight(-820), slow); //slow
+			crab18 = new Crab(getScaledWidth(-7000), getScaledHeight(-910), normal); //normal
+			crab19 = new Crab(getScaledWidth(-7000), getScaledHeight(-910), normal); //normal
+			crab20 = new Crab(getScaledWidth(-7000), getScaledHeight(-1300), slow); //slow
+			crab21 = new Crab(getScaledWidth(-7200), getScaledHeight(-1400), slow); //slow
+			crab22 = new Crab(getScaledWidth(-4550), getScaledHeight(-375), slow); //slow
+			crab23 = new Crab(getScaledWidth(-4700), getScaledHeight(-390), slow); //slow
+			crab24 = new Crab(getScaledWidth(-5150), getScaledHeight(-320), slow); //slow
+			crab25 = new Crab(getScaledWidth(-5460), getScaledHeight(-390), slow); //slow
+			crabs = new Crab[25];
+			crabs[0] = crab1;
+			crabs[1] = crab2;
+			crabs[2] = crab3;
+			crabs[3] = crab4;
+			crabs[4] = crab5;
+			crabs[5] = crab6;
+			crabs[6] = crab7;
+			crabs[7] = crab8;
+			crabs[8] = crab9;
+			crabs[9] = crab10;
+			crabs[10] = crab11;
+			crabs[11] = crab12;
+			crabs[12] = crab13;
+			crabs[13] = crab14;
+			crabs[14] = crab15;
+			crabs[15] = crab16;
+			crabs[16] = crab17;
+			crabs[17] = crab18;
+			crabs[18] = crab19;
+			crabs[19] = crab20;
+			crabs[20] = crab21;
+			crabs[21] = crab22;
+			crabs[22] = crab23;
+			crabs[23] = crab24;
+			crabs[24] = crab25;
+		}
+		else if (tutorial == true) {
+			crab1 = new Crab(getScaledWidth(-1500), getScaledHeight(-800), 13); //normal
+			crabs = new Crab[1];
+			crabs[0] = crab1;
+		}
 		
 		rect1 = new Rectangle(0, 0, getScaledWidth(6000), getScaledHeight(330)); //locked
 		rect2 = new Rectangle(0, getScaledHeight(550), getScaledWidth(550), getScaledHeight(330)); //locked
@@ -155,24 +168,22 @@ public class ResearchGameModel{
 		this.height = height;
 		this.imgHeight = imageHeight;
 		this.imgWidth = imageWidth;
-		
-		isPaused = false;
 	}
 	
 	/**
 	 * returns the Boolean value for the model's isPaused
 	 * @return Boolean value for the model's isPaused
 	 */
-	public Boolean getIsPaused() {
-		return this.isPaused;
+	public Boolean getTutorial() {
+		return this.tutorial;
 	}
 	
 	/**
 	 * Sets a new Boolean value for the model's isPaused method
 	 * @param b new value for isPaused
 	 */
-	public void setIsPaused(Boolean b) {
-		this.isPaused = b;
+	public void setTutorial(Boolean b) {
+		this.tutorial = b;
 	}
 	/**
 	 * <h1>getCrabs</h1> Returns the array of Crabs create from the Model constructor
@@ -208,6 +219,7 @@ public class ResearchGameModel{
 			if (player.getPlayerRect().intersects(c.crabRect) && (c.getSteppedOn() == false)) {
 				player.setLives(player.getLives() - 1);
 				c.setSteppedOn(true);
+//				System.out.println(c);
 			}
 		}
 	}
@@ -231,8 +243,19 @@ public class ResearchGameModel{
 	public Boolean endCheck() {
 		if (player.getxPos() >= getScaledWidth(5500)) {
 			return true;
-			//System.out.print("game over back to main");
-			//add sending back to main screen
+		}
+		else {
+			return false;
+		}
+	}
+	
+	/**
+	 * <h1>tutorialEndCheck</h1> Checks to see if the player has reached the end of the tutorial and it should restart
+	 * @return boolean value of the player has reached the end of the tutorial and it should restart
+	 */
+	public Boolean tutorialEndCheck() {
+		if ((tutorial == true) && (player.getxPos() >= getScaledWidth(1600))) {
+			return true;
 		}
 		else {
 			return false;
@@ -245,6 +268,17 @@ public class ResearchGameModel{
 	 */
 	public boolean lifeCheck() {
 		if (player.getLives() <= 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * <h1>tutorialLifeCheck</h1>Checks if the player has run out of lives, and if so, restart the tutorial
+	 * @return whether True if the player has greater than 0 lives and False if not
+	 */
+	public boolean tutorialLifeCheck() {
+		if ((tutorial == true) && (player.getLives() <= 0)) {
 			return true;
 		}
 		return false;
@@ -307,9 +341,6 @@ public class ResearchGameModel{
 				c.setCrabRect(c.getCrabXPos(), c.getCrabYPos());
 			}
 			
-			for (Rectangle re : rects) {
-				re.setLocation((int)re.getX(), (int)re.getY());
-			}
 		}
 		
 	}

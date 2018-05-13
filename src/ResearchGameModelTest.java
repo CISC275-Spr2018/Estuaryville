@@ -7,7 +7,7 @@ import java.awt.Toolkit;
 import org.junit.jupiter.api.Test;
 
 class ResearchGameModelTest {
-	ResearchGameModel rgm = new ResearchGameModel(1440, 900, 180, 180);
+	ResearchGameModel rgm = new ResearchGameModel(1440, 900, 180, 180, false);
 
 	@Test
 	void testResearchGameModel() {
@@ -95,6 +95,17 @@ class ResearchGameModelTest {
 		player1.setxPos(300);
 		assertEquals(false, rgm.endCheck());
 	}
+	
+	@Test
+	void testTutorialEndCheck() {
+		ResearchGameModel rgm1 = new ResearchGameModel(1440, 900, 180, 180, true);
+		Researcher player1 = rgm1.getPlayer();
+		player1.setxPos(7000);
+		assertEquals(true, rgm1.tutorialEndCheck());
+		
+		player1.setxPos(300);
+		assertEquals(false, rgm1.tutorialEndCheck());
+	}
 
 	@Test
 	void testLifeCheck() {
@@ -102,6 +113,15 @@ class ResearchGameModelTest {
 		assertEquals(false, rgm.lifeCheck());
 		player1.setLives(0);
 		assertEquals(true, rgm.lifeCheck());
+	}
+	
+	@Test
+	void testTutorialLifeCheck() {
+		ResearchGameModel rgm2 = new ResearchGameModel(1440, 900, 180, 180, true);
+		Researcher player1 = rgm2.getPlayer();
+		assertEquals(false, rgm2.lifeCheck());
+		player1.setLives(0);
+		assertEquals(true, rgm2.lifeCheck());
 	}
 
 	@Test
