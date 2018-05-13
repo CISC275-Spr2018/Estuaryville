@@ -254,10 +254,10 @@ public class ResearchGameView{
 			keybindsPic = ImageIO.read(new File("assets/research-game/key-bindings-rs.png"));
 			pausePic = ImageIO.read(new File("assets/research-game/pkey-pic.png"));
 			
-			bg = resizeImg(bg, 7500, 3500);
-			title = resizeImg(title, 900, 900);
-			keybindsPic = resizeImg(keybindsPic, 320, 320);
-			pausePic = resizeImg(pausePic, 80, 80);
+			bg = resizeImg(bg, getScaledWidth(7500), getScaledHeight(3500));
+			title = resizeImg(title, getScaledWidth(900), getScaledHeight(900));
+			keybindsPic = resizeImg(keybindsPic, getScaledWidth(320), getScaledHeight(320));
+			pausePic = resizeImg(pausePic, getScaledWidth(80), getScaledHeight(80));
 			
 			return bufferedImage;
 		} catch (IOException e) {
@@ -273,7 +273,7 @@ public class ResearchGameView{
 		BufferedImage bufferedImage = null;
 		try {
 			bufferedImage = ImageIO.read(new File("assets/research-game/crab-sheet.png"));
-			bufferedImage = resizeImg(bufferedImage, 360, 180);
+			bufferedImage = resizeImg(bufferedImage, getScaledWidth(360), getScaledHeight(180));
 			return bufferedImage;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -289,7 +289,7 @@ public class ResearchGameView{
 		BufferedImage bufferedImage = null;
 		try {
 			bufferedImage = ImageIO.read(new File("assets/research-game/angry-crab-sheet.png"));
-			bufferedImage = resizeImg(bufferedImage, 360, 180);
+			bufferedImage = resizeImg(bufferedImage, getScaledWidth(360), getScaledHeight(180));
 			return bufferedImage;
 		} catch (IOException e) {
 			e.printStackTrace();
