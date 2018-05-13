@@ -180,6 +180,7 @@ public class Controller{
 					if (fMod.getGameOver()) {
 						fView.getPanel().setVisible(false);
 						activePanel = Active.MAIN;
+						break;
 					}
 				case KeyEvent.VK_P:
 					paused = !paused;
