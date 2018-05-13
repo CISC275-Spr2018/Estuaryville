@@ -100,7 +100,7 @@ public class Researcher {
 	 * @param xPos the new value that the Researcher will have for its x position
 	 */
 	public void setxPos(int xPos) {
-		this.xPos = getScaledWidth(xPos);
+		this.xPos = xPos;
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class Researcher {
 	 * @param yPos the new value that the Researcher will have for its y position
 	 */
 	public void setyPos(int yPos) {
-		this.yPos = getScaledWidth(yPos);
+		this.yPos = yPos;
 	}
 
 	/**

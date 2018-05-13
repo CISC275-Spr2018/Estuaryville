@@ -15,9 +15,9 @@ public class Crab{
 	Rectangle crabRect;
 	Boolean steppedOn;
 	int speed;
-	int rectangleOffset = 50;
-	int crabRectWidth = 80;
-	int crabRectHeight = 50;
+	int rectangleOffset = 70;
+	int crabRectWidth = 70;
+	int crabRectHeight = 40;
 	
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	
@@ -91,7 +91,7 @@ public class Crab{
 	 * @param y the y location of the new rectangle, does not change width and height because it is not needed
 	 */
 	public void setCrabRect(int x, int y) {
-		crabRect = new Rectangle(-(getScaledWidth(x) - getScaledHeight(50)), -(getScaledHeight(y) - getScaledHeight(50)), getScaledWidth(80), getScaledHeight(50));
+		crabRect = new Rectangle(-(getScaledWidth(x) - getScaledHeight(rectangleOffset)), -(getScaledHeight(y) - getScaledHeight(rectangleOffset)), getScaledWidth(crabRectWidth), getScaledHeight(crabRectHeight));
 	}
 	
 	/**

@@ -28,7 +28,7 @@ public class ResearchGameView{
 	int crabFrames = 2;
 	int picNum = 0;
 	int CpicNum = 0;
-	Boolean isPaused = false;
+	Boolean tutorial = true;
 	
 	Crab[] crabs;
 	
@@ -63,6 +63,8 @@ public class ResearchGameView{
 	BufferedImage[] aCPics, aCImages; //angry crab pics
 	BufferedImage bg;
 	BufferedImage title;
+	BufferedImage keybindsPic;
+	BufferedImage pausePic;
 	BufferedImage[][] animation; //player animation
 	BufferedImage[][] cAnimation; //crab animation
 	BufferedImage[][] aCAnimation; //angry crab animation
@@ -162,19 +164,27 @@ public class ResearchGameView{
 					else {
 						g.drawImage(cPics[CpicNum], -c.getCrabXPos(), -c.getCrabYPos(), this); //crabs
 					}
-					g.drawRect((int)c.getCrabRect().getX(), (int)c.getCrabRect().getY(), (int)c.getCrabRect().getWidth(), (int)c.getCrabRect().getHeight());//crab rects
+//					g.drawRect((int)c.getCrabRect().getX(), (int)c.getCrabRect().getY(), (int)c.getCrabRect().getWidth(), (int)c.getCrabRect().getHeight());//crab rects
 			}
 				g.drawImage(pics[picNum], playerFixedX, playerFixedY, this); //player
-//				g.drawRect((int)player.getPlayerRect().getX(), (int)player.getPlayerRect().getY(), (int)player.getPlayerRect().getWidth(), (int)player.getPlayerRect().getHeight());
-
-				g.drawRect(playerFixedX + getScaledWidth(xOffsetToFeet), playerFixedY + getScaledHeight(yOffsetToFeet), (int)player.getPlayerRect().getWidth(), (int)player.getPlayerRect().getHeight());
+//				g.drawRect(playerFixedX + getScaledWidth(xOffsetToFeet), playerFixedY + getScaledHeight(yOffsetToFeet), (int)player.getPlayerRect().getWidth(), (int)player.getPlayerRect().getHeight());
 		
-				for (Rectangle re : rects) {
-					g.drawRect((int)re.getX(), (int)re.getY(),(int) re.getWidth(), (int)re.getHeight());
-				}
+//				for (Rectangle re : rects) {
+//					g.drawRect((int)re.getX(), (int)re.getY(),(int) re.getWidth(), (int)re.getHeight());
+//				}
 			
-			if (isPaused) {
-				g.drawImage(resizeImg(title, getScaledWidth(600), getScaledHeight(500)), frameWidth / 2, 0, this);
+			if (tutorial) {
+				g.drawImage(title, getScaledWidth(600), getScaledHeight(-250), this);
+				g.drawImage(keybindsPic, getScaledWidth(700), getScaledHeight(350), this);
+				g.drawImage(pausePic, getScaledWidth(750), getScaledHeight(650), this);
+				g.setFont(new Font("Arial", Font.PLAIN, 25));
+				g.drawString("use P to pause", 840, 720);
+				g.setFont(new Font("Arial", Font.PLAIN, 25));
+				g.drawString("Goal: Get to the end of the level!", getScaledWidth(50), getScaledHeight(100));
+				g.drawString("Avoid: Stepping on 3 Crab and going off the Bridges!", getScaledWidth(50), getScaledHeight(150));
+				g.drawString("Try walking around, when you start there will be more Crabs!", getScaledWidth(50), getScaledHeight(200));
+				g.setFont(new Font("Arial", Font.PLAIN, 45));
+				g.drawString("Press Enter to start the Game when ready", getScaledWidth(100), getScaledHeight(800));
 			}
 			else {
 				g.setFont(new Font("Arial", Font.PLAIN, 45));
@@ -238,9 +248,17 @@ public class ResearchGameView{
 		BufferedImage bufferedImage = null;
 		try {
 			bufferedImage = ImageIO.read(new File("assets/research-game/female-scientist-" + direction.getName() + ".png"));
+			bufferedImage = resizeImg(bufferedImage, 1080, 180);
 			bg = ImageIO.read(new File("assets/research-game/research-background" + ".png"));
 			title = ImageIO.read(new File("assets/research-game/research-title.png"));
-		//	bg = resizeImg(bg, 7500, 3500);
+			keybindsPic = ImageIO.read(new File("assets/research-game/key-bindings-rs.png"));
+			pausePic = ImageIO.read(new File("assets/research-game/pkey-pic.png"));
+			
+			bg = resizeImg(bg, 7500, 3500);
+			title = resizeImg(title, 900, 900);
+			keybindsPic = resizeImg(keybindsPic, 320, 320);
+			pausePic = resizeImg(pausePic, 80, 80);
+			
 			return bufferedImage;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -255,7 +273,7 @@ public class ResearchGameView{
 		BufferedImage bufferedImage = null;
 		try {
 			bufferedImage = ImageIO.read(new File("assets/research-game/crab-sheet.png"));
-//			ac = ImageIO.read(new File("assets/research-game/angry-crab-sheet.png"));
+			bufferedImage = resizeImg(bufferedImage, 360, 180);
 			return bufferedImage;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -271,7 +289,7 @@ public class ResearchGameView{
 		BufferedImage bufferedImage = null;
 		try {
 			bufferedImage = ImageIO.read(new File("assets/research-game/angry-crab-sheet.png"));
-//			ac = ImageIO.read(new File("assets/research-game/angry-crab-sheet.png"));
+			bufferedImage = resizeImg(bufferedImage, 360, 180);
 			return bufferedImage;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -286,10 +304,11 @@ public class ResearchGameView{
 	 * @param crabs pulled in from the model for the most current state of all the crabs in the crabs list, accompanied by all the methods needed to get crabs methods
 	 * @param rects pulls in from model, the most current state of the rectangle
 	 */
-	public void update(Researcher player, Crab[] crabs, Rectangle[] rects){
+	public void update(Researcher player, Crab[] crabs, Rectangle[] rects, Boolean tutorial){
 		this.player = player;
 		this.crabs = crabs;	
 		this.rects = rects;
+		this.tutorial = tutorial;
 		switch(player.getDirection()){
 			case IDLE:	
 				frameCount = animation[RDirection.IDLE.ordinal()].length;	

@@ -32,7 +32,7 @@ public class Controller{
 	boolean firstFrame = true;
 
 	ResearchGameView rView = new ResearchGameView();
-	ResearchGameModel rMod = new ResearchGameModel(MainView.FRAME_WIDTH, MainView.FRAME_HEIGHT,0,0);
+	ResearchGameModel rMod = new ResearchGameModel(MainView.FRAME_WIDTH, MainView.FRAME_HEIGHT,0,0, true);
 
 	public Action drawAction;
 	private static boolean paused = false;
@@ -228,6 +228,8 @@ public class Controller{
 						rView.getPanel().setVisible(false);
 						activePanel = Active.MAIN;
 					}
+					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight(), false);
+					break;
 				case KeyEvent.VK_P:
 					paused = !paused;
 					break;
@@ -425,9 +427,15 @@ public class Controller{
 				rMod.crabCollisionChecker();
 				rMod.boundsCollisionChecker();
 				rMod.endCheck();
-				rView.update(rMod.getPlayer(), rMod.getCrabs(), rMod.getRects());
+				rView.update(rMod.getPlayer(), rMod.getCrabs(), rMod.getRects(), rMod.getTutorial());
+				if (rMod.tutorialEndCheck()) {
+					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight(), true);
+				}
+				if (rMod.tutorialLifeCheck()) {
+					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight(), true);
+				}
 				if (rMod.lifeCheck()) {
-					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight());
+					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight(), false);
 				}
 				if (rMod.endCheck()) {
 					activePanel = Active.MAIN;
