@@ -14,12 +14,14 @@ import java.util.Collection;
  *   @version beta
  */
 public class ResearchGameModel{
-	final int xIncr = 11;
-    final int yIncr = 9; //originally 14
+//	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//	final int frameWidth = 1180;
+//	final int frameHeight = 775;
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	
 	final int frameWidth = (int) screenSize.getWidth();
 	final int frameHeight = (int) screenSize.getHeight();
+	final int xIncr = frameWidth / 140;
+    final int yIncr = frameHeight / 100; //originally 14
 	
 	final int playerStartingX = getScaledWidth(180);
 	final int playerStartingY = getScaledHeight(300);
@@ -74,6 +76,9 @@ public class ResearchGameModel{
 	final int normal = 20;
 	final int slow = 15;
 	final int speedy = 23;
+	
+	public double scaleFacX = 1440.0 / (double)frameWidth;
+	public double scaleFacY = 900.0 / (double)frameHeight;
 
 	/**
 	 * <h1>ResearcherGameModel Constructor</h1> Constructs the Model. Takes in a width, height, imageWidth, and imageHeight from the views knowledge of screen size and image (sprite) size. Outside of this is creates crabs and adds them 
@@ -86,7 +91,7 @@ public class ResearchGameModel{
 	 */
 	public ResearchGameModel(int width, int height, int imageWidth, int imageHeight, Boolean tutorial){
 		this.tutorial = tutorial;
-		player = new Researcher(playerStartingX, playerStartingY, startDir, startingLives);
+		player = new Researcher((int)(playerStartingX * scaleFacX), (int)(playerStartingY * scaleFacY), startDir, startingLives);
 		if (tutorial == false) {
 			crab1 = new Crab(getScaledWidth(-700), getScaledHeight(-400), normal); //normal
 			crab2 = new Crab(getScaledWidth(-2500), getScaledHeight(-800), normal); //normal
@@ -294,7 +299,7 @@ public class ResearchGameModel{
 			player.setxPos(player.getxPos() + xIncr);
 			
 			for (Crab c : crabs) {
-				c.setCrabXPos(c.getCrabXPos() + c.getSpeed());
+				c.setCrabXPos(c.getCrabXPos() + getScaledWidth(c.getSpeed()));
 				c.setCrabRect(c.crabXPos, c.crabYPos);
 			}
 			
@@ -310,7 +315,7 @@ public class ResearchGameModel{
 			
 			for (Crab c : crabs) {
 				c.setCrabYPos(c.getCrabYPos() + yIncr);
-				c.setCrabXPos(c.getCrabXPos() + c.getSpeed());
+				c.setCrabXPos(c.getCrabXPos() + getScaledWidth(c.getSpeed()));
 				c.setCrabRect(c.getCrabXPos(), c.getCrabYPos());
 			}
 			
@@ -325,7 +330,7 @@ public class ResearchGameModel{
 			
 			for (Crab c : crabs) {
 				c.setCrabYPos(c.getCrabYPos() - yIncr);
-				c.setCrabXPos(c.getCrabXPos() + c.getSpeed());
+				c.setCrabXPos(c.getCrabXPos() + getScaledWidth(c.getSpeed()));
 				c.setCrabRect(c.getCrabXPos(), c.getCrabYPos());
 			}
 			
@@ -337,15 +342,11 @@ public class ResearchGameModel{
 		if (player.direction.getName().contains("idle-sheet")) {
 			
 			for (Crab c: crabs) {
-				c.setCrabXPos(c.getCrabXPos() + (c.getSpeed() - xIncr));
+				c.setCrabXPos(c.getCrabXPos() + (getScaledWidth(c.getSpeed()) - xIncr));
 				c.setCrabRect(c.getCrabXPos(), c.getCrabYPos());
 			}
 			
 		}
-		
-	}
-	
-	public void paused() {
 		
 	}
 	

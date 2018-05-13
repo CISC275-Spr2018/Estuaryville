@@ -181,7 +181,6 @@ public class Controller{
 						fView.getPanel().setVisible(false);
 						activePanel = Active.MAIN;
 					}
-					break;
 				case KeyEvent.VK_P:
 					paused = !paused;
 					break;
