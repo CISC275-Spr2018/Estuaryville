@@ -24,6 +24,12 @@ public class Crab{
 	final int frameWidth = (int) screenSize.getWidth();
 	final int frameHeight = (int) screenSize.getHeight();
 	
+//	final int frameWidth = 1180;
+//	final int frameHeight = 775;
+	
+	public double scaleFacX = 1440.0 / (double)frameWidth;
+	public double scaleFacY = 900.0 / (double)frameHeight;
+	
 /**
  * <h1>Crab Constructor</h1>A Crab is made by a x position, a y position, and a speed value. Besides that they have a Rectangle used for collisions that is mapped witht eh x and y, and a boolean that always starts as false but if 
  * the player collides with the Crabs Rectangle it turns true, used so each crab can only take one life from a player. 
@@ -32,9 +38,9 @@ public class Crab{
  * @param y the x position of the Crab
  */
 	public Crab(int x, int y, int speed) {
-		this.crabXPos = getScaledWidth(x);
-		this.crabYPos = getScaledHeight(y);
-		this.crabRect = new Rectangle((getScaledWidth(x) + getScaledWidth(rectangleOffset)), (getScaledHeight(y) + getScaledHeight(rectangleOffset)), (getScaledWidth(crabRectWidth)), (getScaledHeight(crabRectHeight)));
+		this.crabXPos = (int)(getScaledWidth(x)*scaleFacX);
+		this.crabYPos = (int)(getScaledHeight(y)*scaleFacY);
+		this.crabRect = new Rectangle((int)(getScaledWidth(x)*scaleFacX + getScaledWidth(rectangleOffset)), (int)(getScaledHeight(y)*scaleFacY + getScaledHeight(rectangleOffset)), (getScaledWidth(crabRectWidth)), (getScaledHeight(crabRectHeight)));
 		this.speed = speed;
 		steppedOn = false;
 	}
@@ -91,7 +97,7 @@ public class Crab{
 	 * @param y the y location of the new rectangle, does not change width and height because it is not needed
 	 */
 	public void setCrabRect(int x, int y) {
-		crabRect = new Rectangle(-(getScaledWidth(x) - getScaledHeight(rectangleOffset)), -(getScaledHeight(y) - getScaledHeight(rectangleOffset)), getScaledWidth(crabRectWidth), getScaledHeight(crabRectHeight));
+		crabRect = new Rectangle((int)(-getScaledWidth(x)*scaleFacX + getScaledWidth(rectangleOffset)), (int)(-getScaledHeight(y)*scaleFacY + getScaledHeight(rectangleOffset)), getScaledWidth(crabRectWidth), getScaledHeight(crabRectHeight));
 	}
 	
 	/**
