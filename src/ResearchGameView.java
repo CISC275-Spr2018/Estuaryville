@@ -1,3 +1,4 @@
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -153,6 +154,7 @@ public class ResearchGameView{
 			
 			g.setFont(new Font("Arial", Font.PLAIN, 45));
 			g.setColor(Color.WHITE);
+
 				g.drawImage(bg, (-player.getxPos()), (-player.getyPos()), getScaledWidth(7000), getScaledHeight(2500), this); //background////////////////////FIX
 				
 				for (Crab c : crabs) {
@@ -176,6 +178,7 @@ public class ResearchGameView{
 //					g.drawRect((int)re.getX(), (int)re.getY(),(int) re.getWidth(), (int)re.getHeight());
 //				}
 			
+			
 			if (tutorial) {
 				g.drawImage(title, getScaledWidth(600), getScaledHeight(-250), this);
 				g.drawImage(keybindsPic, getScaledWidth(700), getScaledHeight(350), this);
@@ -190,9 +193,12 @@ public class ResearchGameView{
 				g.drawString("Press Enter to start the Game when ready", getScaledWidth(100), getScaledHeight(800));
 			}
 			else if (player.getxPos() >= getScaledWidth(5500)) {
+				g.drawImage(pics[picNum], playerFixedX, playerFixedY, this); //player
 				g.setFont(new Font("Arial", Font.PLAIN, getScaledWidth(40)));
 				g.drawString("Research is important to monitor and survey the Estuary Ecosystem!", getScaledWidth(50), getScaledHeight(600));
 				g.drawString("Press Enter to return to the Main Screen", getScaledWidth(150), getScaledHeight(700));
+				g.setFont(new Font("Arial", Font.PLAIN, 45));
+				g.setColor(Color.WHITE);
 			}
 			else {
 				g.setFont(new Font("Arial", Font.PLAIN, getScaledWidth(45)));
@@ -352,6 +358,7 @@ public class ResearchGameView{
 	 * @return the panel
 	 */
 	public JPanel getPanel() {
+		// TODO Auto-generated method stub
 		return panel;
 	}
 	
