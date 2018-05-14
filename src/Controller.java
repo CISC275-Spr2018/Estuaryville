@@ -1,9 +1,12 @@
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -13,6 +16,7 @@ import java.io.ObjectOutputStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import javax.swing.Timer;
 
@@ -33,7 +37,8 @@ public class Controller{
 
 	ResearchGameView rView = new ResearchGameView();
 	ResearchGameModel rMod = new ResearchGameModel(MainView.FRAME_WIDTH, MainView.FRAME_HEIGHT,0,0, true);
-
+	
+	public Action glow;
 	public Action drawAction;
 	private static boolean paused = false;
 
@@ -63,6 +68,10 @@ public class Controller{
 				case KeyEvent.VK_L:
 					if(ke.isControlDown())
 						load();
+					break;
+				case KeyEvent.VK_ENTER:
+					if(mMod.getTutorial())
+						mMod.reset();
 					break;
 				}
 			}
@@ -256,6 +265,53 @@ public class Controller{
 				c.redraw();
 			}
 		};
+		
+		JButton tButton = mView.getTButton();
+		JButton rButton = mView.getSidebarButtons().get("Remove");
+		glow = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				if(mMod.getTutorial()) {
+					Color defaultC = new JButton().getBackground();
+					rButton.setBackground(defaultC);
+					if(mMod.getBuild() == BuildState.NONE && mMod.getMap()[5][5].getB() == null) {
+						if(tButton.getBackground() == defaultC)	
+							tButton.setBackground(Color.GREEN);
+						else
+							tButton.setBackground(defaultC);
+					}
+					else if(mMod.getBuild() == BuildState.TUTORIAL && mMod.getMap()[5][5].getB() == null) {
+						tButton.setBackground(defaultC);
+						JButton boardButton = mView.getBoard()[5][5].getButton();
+						if(boardButton.getBackground() == defaultC) {
+							boardButton.setBackground(Color.GREEN);
+							boardButton.setIcon(null);
+						}
+						else {
+							boardButton.setBackground(defaultC);
+							boardButton.setIcon(mView.getBoard()[5][5].getBackground());
+						}
+					}
+					else if(mMod.getBuild() == BuildState.NONE && mMod.getMap()[5][5].getB() != null) {
+						if(rButton.getBackground() == defaultC)	
+							rButton.setBackground(Color.GREEN);
+						else
+							rButton.setBackground(defaultC);
+					}
+					else if(mMod.getBuild() == BuildState.REMOVE && mMod.getMap()[5][5].getB() != null) {
+						tButton.setBackground(defaultC);
+						JButton boardButton = mView.getBoard()[5][5].getButton();
+						if(boardButton.getBackground() == defaultC) {
+							boardButton.setBackground(Color.GREEN);
+							boardButton.setIcon(null);
+						}
+						else {
+							boardButton.setBackground(defaultC);
+							boardButton.setIcon(mView.getBoard()[5][5].getShowImage());
+						}
+					}
+				}
+			}
+		};
 	}
 	/**
 	 * Adds listeners to the main map of the main screen.
@@ -267,9 +323,9 @@ public class Controller{
 			for(int j = 0; j < view.getBoard()[0].length; j++) {
 				final int x = i;
 				final int y = j;
-				view.getBoard()[i][j].getButton().addActionListener(new ActionListener() {
+				view.getBoard()[i][j].getButton().addMouseListener(new MouseAdapter() {
 					@Override
-					public void actionPerformed(ActionEvent e) {
+					public void mousePressed(MouseEvent e) {
 						if(!paused) {
 							BuildReturn br;
 							if(activePanel == Active.MAIN) {
@@ -310,6 +366,11 @@ public class Controller{
 									break;
 								case REMOVE:
 									model.removeBuilding(x, y);
+								case TUTORIAL:
+									br = model.build(model.getBuildingTypes().get(BuildingName.TUTORIAL), x, y);
+									activePanel = br.getActive();
+									buildProblem = br.getBuildError();
+									break;
 								default:
 									break;
 								}
@@ -373,6 +434,17 @@ public class Controller{
 					model.setBuild(BuildState.REMOVE);
 			}
 		});
+		
+		view.getTButton().addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(model.getTutorial()) {
+					model.setBuild(BuildState.TUTORIAL);
+				}
+			}
+			
+		});
 	}
 	/**
 	 * Runs games on 30 millisecond tick speed.
@@ -382,6 +454,8 @@ public class Controller{
 			public void run() {
 				Timer t = new Timer(30, drawAction);
 				t.start();
+				Timer t2 = new Timer(750, glow);
+				t2.start();
 			}
 		});
 	}
@@ -401,7 +475,10 @@ public class Controller{
 						mMod.getMoneyIncr(),
 						mMod.getPollIncr(),
 						buildProblem,
-						mMod.getBuildingTypes());
+						mMod.getBuildingTypes(),
+						mMod.getTutorial(),
+						mMod.getBuilt());
+				mMod.setBuilt(false);
 				if(mMod.gameOver()) {
 					try {
 						Thread.sleep(1500);
