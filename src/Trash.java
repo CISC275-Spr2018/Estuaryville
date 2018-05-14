@@ -44,15 +44,15 @@ public class Trash extends Mover{
 	 */
 	public Trash(Type t){
 		if(Math.random() > 0.5){
-			super.setXPos(-25-FishingGameView.TRASH_WIDTH);
+			super.setXPos((int) ((Math.random()*-125)-25-FishingGameView.TRASH_WIDTH));
 			super.setDirection(Direction.EAST);
 		}else{
-			super.setXPos(FishingGameView.getWidth() + 25);
+			super.setXPos((int) (FishingGameView.getWidth() + (Math.random()*125) + 25));
 			super.setDirection(Direction.WEST);
 		}
 		originY = (int) (Math.random()*(FishingGameModel.WATER_BOTTOM - FishingGameModel.WATER_TOP - FishingGameView.TRASH_HEIGHT - 50) + FishingGameModel.WATER_TOP + 50);
 		super.setYPos(originY);
-		super.setXSpeed(12);
+		super.setXSpeed((int) (Math.random()*13) + 7);
 		trashType = t;
 		hooked = false;
 		hookedFor = 0;
@@ -94,7 +94,7 @@ public class Trash extends Mover{
 	public void move(){
 		switch(this.direction){
 		case EAST:
-			this.setYPos(originY - (int)(30 * Math.cos(this.getXPos())));
+			this.setYPos(originY - (int)(this.getXSpeed()*2.5 * Math.cos(this.getXPos()/1.2/this.getXSpeed())));
 			this.setXPos(this.getXPos() + this.getXSpeed());
 			if(this.getXPos() > FishingGameView.WIDTH + 25)
 				this.setXPos(-25-FishingGameView.TRASH_WIDTH);
@@ -102,7 +102,7 @@ public class Trash extends Mover{
 		break;
 		case WEST:
 		default:
-			this.setYPos(originY - (int)(30 * Math.cos(this.getXPos())));
+			this.setYPos(originY - (int)(this.getXSpeed()*2.5*Math.cos(this.getXPos()/1.2/this.getXSpeed())));
 			this.setXPos(this.getXPos() - this.getXSpeed());
 			if(this.getXPos() < -25-FishingGameView.TRASH_WIDTH)
 				this.setXPos(FishingGameView.WIDTH + 25);

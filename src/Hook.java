@@ -20,7 +20,7 @@ public class Hook extends Mover{
 		super();
 		super.setXPos((int) (500.0/1100.0 * FishingGameView.getWidth()));
 		super.setYPos((int) (450.0/700.0 * FishingGameView.getHeight()));
-		hitbox = new Rectangle(getXPos(), getYPos(), FishingGameView.HOOK_WIDTH, FishingGameView.HOOK_HEIGHT);
+		hitbox = new Rectangle(getXPos(), getYPos()+FishingGameView.HOOK_HEIGHT/3, FishingGameView.HOOK_WIDTH, FishingGameView.HOOK_HEIGHT*2/3);
 		gotABite = false;
 	}
 	
@@ -35,7 +35,7 @@ public class Hook extends Mover{
 	 * @param y new y location
 	 */
 	public void setHitbox(int x, int y){
-		hitbox.setLocation(x, y);
+		hitbox.setLocation(x, y+FishingGameView.HOOK_HEIGHT/3);
 	}
 	
 	/**
