@@ -1,4 +1,5 @@
 
+
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -7,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -41,6 +43,8 @@ public class Controller{
 	public Action glow;
 	public Action drawAction;
 	private static boolean paused = false;
+	public static boolean tutClicked = false;
+	public boolean firstClick = true;
 
 	/**
 	 * Creates an instance of Controller
@@ -54,6 +58,23 @@ public class Controller{
 		fView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
 		rView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
 
+		mView.getPanel().addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+			@Override
+			public void mousePressed(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (tutClicked) {
+					tutClicked = false;
+				}
+			}
+		});
+		
 		mView.getPanel().addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent ke) {
@@ -72,8 +93,10 @@ public class Controller{
 				case KeyEvent.VK_ENTER:
 					if(mMod.getTutorial())
 						mMod.reset();
-					if(mMod.gameOver())
+					if(mMod.gameOver()) {
 						mMod.reset();
+						firstClick = true;
+					}
 					break;
 				}
 			}
@@ -303,6 +326,10 @@ public class Controller{
 						}
 					}
 					else if(mMod.getBuild() == BuildState.NONE && mMod.getMap()[5][5].getB() != null) {
+						if(firstClick) {
+							tutClicked = true;
+						firstClick = false;
+						}
 						if(rButton.getBackground() == defaultC)	
 							rButton.setBackground(Color.GREEN);
 						else
@@ -465,7 +492,7 @@ public class Controller{
 			public void run() {
 				Timer t = new Timer(30, drawAction);
 				t.start();
-				Timer t2 = new Timer(750, glow);
+				Timer t2 = new Timer(500, glow);
 				t2.start();
 			}
 		});
@@ -492,17 +519,20 @@ public class Controller{
 			switch(activePanel) {
 			case MAIN:
 				mView.getPanel().requestFocusInWindow();
-				mMod.update();
+				if (!tutClicked) {
+					mMod.update();
+				}
 				mView.update((double) (mMod.getMoney())/(double) (mMod.MONEY_MAX),
 						(double) (mMod.getPollution()) /(double) (mMod.POLLUTION_MAX),
 						mMod.getMap(),
-						mMod.gameOver(),
 						mMod.getMoneyIncr(),
 						mMod.getPollIncr(),
 						buildProblem,
 						mMod.getBuildingTypes(),
 						mMod.getTutorial(),
-						mMod.getBuilt());
+						mMod.getBuilt(), 
+						mMod.gameOver(),
+						tutClicked);
 				mMod.setBuilt(false);/*
 				if(mMod.gameOver()) {
 					try {

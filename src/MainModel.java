@@ -144,6 +144,11 @@ public class MainModel implements Serializable {
 	public MapSpot[][] getMap() {
 		return map;
 	}
+	
+	/**
+	 * Returns the tutorial variable of the Main Model
+	 * @return Tells whether the tutorial is active or not
+	 */
 	public boolean getTutorial() {
 		return tutorial;
 	}
@@ -160,6 +165,9 @@ public class MainModel implements Serializable {
 		}
 	}
 	
+	/**
+	 * Resets the game to the starting state
+	 */
 	public void reset() {
 		for(int i = 0;i < map.length; i++) {
     		for(int j = 0; j < map[0].length; j++) {
@@ -226,6 +234,8 @@ public class MainModel implements Serializable {
 					break;
 				case TUTORIAL:
 					build = BuildState.NONE;
+					pollIncr += FACTORY_POLL_INCR;
+					moneyIncr += FACTORY_MONEY_INCR;
 					break;
 				}
 			}
