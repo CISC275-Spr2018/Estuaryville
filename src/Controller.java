@@ -237,6 +237,7 @@ public class Controller{
 					if (rMod.endCheck()) {
 						rView.getPanel().setVisible(false);
 						activePanel = Active.MAIN;
+						paused = false;
 					}
 					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight(), false);
 					break;
@@ -516,7 +517,7 @@ public class Controller{
 					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight(), false);
 				}
 				if (rMod.endCheck()) {
-					activePanel = Active.MAIN;
+					paused = true;
 				}
 				break;
 			default:

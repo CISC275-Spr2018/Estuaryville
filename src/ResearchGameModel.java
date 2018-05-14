@@ -15,8 +15,8 @@ import java.util.Collection;
  */
 public class ResearchGameModel{
 //	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-//	final int frameWidth = 1180;
-//	final int frameHeight = 775;
+//	final int frameWidth = 1160;
+//	final int frameHeight = 780;
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	final int frameWidth = (int) screenSize.getWidth();
 	final int frameHeight = (int) screenSize.getHeight();
@@ -277,6 +277,7 @@ public class ResearchGameModel{
 		}
 		return false;
 	}
+
 	
 	/**
 	 * <h1>tutorialLifeCheck</h1>Checks if the player has run out of lives, and if so, restart the tutorial
