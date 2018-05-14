@@ -150,5 +150,4 @@ public class MapSpot implements Serializable{
 		else 
 			return other.getB().equals(this.b) && other.gettState().equals(this.tState);
 	}
-	
 }

@@ -35,20 +35,20 @@ public class MainModel implements Serializable {
     private boolean tutorial = true;
     private boolean built = false;
     
-    public boolean getBuilt() {
-    	return built;
-    }
-    
-    public void setBuilt(boolean built) {
-    	this.built = built;
-    }
-    
     public void setButtons(MapSpot[][] board) {
     	for(int i = 0;i < board.length; i++) {
     		for(int j = 0; j < board[0].length; j++) {
     			map[i][j].setButton(board[i][j].getButton());
     		}
     	}
+    }
+    
+    public boolean getBuilt() {
+    	return built;
+    }
+    
+    public void setBuilt(boolean built) {
+    	this.built = built;
     }
 	/**
 	 * Returns a Map with the keys being the Building's name and the Value being the Building.
@@ -206,9 +206,6 @@ public class MainModel implements Serializable {
 					pollIncr += PORT_POLL_INCR;
 					moneyIncr += PORT_MONEY_INCR;
 					break;
-				default:
-					build = BuildState.NONE;
-					return new BuildReturn(BuildError.NONE,Active.MAIN);
 				}
 			}
 			else {
@@ -300,7 +297,7 @@ public class MainModel implements Serializable {
 	 */
 	public void update() {
 		if(!gameOver()) {
-			if(pollution >= 0)
+			if(pollution >= 0 || pollIncr > 0)
 				pollution += pollIncr;
 			if(moneyIncr >= 0 || money > 0)
 				money += moneyIncr;
