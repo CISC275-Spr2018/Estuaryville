@@ -76,8 +76,14 @@ public class MainView {
 	private JButton tButton;
 	private boolean built = false;
 	private boolean gameOver = false;
+	private boolean tut = false;
+	private BufferedImage tutPic;
 	
 	//setters/getters
+	/**
+	 * Sets the buildings based on a given map
+	 * @param map The map used to base the building placements off of
+	 */
 	public void setBuildings(MapSpot[][] map) {
     	for(int i = 0;i < map.length; i++) {
     		for(int j = 0; j < map[0].length; j++) {
@@ -87,6 +93,10 @@ public class MainView {
     	}
     }
 	
+	/**
+	 * Gets the tutorial button from the View
+	 * @return The tutorial button
+	 */
 	public JButton getTButton() {
 		return tButton;
 	}
@@ -184,6 +194,14 @@ public class MainView {
 			Graphics2D g2d = (Graphics2D) g;
 			int fontSize = FRAME_WIDTH/20;
 			g2d.setFont(new Font("Monospaced", Font.BOLD, fontSize));
+			if (tut) {
+				for(int i = 0;i < board.length; i++) {
+		    		for(int j = 0; j < board[0].length; j++) {
+		    			board[i][j].getButton().setVisible(false);
+		    		}
+		    	}
+				g.drawImage(tutPic, 0, 0, this);
+			}
 			if(gameOver) {
 				for(int i = 0;i < board.length; i++) {
 		    		for(int j = 0; j < board[0].length; j++) {
@@ -202,7 +220,7 @@ public class MainView {
 				g2d.drawString("PRESS  ENTER", FRAME_WIDTH/5, FRAME_HEIGHT/2);
 				g2d.drawString(" TO RESTART ", FRAME_WIDTH/5, FRAME_HEIGHT/2+g2d.getFontMetrics().getHeight());
 			}
-			else {
+			else if (!tut){
 				setBackground(new Color(100, 153, 239));
 				
 				
@@ -377,6 +395,12 @@ public class MainView {
 	 */
 	public void addMainMap() {
 		ImageIcon[][] backgroundImages = loadBackgroundImages();
+		try {
+			tutPic = resize(ImageIO.read(new File("assets/main-screen/tutorial.png")), FRAME_WIDTH, FRAME_HEIGHT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		for(int i = 0; i < NUM_MAP_BUTTONS_X; i++) {
 			for(int j = 0; j < NUM_MAP_BUTTONS_Y; j++) {
 				JButton button = new JButton();
@@ -492,6 +516,7 @@ public class MainView {
 					bgImages[i][j] = new ImageIcon(resize(bgBImages[i][j],MAP_BUTTON_WIDTH,MAP_BUTTON_HEIGHT));
 				}
 			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -518,7 +543,8 @@ public class MainView {
 	 * @param poll The current pollution level.
 	 * @param map The current state of the main grid.
 	 */
-	public void update(double money, double poll, MapSpot[][] map, boolean gOver,int moneyIncr, int pollIncr,BuildError be,HashMap<BuildingName,Building> buildTypes, boolean tutorial, boolean built, boolean gameOver) {
+	public void update(double money, double poll, MapSpot[][] map, int moneyIncr, int pollIncr,BuildError be,HashMap<BuildingName,Building> buildTypes, boolean tutorial, boolean built, boolean gameOver, boolean tutClicked) {
+		tut = tutClicked;
 		if(firstFrame) {
 			for(BuildingName name : BuildingName.values()) {
 				if(name != BuildingName.TUTORIAL)
