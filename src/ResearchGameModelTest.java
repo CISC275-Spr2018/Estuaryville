@@ -127,8 +127,9 @@ class ResearchGameModelTest {
 	@Test
 	void testUpdateLocationAndDirection() {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		final int playerStartingX = (int)screenSize.getWidth() / 8;
-		final int xIncr = 15;
+		final int playerStartingX = (180);
+		final int frameWidth = (int) screenSize.getWidth();
+		final int xIncr = frameWidth / 140;
 		Researcher player = rgm.getPlayer();
 		player.setDirection(RDirection.EAST);
 		assertEquals(player.getxPos(), playerStartingX);

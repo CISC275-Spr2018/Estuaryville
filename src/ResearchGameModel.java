@@ -14,14 +14,11 @@ import java.util.Collection;
  *   @version beta
  */
 public class ResearchGameModel{
-//	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-//	final int frameWidth = 1160;
-//	final int frameHeight = 780;
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	final int frameWidth = (int) screenSize.getWidth();
 	final int frameHeight = (int) screenSize.getHeight();
 	final int xIncr = frameWidth / 140;
-    final int yIncr = frameHeight / 100; //originally 14
+    final int yIncr = frameHeight / 100;
 	
 	final int playerStartingX = getScaledWidth(180);
 	final int playerStartingY = getScaledHeight(300);
@@ -224,7 +221,6 @@ public class ResearchGameModel{
 			if (player.getPlayerRect().intersects(c.crabRect) && (c.getSteppedOn() == false)) {
 				player.setLives(player.getLives() - 1);
 				c.setSteppedOn(true);
-//				System.out.println(c);
 			}
 		}
 	}
@@ -295,7 +291,6 @@ public class ResearchGameModel{
 	 * player position, and bounds rectangles.
 	 */
 	public void updateLocationAndDirection(){	
-//		System.out.println("x: " + player.getxPos() + ", y: " + player.getyPos()); // print x and y of player
 		if (player.direction.getName().contains("forward-east-sheet")) {
 			player.setxPos(player.getxPos() + xIncr);
 			

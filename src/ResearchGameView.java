@@ -74,8 +74,6 @@ public class ResearchGameView{
 	
 	final int frameWidth = (int) screenSize.getWidth();
 	final int frameHeight = (int) screenSize.getHeight();
-//	final int frameWidth = 1160;
-//	final int frameHeight = 780;
 	
 	
 	final int playerFixedX = getScaledWidth(180);
@@ -166,6 +164,9 @@ public class ResearchGameView{
 					else {
 						g.drawImage(cPics[CpicNum], -c.getCrabXPos(), -c.getCrabYPos(), this); //crabs
 					}
+					
+					//uncomment to see the rectangles for player, crabs, and boundaries
+					
 //					g.drawRect((int)c.getCrabRect().getX(), (int)c.getCrabRect().getY(), (int)c.getCrabRect().getWidth(), (int)c.getCrabRect().getHeight());//crab rects
 			}
 				g.drawImage(pics[picNum], playerFixedX, playerFixedY, this); //player
@@ -346,8 +347,11 @@ public class ResearchGameView{
 		}
 	}
 
+	/**
+	 * Returns the panel
+	 * @return the panel
+	 */
 	public JPanel getPanel() {
-		// TODO Auto-generated method stub
 		return panel;
 	}
 	
