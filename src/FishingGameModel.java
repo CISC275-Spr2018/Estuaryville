@@ -24,6 +24,8 @@ public class FishingGameModel extends Model {
 	int timeSinceCatch;
 	boolean displayCatch;
 	boolean gameOver;
+	boolean tutorial;
+	boolean reeling;
 	// GETTERS
 	/**
 	 * returns the Mover that is on the hook currently
@@ -43,11 +45,13 @@ public class FishingGameModel extends Model {
 	
 	public void setPollutionLevel(double pl){
 		piecesOfTrash = (int) (pl * MAX_TRASH);
-		for(int i = 0; i < piecesOfTrash; i++){
-			trashAL.add(new Trash(Trash.Type.values()[i%3]));
-		}
 	}
 	
+	/**
+	 * Returns true if the game mode is set to tutorial
+	 * @return a Boolean
+	 */
+	public boolean isTutorial(){return tutorial;}
 	
 	/**
 	 * Creates a new instance of FishingGameModel Adds an interactive hook and
@@ -62,15 +66,16 @@ public class FishingGameModel extends Model {
 		super(w, h);
 		fishes = new ArrayList<Fish>();
 		trashAL = new ArrayList<Trash>();
-		for (int i = 0; i < 12; i++) {
-			fishes.add(new Fish(Fish.Species.values()[i % 3], 9, 2, (i % 2 == 0 ? Direction.EAST : Direction.WEST)));
-		}
+		fishes.add(new Fish(Fish.Species.SUMMER_FLOUNDER, 9, 2, Direction.EAST));
+		trashAL.add(new Trash(Trash.Type.values()[1]));
 		hook = new Hook();
 		hook.setXSpeed(0);
 		hook.setYSpeed(0);
 		caught = null;
 		gameOver = false;
 		timeSinceCatch = -1;
+		tutorial = true;
+		reeling = false;
 	}
 
 	/**
@@ -107,37 +112,37 @@ public class FishingGameModel extends Model {
 	 */
 	@Override
 	public void update() {
-		boolean reeling = false;
 		Fish f;
 		Trash t;
 		int i = 0;
-		if(fishes.size() == 0)
+		if(fishes.size() == 0 && !tutorial)
 			gameOver = true;
 		while (!reeling && i < fishes.size() + trashAL.size()) {
 			if(i < fishes.size() && fishCaught(fishes.get(i))) {
 				caught = fishes.get(i);
-				reelItIn(fishes.get(i));
 				reeling = true;
 			}else if(i >= fishes.size() && trashCaught(trashAL.get(i - fishes.size()))){
 				caught = trashAL.get(i - fishes.size());
-				reelItIn(trashAL.get(i - fishes.size()));
 				reeling = true;
 			}
 			i++;
 		}
-		if (!reeling) {
+		if(reeling){
+			reelItIn(caught);
+		}else{
 			caught = null;
 			checkBounds(); // checks the hook
 		}
 		if(timeSinceCatch >= 0){
 			displayCatch = true;
-			timeSinceCatch++;
+			timeSinceCatch++;		
 		}
 		if(timeSinceCatch > 30){
 			displayCatch = false;
 			hook.setXPos((int) (500.0/1100.0 * FishingGameView.getWidth()));
 			hook.setYPos((int) (450.0/700.0 * FishingGameView.getHeight()));
 			timeSinceCatch = -1;
+			reeling = false;
 		}
 		hook.setHitbox(hook.getXPos(), hook.getYPos());
 
@@ -151,10 +156,23 @@ public class FishingGameModel extends Model {
 			t = trashAL.get(i);
 			if(!t.getHooked())
 				t.move();
+			System.out.println("Y:"+t.getYPos());
 			t.setHitbox(t.getXPos(), t.getYPos());
 		}
 
 	}
+	
+	public void populate(){
+			tutorial = false;
+			for (int j = 0; j < 9; j++) {
+				fishes.add(new Fish(Fish.Species.values()[j % 3], 9, 2, (j % 2 == 0 ? Direction.EAST : Direction.WEST)));
+			}
+			for(int k = 0; k < piecesOfTrash; k++){
+				trashAL.add(new Trash(Trash.Type.values()[k%3]));
+			}
+			timeSinceCatch = 31;
+	}
+	
 /**
  * Reels in the hook and whatever Mover is caught
  * @param m a Mover that is caught on the hook
@@ -166,18 +184,16 @@ public class FishingGameModel extends Model {
 		m.setYPos(m.getYPos() + yDiff);
 		hook.setXPos(hook.getXPos() + xDiff);
 		hook.setYPos(hook.getYPos() + yDiff);
-		if(m instanceof Fish)
-		{
-			Fish f = (Fish) m;
-			if(Math.abs(hook.getXPos() - FishingGameView.ROD_X) < 7 && Math.abs(hook.getYPos() - FishingGameView.ROD_Y) < 7){
-				fishes.remove(f);
-				timeSinceCatch = 0;
-			}
-		}else{
-			Trash t = (Trash) m;
-			if(Math.abs(hook.getXPos() - FishingGameView.ROD_X) < 7 && Math.abs(hook.getYPos() - FishingGameView.ROD_Y) < 7){
+		if(Math.abs(hook.getXPos() - FishingGameView.ROD_X) < 7 && Math.abs(hook.getYPos() - FishingGameView.ROD_Y) < 7){
+			timeSinceCatch = 0;
+			reeling = false;
+			if(m instanceof Fish)
+			{
+				Fish f = (Fish) m;
+				fishes.remove(f);	
+			}else{
+				Trash t = (Trash) m;
 				trashAL.remove(t);
-				timeSinceCatch = 0;
 			}
 		}
 	}

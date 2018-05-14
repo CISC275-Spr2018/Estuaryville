@@ -68,10 +68,10 @@ public class Fish extends Mover{
 	 */
 	public void setMouth(int x, int y, Direction dir){
 		if(dir == Direction.EAST){
-			mouth.setLocation(x + (int)(.75* FishingGameView.FISH_WIDTH),
+			mouth.setLocation(x + (int)(.70* FishingGameView.FISH_WIDTH),
 							  y + (int)(.4 * FishingGameView.FISH_HEIGHT));
 		}else if(dir == Direction.WEST){
-			mouth.setLocation(x+(int)(.08* FishingGameView.FISH_WIDTH), y + (int)(.4 * FishingGameView.FISH_HEIGHT));
+			mouth.setLocation(x+(int)(.12* FishingGameView.FISH_WIDTH), y + (int)(.4 * FishingGameView.FISH_HEIGHT));
 		}
 	}
 	
@@ -91,12 +91,12 @@ public class Fish extends Mover{
 		xPos = (int) (Math.random()*FishingGameView.getWidth());
 		yPos = (int) (Math.random()*(FishingGameModel.WATER_BOTTOM - FishingGameModel.WATER_TOP - FishingGameView.FISH_HEIGHT) + FishingGameModel.WATER_TOP);
 		if(dir == Direction.EAST){
-			mouth = new Rectangle(xPos + (int)(.75*FishingGameView.FISH_WIDTH),
+			mouth = new Rectangle(xPos + (int)(.70*FishingGameView.FISH_WIDTH),
 					yPos + (int)(.4 * FishingGameView.FISH_HEIGHT), 
 					FishingGameView.FISH_WIDTH/5, 
 					FishingGameView.FISH_HEIGHT/5);
 		}else{
-			mouth = new Rectangle(xPos+(int)(.08* FishingGameView.FISH_WIDTH), yPos + (int)(.4 * FishingGameView.FISH_HEIGHT), FishingGameView.FISH_WIDTH/5, FishingGameView.FISH_HEIGHT/5);
+			mouth = new Rectangle(xPos+(int)(.12* FishingGameView.FISH_WIDTH), yPos + (int)(.4 * FishingGameView.FISH_HEIGHT), FishingGameView.FISH_WIDTH/5, FishingGameView.FISH_HEIGHT/5);
 		}
 		hookedFor = 0;
 	}

@@ -15,7 +15,6 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-
 /* 
  * Joel Turk
  */
@@ -26,24 +25,25 @@ import javax.swing.JPanel;
  * 
  * @author Joel
  */
-public class FishingGameView{
+public class FishingGameView {
 	static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	final static int WIDTH = screenSize.width;// 1100;//786;//
 	final static int HEIGHT = screenSize.height; // 500;//
 	public static BufferedImage bg; // background image
 	public static BufferedImage hook_sprite; // the fishing hook
+	public static BufferedImage arrow_keys, spacebar, p_key, title, tutorial_complete_screen;
 	final static double SCALE = (FishingGameView.WIDTH / 1280.0);
 	final static double SCALE_Y = (FishingGameView.HEIGHT / 800.0);
 	final static int HOOK_WIDTH = (int) (15 * SCALE);
 	final static int HOOK_HEIGHT = (int) (21 * SCALE);
 	final static int FISH_WIDTH = (int) (100 * SCALE);
 	final static int FISH_HEIGHT = (int) (100 * SCALE_Y);
-	final static int TRASH_WIDTH = (int) (75 * SCALE);
-	final static int TRASH_HEIGHT = (int) (75 * SCALE_Y);
+	final static int TRASH_WIDTH = (int) (40 * SCALE);
+	final static int TRASH_HEIGHT = (int) (40 * SCALE_Y);
 	final static int ROD_X = (int) (748 * SCALE);
 	final static int ROD_Y = (int) (73 * SCALE_Y);
 	public BufferedImage[][] fish_sprites;
-	public BufferedImage[] trash_sprites; //trash
+	public BufferedImage[] trash_sprites; // trash
 	public int imgWidths[];
 	public int imgHeights[];
 	private ArrayList<Fish> fishes;
@@ -54,6 +54,7 @@ public class FishingGameView{
 	boolean reeling;
 	boolean gameOver;
 	boolean displayCatch;
+	boolean tutorial;
 	Mover recentlyCaught;
 	Fish rcF;
 	Trash rcT;
@@ -72,6 +73,7 @@ public class FishingGameView{
 		panel.setFocusable(true);
 		panel.requestFocusInWindow();
 		reeling = false;
+		tutorial = true;
 		gameOver = false;
 	}
 
@@ -101,29 +103,30 @@ public class FishingGameView{
 			g.drawImage(hook_sprite, hook.getXPos(), hook.getYPos(), this);
 			g.setColor(Color.WHITE);
 			Graphics2D g2d = (Graphics2D) g;
-			g2d.setStroke(new BasicStroke(3));
+			g2d.setStroke(new BasicStroke((WIDTH > 2000 ? 7 : 3)));
 			int hookX = hook.getXPos() + (HOOK_WIDTH * 2 / 3);
 			int hookY = hook.getYPos();
 			int waterSurfaceY = (int) (365.0 / 700.0 * FishingGameView.HEIGHT);
 			int x = 0, y = 0, width = 0, height = 0, startAngle = 0, arcAngle = 0;
 			if (!reeling) {
 				if (displayCatch) {
-					g.setFont(new Font("Futura", Font.BOLD, 50));
-					String catchPhrase = "You caught a";
-					if(recentlyCaught instanceof Fish){
-						rcF = (Fish)recentlyCaught;
-					if(rcF.getSpecies().getName().toLowerCase().startsWith("a"))
-						catchPhrase += "n ";
-					else 
-						catchPhrase += " ";
-					catchPhrase += capitalize(rcF.getSpecies().getName().toLowerCase().replaceAll("-", " "))
-					+ "!";
-					}else{
-						catchPhrase = "You caught trash!";
+					if (!tutorial) {
+						g.setFont(new Font("Futura", Font.BOLD, 50));
+						String catchPhrase = "You caught a";
+						if (recentlyCaught instanceof Fish) {
+							rcF = (Fish) recentlyCaught;
+							if (rcF.getSpecies().getName().toLowerCase().startsWith("a"))
+								catchPhrase += "n ";
+							else
+								catchPhrase += " ";
+							catchPhrase += capitalize(rcF.getSpecies().getName().toLowerCase().replaceAll("-", " "))
+									+ "!";
+						} else {
+							catchPhrase = "You caught trash!";
+						}
+
+						g.drawString(catchPhrase, FishingGameView.WIDTH / 2 - 350, FishingGameView.HEIGHT / 2);
 					}
-					
-					g.drawString(catchPhrase,
-								FishingGameView.WIDTH / 2 - 350, FishingGameView.HEIGHT / 2);
 					g2d.drawLine(ROD_X, ROD_Y, hookX, hookY);
 				} else {
 					if (hookX < ROD_X) {/* hook is left of rod */
@@ -152,37 +155,52 @@ public class FishingGameView{
 			for (int i = 0; i < fishes.size(); i++) {
 				Fish f = fishes.get(i);
 				if (f.getHooked()) {
-					//System.out.println("The " + f.getSpecies().getName() + " is HOOKED");
+					// System.out.println("The " + f.getSpecies().getName() + "
+					// is HOOKED");
 					recentlyCaught = f;
 				}
-				 //g.drawRect(f.getMouth().x, f.getMouth().y,
-				 //f.getMouth().width, f.getMouth().height);
-				 //g.drawRect(hook.getHitbox().x, hook.getHitbox().y,
-				 //hook.getHitbox().width, hook.getHitbox().height);
+				//g.drawRect(f.getMouth().x, f.getMouth().y, f.getMouth().width, f.getMouth().height);
+				//g.drawRect(hook.getHitbox().x, hook.getHitbox().y, hook.getHitbox().width, hook.getHitbox().height);
 				if (f.getDirection().equals(Direction.WEST))
 					g.drawImage(fish_sprites[f.getSpecies().ordinal() * 2][frameCount], f.getXPos(), f.getYPos(), this);
 				else
 					g.drawImage(fish_sprites[f.getSpecies().ordinal() * 2 + 1][frameCount], f.getXPos(), f.getYPos(),
 							this);
 			}
-			
-			for(int i = 0; i < trashAL.size(); i++){
+
+			for (int i = 0; i < trashAL.size(); i++) {
 				Trash t = trashAL.get(i);
-				if(t.getHooked()){
+				if (t.getHooked()) {
 					recentlyCaught = t;
 				}
 				g.drawImage(trash_sprites[t.getType().ordinal()], t.getXPos(), t.getYPos(), this);
 			}
-			if(!reeling && displayCatch)
-				if(recentlyCaught instanceof Fish){
+			if (!reeling && displayCatch && !tutorial)
+				if (recentlyCaught instanceof Fish) {
 					rcF = (Fish) recentlyCaught;
-					g.drawImage(fish_sprites[rcF.getSpecies().ordinal() * 2 + 1][0],
-						FishingGameView.WIDTH / 2 - 100, FishingGameView.HEIGHT / 2, 200, 200, this);
-				}else{
+					g.drawImage(fish_sprites[rcF.getSpecies().ordinal() * 2 + 1][0], FishingGameView.WIDTH / 2 - 100,
+							FishingGameView.HEIGHT / 2, 200, 200, this);
+				} else {
 					rcT = (Trash) recentlyCaught;
 					g.drawImage(trash_sprites[rcT.getType().ordinal()], rcT.getXPos(), rcT.getYPos(), this);
 				}
-			if (gameOver && !displayCatch) {
+			if (tutorial) {
+				g.setFont(new Font("Futura", Font.BOLD, (int) (SCALE_Y * 40)));
+				g.drawImage(title, (int) (SCALE * 850), (int) (SCALE * -50), this);
+				g.drawString("Try to catch a fish", (int) (SCALE * 70), (int) (SCALE_Y * 350));
+				g.drawString("Avoid the trash", (int) (SCALE * 70), (int) (SCALE_Y * 400));
+				g.setFont(new Font("Futura", Font.BOLD, (int) (SCALE * 30)));
+				g.drawImage(arrow_keys, (int) (SCALE * 510), (int) (SCALE_Y * 100), this);
+				g.drawString("Use arrow keys to move the hook", (int) (SCALE * 70), (int) (SCALE_Y * 180));
+				g.drawImage(p_key, (int) (SCALE * 415), (int) (SCALE_Y * 200), this);
+				g.drawString("Use P to pause the game", (int) (SCALE * 70), (int) (SCALE_Y * 240));
+				if (fishes.isEmpty()) {
+					g.setFont(new Font("Futura", Font.BOLD, (int) (SCALE_Y * 40)));
+					g.drawString("You finished the tutorial", (int) (SCALE * 500), (int) (SCALE_Y * 450));
+					g.drawString("Press enter to continue", (int) (SCALE * 500), (int) (SCALE_Y * 500));
+				}
+			}
+			if (gameOver && !displayCatch && !tutorial) {
 				g.setFont(new Font("Futura", Font.BOLD, 50));
 				g.drawString("You've caught all the fish. Press Enter to continue", 125, FishingGameView.HEIGHT / 2);
 			}
@@ -249,6 +267,14 @@ public class FishingGameView{
 			bg = resize(bg, FishingGameView.WIDTH, FishingGameView.HEIGHT);
 			hook_sprite = ImageIO.read(new File("assets/fishing-game/hook.png"));
 			hook_sprite = resize(hook_sprite, (int) (HOOK_WIDTH * SCALE), (int) (HOOK_HEIGHT * SCALE_Y));
+			title = ImageIO.read(new File("assets/fishing-game/fishing-title.png"));
+			title = resize(title, (int) (400 * SCALE), (int) (400 * SCALE_Y));
+			arrow_keys = ImageIO.read(new File("assets/fishing-game/arrowkey-pic.png"));
+			arrow_keys = resize(arrow_keys, (int) (SCALE * 140), (int) (SCALE_Y * 140));
+			p_key = ImageIO.read(new File("assets/bird-game/pkey-pic.png"));
+			p_key = resize(p_key, (int) (SCALE * 60), (int) (SCALE_Y * 60));
+			spacebar = ImageIO.read(new File("assets/fishing-game/space-pic.png"));
+			spacebar = resize(spacebar, (int) (SCALE * 150), (int) (SCALE_Y * 60));
 			Scanner infoScanner = new Scanner(new File("assets/fishing-game/info.txt"));
 			imgWidths = new int[speciesNum];
 			imgHeights = new int[speciesNum];
@@ -272,8 +298,8 @@ public class FishingGameView{
 					}
 				}
 			}
-			for(Trash.Type t : Trash.Type.values()){
-				String filepath = "assets/fishing-game/trash/"+t.getPath()+"-trash.png";
+			for (Trash.Type t : Trash.Type.values()) {
+				String filepath = "assets/fishing-game/trash/" + t.getPath() + "-trash.png";
 				BufferedImage trashPic = ImageIO.read(new File(filepath));
 				trash_sprites[t.ordinal()] = resize(trashPic, TRASH_WIDTH, TRASH_HEIGHT);
 			}
@@ -339,22 +365,32 @@ public class FishingGameView{
 	}
 
 	/**
-	 * Takes a string a capitalizes every space-separated word
-	 * i.e. "a man with a plan."	-->		"A Man With A Plan."
-	 * @param str the initial string
+	 * Takes a string a capitalizes every space-separated word i.e. "a man with
+	 * a plan." --> "A Man With A Plan."
+	 * 
+	 * @param str
+	 *            the initial string
 	 * @return a String with each word capitalized
 	 */
-	private String capitalize(String str){
-		String [] line = str.split(" ");
+	private String capitalize(String str) {
+		String[] line = str.split(" ");
 		String result = "";
 		int count = 0;
-		for(String s : line){
-			result += s.substring(0,1).toUpperCase() + s.substring(1);
+		for (String s : line) {
+			result += s.substring(0, 1).toUpperCase() + s.substring(1);
 			count++;
-			if(count < line.length)
+			if (count < line.length)
 				result += " ";
 		}
 		return result;
+	}
+
+	/**
+	 * @param b
+	 *            a boolean representing the state of the view, tutorial or game
+	 */
+	public void setTutorial(boolean b) {
+		tutorial = b;
 	}
 
 }
