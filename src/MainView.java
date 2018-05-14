@@ -238,7 +238,8 @@ public class MainView {
 				g2d.drawString("  EXISTS  ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
 				break;
 			default:
-				g2d.drawString("",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET));
+				g2d.drawString("GAME OVER",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
+				g2d.drawString("PRESS ENTER",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
 				break;
 			}
 		}
@@ -522,6 +523,13 @@ public class MainView {
 			tButton.setVisible(false);
 			for (Entry<String, JButton> entry : sidebarButtons.entrySet()) {
 			    entry.getValue().setVisible(true);
+			}
+		}
+		else {
+			tButton.setVisible(true);
+			for (Entry<String, JButton> entry : sidebarButtons.entrySet()) {
+				if(!entry.getKey().equals("Remove"))
+					entry.getValue().setVisible(false);
 			}
 		}
 	}
