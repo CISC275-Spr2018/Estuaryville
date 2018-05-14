@@ -74,8 +74,8 @@ public class ResearchGameView{
 	
 	final int frameWidth = (int) screenSize.getWidth();
 	final int frameHeight = (int) screenSize.getHeight();
-//	final int frameWidth = 1180;
-//	final int frameHeight = 775;
+//	final int frameWidth = 1160;
+//	final int frameHeight = 780;
 	
 	
 	final int playerFixedX = getScaledWidth(180);
@@ -188,10 +188,16 @@ public class ResearchGameView{
 				g.setFont(new Font("Arial", Font.PLAIN, getScaledWidth(45)));
 				g.drawString("Press Enter to start the Game when ready", getScaledWidth(100), getScaledHeight(800));
 			}
+			else if (player.getxPos() >= getScaledWidth(5500)) {
+				g.setFont(new Font("Arial", Font.PLAIN, getScaledWidth(40)));
+				g.drawString("Research is important to monitor and survey the Estuary Ecosystem!", getScaledWidth(50), getScaledHeight(600));
+				g.drawString("Press Enter to return to the Main Screen", getScaledWidth(150), getScaledHeight(700));
+			}
 			else {
 				g.setFont(new Font("Arial", Font.PLAIN, getScaledWidth(45)));
 				g.drawString("Crabs Stepped On: " + (3 - player.getLives()), getScaledWidth(100), getScaledHeight(100));
 			}
+			
 		}
 			
 	}
