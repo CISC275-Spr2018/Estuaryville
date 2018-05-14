@@ -35,6 +35,10 @@ public class MainModel implements Serializable {
     private boolean tutorial = true;
     private boolean built = false;
     
+    /**
+     * Sets the buttons to the view's board.
+     * @param board the buttons to be set
+     */
     public void setButtons(MapSpot[][] board) {
     	for(int i = 0;i < board.length; i++) {
     		for(int j = 0; j < board[0].length; j++) {
@@ -42,11 +46,17 @@ public class MainModel implements Serializable {
     		}
     	}
     }
-    
+    /**
+     * Returns if something has been built in the last tick
+     * @return if something has been built in the last tick
+     */
     public boolean getBuilt() {
     	return built;
     }
-    
+    /**
+     * Set if something has been built
+     * @param built if something has been built
+     */
     public void setBuilt(boolean built) {
     	this.built = built;
     }
@@ -178,6 +188,7 @@ public class MainModel implements Serializable {
 	 * @param yPos The y location to build. 
 	 * @return
 	 */
+	@SuppressWarnings("incomplete-switch")
 	public BuildReturn build(Building structure, int xPos, int yPos) {
 		built = true;
 		if(build != BuildState.REMOVE && build != BuildState.NONE) {
@@ -205,6 +216,9 @@ public class MainModel implements Serializable {
 					build = BuildState.NONE;
 					pollIncr += PORT_POLL_INCR;
 					moneyIncr += PORT_MONEY_INCR;
+					break;
+				case TUTORIAL:
+					build = BuildState.NONE;
 					break;
 				}
 			}
