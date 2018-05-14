@@ -31,7 +31,7 @@ public class FishingGameView {
 	final static int HEIGHT = screenSize.height; // 500;//
 	public static BufferedImage bg; // background image
 	public static BufferedImage hook_sprite; // the fishing hook
-	public static BufferedImage arrow_keys, spacebar, p_key, title, tutorial_complete_screen;
+	public static BufferedImage arrow_keys, spacebar, p_key, title;
 	final static double SCALE = (FishingGameView.WIDTH / 1280.0);
 	final static double SCALE_Y = (FishingGameView.HEIGHT / 800.0);
 	final static int HOOK_WIDTH = (int) (15 * SCALE);
@@ -42,6 +42,7 @@ public class FishingGameView {
 	final static int TRASH_HEIGHT = (int) (40 * SCALE_Y);
 	final static int ROD_X = (int) (748 * SCALE);
 	final static int ROD_Y = (int) (73 * SCALE_Y);
+	static int strokeWidth;
 	public BufferedImage[][] fish_sprites;
 	public BufferedImage[] trash_sprites; // trash
 	public int imgWidths[];
@@ -75,6 +76,11 @@ public class FishingGameView {
 		reeling = false;
 		tutorial = true;
 		gameOver = false;
+		if(WIDTH > 2000){
+			strokeWidth = 7;
+		}else{
+			strokeWidth = 3;
+		}
 	}
 
 	@SuppressWarnings("serial")
@@ -103,7 +109,8 @@ public class FishingGameView {
 			g.drawImage(hook_sprite, hook.getXPos(), hook.getYPos(), this);
 			g.setColor(Color.WHITE);
 			Graphics2D g2d = (Graphics2D) g;
-			g2d.setStroke(new BasicStroke((WIDTH > 2000 ? 7 : 3)));
+			
+			g2d.setStroke(new BasicStroke(strokeWidth));
 			int hookX = hook.getXPos() + (HOOK_WIDTH * 2 / 3);
 			int hookY = hook.getYPos();
 			int waterSurfaceY = (int) (365.0 / 700.0 * FishingGameView.HEIGHT);

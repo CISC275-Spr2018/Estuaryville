@@ -156,7 +156,7 @@ public class FishingGameModel extends Model {
 			t = trashAL.get(i);
 			if(!t.getHooked())
 				t.move();
-			System.out.println("Y:"+t.getYPos());
+			//System.out.println("Y:"+t.getYPos());
 			t.setHitbox(t.getXPos(), t.getYPos());
 		}
 
@@ -210,11 +210,11 @@ public class FishingGameModel extends Model {
 			//System.out.println((f.getDirection().ordinal()*2 - 4) * 1);
 			switch(f.getDirection()){
 			case EAST:
-				f.setXPos(f.getXPos() + (int)(5*f.getXSpeed()));
+				f.setXPos(f.getXPos() + (int)(5.0*FishingGameView.getWidth()/1280*f.getXSpeed()));
 				break;
 			case WEST:
 				default:
-				f.setXPos(f.getXPos() - (int)(5*f.getXSpeed()));
+				f.setXPos(f.getXPos() - (int)(5*FishingGameView.getWidth()/1280*f.getXSpeed()));
 				break;
 			}
 			if (f.getXPos() < (-1 * FishingGameView.FISH_WIDTH)
