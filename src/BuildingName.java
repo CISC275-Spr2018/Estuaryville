@@ -4,5 +4,6 @@ public enum BuildingName {
 	PORT,
 	FACTORY,
 	RESEARCH,
-	FISH
+	FISH,
+	TUTORIAL
 }

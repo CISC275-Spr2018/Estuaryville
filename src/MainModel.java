@@ -12,14 +12,18 @@ public class MainModel implements Serializable {
 	private static final long serialVersionUID = -4361856093721815033L;
 	public final int POLLUTION_MAX = 10000;
 	public final int MONEY_MAX = 10000;
-	private int pollution = 1;
-	private int money = 250;
+	public final int POLL_START = 1;
+	public final int MONEY_START = 250;
+	public final int POLL_INCR_START = 5;
+	public final int MONEY_INCR_START = 3;
+	private int pollution = POLL_START;
+	private int money = MONEY_START;
 	private final int MAP_HEIGHT = 10;
 	private final int MAP_WIDTH = 10;
 	private MapSpot[][] map = new MapSpot[MAP_HEIGHT][MAP_WIDTH];
 	private HashMap<BuildingName,Building> buildingTypes;
-	private int pollIncr = 5;
-	private int moneyIncr = 3;
+	private int pollIncr = POLL_INCR_START;
+	private int moneyIncr = MONEY_INCR_START;
 	private BuildState build = BuildState.NONE;
 	private boolean[] placedBuildings = new boolean[BuildState.values().length];
     private int FACTORY_MONEY_INCR  = 10;
@@ -28,6 +32,16 @@ public class MainModel implements Serializable {
     private int PORT_POLL_INCR  = 5;
     private int RESEARCH_MONEY_INCR  = -2;
     private int RESEARCH_POLL_INCR  = -10;
+    private boolean tutorial = true;
+    private boolean built = false;
+    
+    public boolean getBuilt() {
+    	return built;
+    }
+    
+    public void setBuilt(boolean built) {
+    	this.built = built;
+    }
     
     public void setButtons(MapSpot[][] board) {
     	for(int i = 0;i < board.length; i++) {
@@ -120,6 +134,9 @@ public class MainModel implements Serializable {
 	public MapSpot[][] getMap() {
 		return map;
 	}
+	public boolean getTutorial() {
+		return tutorial;
+	}
 	/**
 	 * Creates a new instance of MainModel
 	 * @param map the grid of MapSpots which forms the board displayed.
@@ -127,6 +144,18 @@ public class MainModel implements Serializable {
 	public MainModel(MapSpot[][] map) {
 		this.map = map;
 		buildingTypes = loadBuildingTypes();
+		if(tutorial) {
+			moneyIncr = 0;
+			pollIncr = 0;
+		}
+	}
+	
+	public void reset() {
+		money = MONEY_START;
+		pollution = POLL_START;
+		moneyIncr = MONEY_INCR_START;
+		pollIncr = POLL_INCR_START;
+		tutorial = !tutorial;
 	}
 	/**
 	 * Creates the different Buildings to use through game.
@@ -139,6 +168,7 @@ public class MainModel implements Serializable {
 		types.put(BuildingName.FISH,new Building(250,10000,BuildingName.FISH,"pier"));
 		types.put(BuildingName.FACTORY,new Building(200,10000,BuildingName.FACTORY,"factory"));
 		types.put(BuildingName.PORT,new Building(150,10000,BuildingName.PORT,"port"));
+		types.put(BuildingName.TUTORIAL, new Building(100,10000,BuildingName.TUTORIAL,"factory"));
 		return types;
 	}
 	/**
@@ -149,39 +179,59 @@ public class MainModel implements Serializable {
 	 * @return
 	 */
 	public BuildReturn build(Building structure, int xPos, int yPos) {
-		if(!placedBuildings[build.ordinal()] && isValidPlacement(xPos, yPos, structure) && isConstructable(structure) && map[xPos][yPos].getB() == null) {
-			placedBuildings[build.ordinal()] = true;
-			map[xPos][yPos].setB(structure);
-			switch(build) {
-			case FISH:
-				return new BuildReturn(BuildError.NONE, Active.FISH);
-			case BIRD:
-				return new BuildReturn(BuildError.NONE,Active.BIRD);
-			case RESEARCH:
-				pollIncr += RESEARCH_POLL_INCR;
-				moneyIncr += RESEARCH_MONEY_INCR;
-				return new BuildReturn(BuildError.NONE,Active.RESEARCH);
-			case FACTORY:
-				pollIncr += FACTORY_POLL_INCR;
-				moneyIncr += FACTORY_MONEY_INCR;
-				break;
-			case PORT:
-				pollIncr += PORT_POLL_INCR;
-				moneyIncr += PORT_MONEY_INCR;
-				break;
-			default:
-				return new BuildReturn(BuildError.NONE,Active.MAIN);
+		built = true;
+		if(build != BuildState.REMOVE && build != BuildState.NONE) {
+			if(!placedBuildings[build.ordinal()] && isValidPlacement(xPos, yPos, structure) && isConstructable(structure) && map[xPos][yPos].getB() == null) {
+				placedBuildings[build.ordinal()] = true;
+				map[xPos][yPos].setB(structure);
+				switch(build) {
+				case FISH:
+					build = BuildState.NONE;
+					return new BuildReturn(BuildError.NONE, Active.FISH);
+				case BIRD:
+					build = BuildState.NONE;
+					return new BuildReturn(BuildError.NONE,Active.BIRD);
+				case RESEARCH:
+					build = BuildState.NONE;
+					pollIncr += RESEARCH_POLL_INCR;
+					moneyIncr += RESEARCH_MONEY_INCR;
+					return new BuildReturn(BuildError.NONE,Active.RESEARCH);
+				case FACTORY:
+					build = BuildState.NONE;
+					pollIncr += FACTORY_POLL_INCR;
+					moneyIncr += FACTORY_MONEY_INCR;
+					break;
+				case PORT:
+					build = BuildState.NONE;
+					pollIncr += PORT_POLL_INCR;
+					moneyIncr += PORT_MONEY_INCR;
+					break;
+				default:
+					build = BuildState.NONE;
+					return new BuildReturn(BuildError.NONE,Active.MAIN);
+				}
+			}
+			else {
+				if(placedBuildings[build.ordinal()]) {
+					build = BuildState.NONE;
+					return new BuildReturn(BuildError.PLACED,Active.MAIN);
+				}
+				else if(!isValidPlacement(xPos,yPos,structure)) {
+					build = BuildState.NONE;
+					return new BuildReturn(BuildError.SPOT,Active.MAIN);
+				}
+				else if(structure.getCost() > money) {
+					build = BuildState.NONE;
+					return new BuildReturn(BuildError.COST,Active.MAIN);
+				}
+				else if(structure.getQualityNeeded() < pollution) {
+					build = BuildState.NONE;
+					return new BuildReturn(BuildError.POLLUTION,Active.MAIN);
+				}
 			}
 		}
 		else {
-			if(placedBuildings[build.ordinal()])
-				return new BuildReturn(BuildError.PLACED,Active.MAIN);
-			else if(!isValidPlacement(xPos,yPos,structure))
-				return new BuildReturn(BuildError.SPOT,Active.MAIN);
-			else if(structure.getCost() > money)
-				return new BuildReturn(BuildError.COST,Active.MAIN);
-			else if(structure.getQualityNeeded() < pollution)
-				return new BuildReturn(BuildError.POLLUTION,Active.MAIN);
+			removeBuilding(xPos,yPos);
 		}
 		build = BuildState.NONE;
 		return new BuildReturn(BuildError.NONE,Active.MAIN);
@@ -192,20 +242,24 @@ public class MainModel implements Serializable {
 	 * @param yPos The y position to remove building from.
 	 */
 	public void removeBuilding(int xPos, int yPos) {
-		if(map[xPos][yPos].getB().getName() == BuildingName.FACTORY) {
-			moneyIncr -= FACTORY_MONEY_INCR;
-			pollIncr -= FACTORY_POLL_INCR;
-			placedBuildings[BuildState.FACTORY.ordinal()] = false;
+		if(map[xPos][yPos].getB() != null) {
+			if(map[xPos][yPos].getB().getName() == BuildingName.FACTORY) {
+				moneyIncr -= FACTORY_MONEY_INCR;
+				pollIncr -= FACTORY_POLL_INCR;
+				placedBuildings[BuildState.FACTORY.ordinal()] = false;
+			}
+			else if(map[xPos][yPos].getB().getName() == BuildingName.PORT) {
+				moneyIncr -= PORT_MONEY_INCR;
+				pollIncr -= PORT_POLL_INCR;
+				placedBuildings[BuildState.PORT.ordinal()] = false;
+			}
+			else if(map[xPos][yPos].getB().getName() == BuildingName.RESEARCH) {
+				moneyIncr -= RESEARCH_MONEY_INCR;
+				pollIncr -= RESEARCH_POLL_INCR;
+			}
 		}
-		else if(map[xPos][yPos].getB().getName() == BuildingName.PORT) {
-			moneyIncr -= PORT_MONEY_INCR;
-			pollIncr -= PORT_POLL_INCR;
-			placedBuildings[BuildState.PORT.ordinal()] = false;
-		}
-		else if(map[xPos][yPos].getB().getName() == BuildingName.RESEARCH) {
-			moneyIncr -= RESEARCH_MONEY_INCR;
-			pollIncr -= RESEARCH_POLL_INCR;
-		}
+		placedBuildings[build.ordinal()] = false;
+		built = true;
 		map[xPos][yPos].setB(null);
 		build = BuildState.NONE;
 	}
@@ -229,6 +283,9 @@ public class MainModel implements Serializable {
 	 * @return if the building can be built at that MapSpot.
 	 */
 	public boolean isValidPlacement(int xPos, int yPos, Building structure) {
+		if(structure.getName() == BuildingName.TUTORIAL) {
+			return xPos == 5 && yPos == 5;
+		}
 		return map[yPos][xPos].isValid(structure);
 	}
 	/**

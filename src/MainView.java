@@ -6,13 +6,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -73,8 +72,14 @@ public class MainView {
 	private int moneyIncr = 0;
 	private int pollIncr = 0;
 	private boolean firstFrame = true;
+	private boolean tutorial = true;
+	private JButton tButton;
+	private boolean built = false;
 	
 	//setters/getters
+	public JButton getTButton() {
+		return tButton;
+	}
 	/**
 	 * Returns the JFrame being displayed.
 	 * @return the JFrame being displayed.
@@ -200,6 +205,11 @@ public class MainView {
 			g2d.setColor(Color.BLACK);
 			switch(bError) {
 			case NONE:
+				if(tutorial) {
+					g2d.drawString("PRESS ENTER",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
+					g2d.drawString("  TO PLAY  ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
+				}
+				else
 				g2d.drawString("",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET));
 				break;
 			case SPOT:
@@ -253,7 +263,7 @@ public class MainView {
 	public void addSidebar() {
 		ImageIcon[] sidebarImages = loadSidebarImages();
 		for(int i = 0; i < buildingNames.length; i++) {
-			JButton button = new JButton(buildingNames[i]);//new JButton(buildingNames[i]);
+			JButton button = new JButton(buildingNames[i]);
 			button.setBounds(BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(i*BUILDING_BUTTON_Y_OFFSET), BUILDING_BUTTON_WIDTH, BUILDING_BUTTON_HEIGHT);
 
 			button.setIcon(sidebarImages[i]);
@@ -268,6 +278,21 @@ public class MainView {
 		button.setRolloverEnabled(false);
 		panel.add(button);
 		sidebarButtons.put("Remove", button);
+		if(tutorial) {
+			for (Entry<String, JButton> entry : sidebarButtons.entrySet()) {
+			    if(!entry.getKey().equals("Remove")) {
+			    	entry.getValue().setVisible(false);
+			    }
+			}
+			tButton = new JButton("Tutorial");
+			tButton.setBounds(BUILDING_BUTTON_X,BUILDING_BUTTON_Y+BUILDING_BUTTON_Y_OFFSET, BUILDING_BUTTON_WIDTH, BUILDING_BUTTON_HEIGHT);
+
+			tButton.setIcon(sidebarButtons.get("Factory").getIcon());
+			tButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+			tButton.setHorizontalTextPosition(SwingConstants.CENTER);
+			tButton.setRolloverEnabled(false);
+			panel.add(tButton);
+		}
 	}
 	
 	/**
@@ -459,10 +484,13 @@ public class MainView {
 	 * @param poll The current pollution level.
 	 * @param map The current state of the main grid.
 	 */
-	public void update(double money, double poll, MapSpot[][] map, boolean gOver,int moneyIncr, int pollIncr,BuildError be,HashMap<BuildingName,Building> buildTypes) {
+	public void update(double money, double poll, MapSpot[][] map, boolean gOver,int moneyIncr, int pollIncr,BuildError be,HashMap<BuildingName,Building> buildTypes, boolean tutorial, boolean built) {
 		if(firstFrame) {
 			for(BuildingName name : BuildingName.values()) {
-				buildingImages.put(name, loadBuildingImage(buildTypes.get(name)));
+				if(name != BuildingName.TUTORIAL)
+					buildingImages.put(name, loadBuildingImage(buildTypes.get(name)));
+				else
+					buildingImages.put(name, loadBuildingImage(buildTypes.get(BuildingName.FACTORY)));
 			}
 			firstFrame = false;
 		}
@@ -473,21 +501,31 @@ public class MainView {
 		this.moneyIncr = moneyIncr;
 		this.pollIncr = pollIncr;
 		this.bError = be;
+		this.tutorial = tutorial;
+		this.built = built;
+		if(tutorial == false) {
+			tButton.setVisible(false);
+			for (Entry<String, JButton> entry : sidebarButtons.entrySet()) {
+			    entry.getValue().setVisible(true);
+			}
+		}
 	}
 	/**
 	 * Displays image of building if one exists or deletes Image if it is removed from a Spot.
 	 */
 	public void updateBoard() {
-		for(int i = 0; i < board.length; i++) {
-			for(int j = 0; j < board[0].length; j++) {
-				BuildingImage bi = null;
-				if(board[i][j] != null && board[i][j].getB() != null) {
-					BufferedImage bImage = resize(buildingImages.get(board[i][j].getB().getName()),MAP_BUTTON_HEIGHT,MAP_BUTTON_HEIGHT);
-					bi = new BuildingImage(board[i][j].getBackground(),new ImageIcon(bImage));
-					board[i][j].setShowImage(bi);
-				}
-				else {
-					board[i][j].setShowImage(board[i][j].getBackground());
+		if(built) {
+			for(int i = 0; i < board.length; i++) {
+				for(int j = 0; j < board[0].length; j++) {
+					BuildingImage bi = null;
+					if(board[i][j] != null && board[i][j].getB() != null) {
+						BufferedImage bImage = resize(buildingImages.get(board[i][j].getB().getName()),MAP_BUTTON_HEIGHT,MAP_BUTTON_HEIGHT);
+						bi = new BuildingImage(board[i][j].getBackground(),new ImageIcon(bImage));
+						board[i][j].setShowImage(bi);
+					}
+					else {
+						board[i][j].setShowImage(board[i][j].getBackground());
+					}
 				}
 			}
 		}

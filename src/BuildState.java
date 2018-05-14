@@ -5,5 +5,6 @@ public enum BuildState {
 	RESEARCH,
 	FISH, 
 	NONE,
+	TUTORIAL,
 	REMOVE
 }
