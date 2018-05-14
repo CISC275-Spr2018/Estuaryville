@@ -161,6 +161,13 @@ public class MainModel implements Serializable {
 	}
 	
 	public void reset() {
+		for(int i = 0;i < map.length; i++) {
+    		for(int j = 0; j < map[0].length; j++) {
+    			map[i][j].setB(null);
+    			map[i][j].setShowImage(map[i][j].getBackground());
+    		}
+    	}
+		placedBuildings = new boolean[BuildingName.values().length];
 		money = MONEY_START;
 		pollution = POLL_START;
 		moneyIncr = MONEY_INCR_START;
