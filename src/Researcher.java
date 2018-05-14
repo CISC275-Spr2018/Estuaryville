@@ -26,9 +26,6 @@ public class Researcher {
 	final int frameWidth = (int) screenSize.getWidth();
 	final int frameHeight = (int) screenSize.getHeight();
 	
-//	final int frameWidth = 1180;
-//	final int frameHeight = 775;
-	
 	final int playerFixedX = getScaledWidth(180);
 	final int playerFixedY = getScaledHeight(300);
 	

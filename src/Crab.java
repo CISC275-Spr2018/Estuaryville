@@ -24,8 +24,6 @@ public class Crab{
 	final int frameWidth = (int) screenSize.getWidth();
 	final int frameHeight = (int) screenSize.getHeight();
 	
-//	final int frameWidth = 1180;
-//	final int frameHeight = 775;
 	
 	public double scaleFacX = 1440.0 / (double)frameWidth;
 	public double scaleFacY = 900.0 / (double)frameHeight;
