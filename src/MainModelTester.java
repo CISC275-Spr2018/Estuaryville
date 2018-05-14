@@ -1,9 +1,6 @@
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 
 import org.junit.jupiter.api.Test;
 

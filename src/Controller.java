@@ -194,10 +194,10 @@ public class Controller{
 						fMod.getHook().setXSpeed(15);
 					break;
 				case KeyEvent.VK_ENTER:
-					//if(fMod.isTutorial() && fMod.getFish().isEmpty()) {
-						//fMod.populate();
-						//fView.setTutorial(false);
-					//}
+					if(fMod.isTutorial() && fMod.getFish().isEmpty()) {
+						fMod.populate();
+						fView.setTutorial(false);
+					}
 					if (fMod.getGameOver()) {
 						fView.getPanel().setVisible(false);
 						activePanel = Active.MAIN;
@@ -459,7 +459,7 @@ public class Controller{
 		});
 	}
 	/**
-	 * Runs games on 30 millisecond tick speed.
+	 * Runs games on 30 millisecond tick speed, and the tutorial flash at 750 milliseconds.
 	 */
 	public void start() {
 		EventQueue.invokeLater(new Runnable() {
@@ -490,9 +490,6 @@ public class Controller{
 						mMod.getBuildingTypes(),
 						mMod.getTutorial(),
 						mMod.getBuilt());
-				System.out.println(mMod.getMap()[5][2]);
-				System.out.println(mView.getBoard()[5][2]);
-				System.out.println(mMod.getMap()[5][2].getButton() == mView.getBoard()[5][2].getButton());
 				mMod.setBuilt(false);
 				if(mMod.gameOver()) {
 					try {
@@ -541,6 +538,9 @@ public class Controller{
 		}
 	}
 
+	/**
+	 * Saves the main model to a file
+	 */
 	public void save() {
 		try {
 			ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(FILEPATH));
@@ -552,14 +552,13 @@ public class Controller{
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * Loads the main model from a save file
+	 */
 	public void load() {
 		try {
 			ObjectInputStream is = new ObjectInputStream(new FileInputStream(FILEPATH));
-			System.out.println(mMod);
-			mMod = null;
 			mMod = (MainModel) is.readObject();
-			System.out.println(mMod);
 			mMod.setButtons(mView.getBoard());
 			mView.setBuildings(mMod.getMap());
 			mMod.setBuilt(true);

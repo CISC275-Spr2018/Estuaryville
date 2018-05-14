@@ -1,9 +1,4 @@
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-
-import javax.imageio.ImageIO;
 /**
  * Buildings that can be built on the main screen of the game.
  * @author Riley
