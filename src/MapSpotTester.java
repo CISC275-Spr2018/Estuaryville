@@ -16,9 +16,9 @@ public class MapSpotTester {
 	@Test
 	public void equalTest2() {
 		MapSpot ms1 = new MapSpot();
-		ms1.setB(new Building(0,0,"Factory","factory"));
+		ms1.setB(new Building(0,0,BuildingName.FACTORY,"factory"));
 		MapSpot ms2 = new MapSpot();
-		ms2.setB(new Building(0,0,"Research Station","research"));
+		ms2.setB(new Building(0,0,BuildingName.RESEARCH,"research"));
 		assertEquals(ms1.equals(ms2),false);
 	}
 	
@@ -26,14 +26,14 @@ public class MapSpotTester {
 	public void equalTest3() {
 		MapSpot ms1 = new MapSpot();
 		MapSpot ms2 = new MapSpot();
-		ms2.setB(new Building(0,0,"Research Station","research"));
+		ms2.setB(new Building(0,0,BuildingName.RESEARCH,"research"));
 		assertEquals(ms1.equals(ms2),false);
 	}
 	
 	@Test
 	public void equalTest4() {
 		MapSpot ms1 = new MapSpot();
-		ms1.setB(new Building(0,0,"Factory","factory"));
+		ms1.setB(new Building(0,0,BuildingName.FACTORY,"factory"));
 		MapSpot ms2 = new MapSpot();
 		assertEquals(ms1.equals(ms2),false);
 	}
@@ -41,25 +41,25 @@ public class MapSpotTester {
 	@Test
 	public void equalTest5() {
 		MapSpot ms1 = new MapSpot();
-		ms1.setB(new Building(0,0,"Factory","factory"));
+		ms1.setB(new Building(0,0,BuildingName.FACTORY,"factory"));
 		assertEquals(ms1.equals(null),false);
 	}
 	
 	@Test
 	public void equalTest6() {
 		MapSpot ms1 = new MapSpot();
-		ms1.setB(new Building(0,0,"Factory","factory"));
+		ms1.setB(new Building(0,0,BuildingName.FACTORY,"factory"));
 		MapSpot ms2 = new MapSpot();
-		ms2.setB(new Building(0,0,"Factory","factory"));
+		ms2.setB(new Building(0,0,BuildingName.FACTORY,"factory"));
 		assertEquals(ms1.equals(ms2),true);
 	}
 	
 	@Test
 	public void equalTest7() {
 		MapSpot ms1 = new MapSpot();
-		ms1.setB(new Building(0,0,"Factory","factory"));
+		ms1.setB(new Building(0,0,BuildingName.FACTORY,"factory"));
 		MapSpot ms2 = new MapSpot();
-		ms2.setB(new Building(0,0,"Factory","factory"));
+		ms2.setB(new Building(0,0,BuildingName.FACTORY,"factory"));
 		ms2.settState(TerrainState.BEACH);
 		assertEquals(ms1.equals(ms2),false);
 	}
@@ -87,20 +87,20 @@ public class MapSpotTester {
 	@Test
 	public void isValidTest() {
 		MapSpot ms = new MapSpot();
-		assertEquals(ms.isValid(new Building(0,0,"Factory","factory")),true);
+		assertEquals(ms.isValid(new Building(0,0,BuildingName.FACTORY,"factory")),true);
 	}
 	
 	@Test
 	public void isValidTest2() {
 		MapSpot ms = new MapSpot();
 		ms.settState(TerrainState.OTHER);
-		assertEquals(ms.isValid(new Building(0,0,"Factory","factory")),false);
+		assertEquals(ms.isValid(new Building(0,0,BuildingName.FACTORY,"factory")),false);
 	}
 	
 	@Test
 	public void isValidTest3() {
 		MapSpot ms = new MapSpot();
-		ms.setB(new Building(0,0,"Factory","factory"));
-		assertEquals(ms.isValid(new Building(0,0,"Factory","factory")),false);
+		ms.setB(new Building(0,0,BuildingName.FACTORY,"factory"));
+		assertEquals(ms.isValid(new Building(0,0,BuildingName.FACTORY,"factory")),false);
 	}
 }

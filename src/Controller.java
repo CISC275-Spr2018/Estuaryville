@@ -72,6 +72,10 @@ public class Controller{
 				case KeyEvent.VK_ENTER:
 					if(mMod.getTutorial())
 						mMod.reset();
+					else {
+						mView = new MainView();
+						mMod = new MainModel(mView.getBoard());
+					}
 					break;
 				}
 			}
@@ -99,19 +103,19 @@ public class Controller{
 				switch (ke.getKeyCode()) {
 				case KeyEvent.VK_UP:
 					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
-						bMod.getCamera().setYSpeed(bMod.getScaledHeight(-15));
+						bMod.getCamera().setYSpeed(bMod.getScaledHeight(-20));
 					break;
 				case KeyEvent.VK_DOWN:
 					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
-						bMod.getCamera().setYSpeed(bMod.getScaledHeight(15));
+						bMod.getCamera().setYSpeed(bMod.getScaledHeight(20));
 					break;
 				case KeyEvent.VK_LEFT:
 					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
-						bMod.getCamera().setXSpeed(bMod.getScaledWidth(-15));
+						bMod.getCamera().setXSpeed(bMod.getScaledWidth(-20));
 					break;
 				case KeyEvent.VK_RIGHT:
 					if (bMod.getToDisplayInfo() == null && !bMod.getGameOver())
-						bMod.getCamera().setXSpeed(bMod.getScaledWidth(15));
+						bMod.getCamera().setXSpeed(bMod.getScaledWidth(20));
 					break;
 				case KeyEvent.VK_SPACE:
 					bMod.setWrongBird(false);
@@ -174,18 +178,26 @@ public class Controller{
 			public void keyPressed(KeyEvent ke) {	
 				switch(ke.getKeyCode()){
 				case KeyEvent.VK_UP:
-					fMod.getHook().setYSpeed(-15);
+					if(!fMod.getDisplayCatch() && fMod.caught == null)
+						fMod.getHook().setYSpeed(-15);
 					break;
 				case KeyEvent.VK_DOWN:
-					fMod.getHook().setYSpeed(15);
+					if(!fMod.getDisplayCatch() && fMod.caught == null)
+						fMod.getHook().setYSpeed(15);
 					break;
 				case KeyEvent.VK_LEFT:
-					fMod.getHook().setXSpeed(-15);
+					if(!fMod.getDisplayCatch() && fMod.caught == null)
+						fMod.getHook().setXSpeed(-15);
 					break;
 				case KeyEvent.VK_RIGHT:
-					fMod.getHook().setXSpeed(15);
+					if(!fMod.getDisplayCatch() && fMod.caught == null)
+						fMod.getHook().setXSpeed(15);
 					break;
 				case KeyEvent.VK_ENTER:
+					//if(fMod.isTutorial() && fMod.getFish().isEmpty()) {
+						//fMod.populate();
+						//fView.setTutorial(false);
+					//}
 					if (fMod.getGameOver()) {
 						fView.getPanel().setVisible(false);
 						activePanel = Active.MAIN;
@@ -237,7 +249,6 @@ public class Controller{
 					if (rMod.endCheck()) {
 						rView.getPanel().setVisible(false);
 						activePanel = Active.MAIN;
-						paused = false;
 					}
 					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight(), false);
 					break;
@@ -479,6 +490,9 @@ public class Controller{
 						mMod.getBuildingTypes(),
 						mMod.getTutorial(),
 						mMod.getBuilt());
+				System.out.println(mMod.getMap()[5][2]);
+				System.out.println(mView.getBoard()[5][2]);
+				System.out.println(mMod.getMap()[5][2].getButton() == mView.getBoard()[5][2].getButton());
 				mMod.setBuilt(false);
 				if(mMod.gameOver()) {
 					try {
@@ -517,7 +531,7 @@ public class Controller{
 					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight(), false);
 				}
 				if (rMod.endCheck()) {
-					paused = true;
+					activePanel = Active.MAIN;
 				}
 				break;
 			default:
@@ -542,8 +556,13 @@ public class Controller{
 	public void load() {
 		try {
 			ObjectInputStream is = new ObjectInputStream(new FileInputStream(FILEPATH));
+			System.out.println(mMod);
+			mMod = null;
 			mMod = (MainModel) is.readObject();
+			System.out.println(mMod);
 			mMod.setButtons(mView.getBoard());
+			mView.setBuildings(mMod.getMap());
+			mMod.setBuilt(true);
 			is.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

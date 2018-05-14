@@ -77,6 +77,15 @@ public class MainView {
 	private boolean built = false;
 	
 	//setters/getters
+	public void setBuildings(MapSpot[][] map) {
+    	for(int i = 0;i < map.length; i++) {
+    		for(int j = 0; j < map[0].length; j++) {
+    			board[i][j].setB(map[i][j].getB());
+    			board[i][j].setShowImage(map[i][j].getShowImage());
+    		}
+    	}
+    }
+	
 	public JButton getTButton() {
 		return tButton;
 	}
@@ -494,7 +503,16 @@ public class MainView {
 			}
 			firstFrame = false;
 		}
-		this.board = map;
+		//System.out.println(board);
+		//System.out.println(map);
+		//this.board = map;
+		for(int i = 0;i < map.length; i++) {
+    		for(int j = 0; j < map[0].length; j++) {
+    			board[i][j] = map[i][j];
+    			board[i][j].setB(map[i][j].getB());
+    			board[i][j].setShowImage(map[i][j].getShowImage());
+    		}
+    	}
 		updateBoard();
 		updateBars(money, poll);
 		panel.repaint();

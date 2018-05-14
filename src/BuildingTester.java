@@ -1,39 +1,32 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
 public class BuildingTester {
 	@Test
 	public void gettersAndSettersTest() {
-		Building b = new Building(0,0,"Factory","factory");
+		Building b = new Building(0,0,BuildingName.FACTORY,"factory");
 		assertEquals(b.getCost(),0);
 		assertEquals(b.getQualityNeeded(),0);
-		assertEquals(b.getName(),"Factory");
-		
-		BufferedImage img = new BufferedImage(1,1,1);
-		//b.setImage(img);
-		//assertEquals(b.getImage(),img);
+		assertEquals(b.getName(),BuildingName.FACTORY);
+		assertEquals(b.getFileName(),"factory");
 	}
 	@Test
 	public void equalsTest() {
-		Building b1 = new Building(0,0,"Factory","factory");
-		Building b2 = new Building(0,0,"Pier","pier");
+		Building b1 = new Building(0,0,BuildingName.FACTORY,"factory");
+		Building b2 = new Building(0,0,BuildingName.FISH,"pier");
 		assertEquals(b1.equals(b2),false);
 	}
 	@Test
 	public void equalsTest2() {
-		Building b1 = new Building(0,0,"Factory","factory");
-		Building b2 = new Building(0,0,"Factory","factory");
+		Building b1 = new Building(0,0,BuildingName.FACTORY,"factory");
+		Building b2 = new Building(0,0,BuildingName.FACTORY,"factory");
 		assertEquals(b1.equals(b2),true);
 	}
 	@Test
 	public void equalsTest3() {
 		Building b1 = null;
-		Building b2 = new Building(0,0,"Factory","factory");
+		Building b2 = new Building(0,0,BuildingName.FACTORY,"factory");
 		assertEquals(b2.equals(b1),false);
 	}
 	
