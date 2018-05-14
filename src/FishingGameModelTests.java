@@ -22,6 +22,8 @@ public class FishingGameModelTests {
 		assertEquals(false, fgm.getDisplayCatch());
 		fgm.trashAL = new ArrayList<Trash>();
 		assertEquals(fgm.trashAL, fgm.getTrash());
+		fgm.tutorial = true;
+		assertEquals(true, fgm.isTutorial());
 	}
 	
 	@Test
@@ -402,7 +404,8 @@ public class FishingGameModelTests {
 	@Test
 	public void testSetPollutionLevel(){
 		fgm.setPollutionLevel(0.5);
-		assertEquals(4, fgm.getTrash().size());
+		fgm.populate();
+		assertEquals(5, fgm.getTrash().size());
 	}
 
 }
