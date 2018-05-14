@@ -75,6 +75,7 @@ public class MainView {
 	private boolean tutorial = true;
 	private JButton tButton;
 	private boolean built = false;
+	private boolean gameOver = false;
 	
 	//setters/getters
 	public void setBuildings(MapSpot[][] map) {
@@ -180,67 +181,90 @@ public class MainView {
 		@Override
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
-			setBackground(new Color(100, 153, 239));
-			
 			Graphics2D g2d = (Graphics2D) g;
-			float thickness = 2;
-			g2d.setStroke(new BasicStroke(thickness));
-			g2d.setColor(Color.BLACK);
-			g2d.drawRoundRect(xPos, yPos, BAR_WIDTH, BAR_HEIGHT,BAR_ROUND,BAR_ROUND);
-			g2d.drawRoundRect(xPos, yPos+yOffset, BAR_WIDTH, BAR_HEIGHT,BAR_ROUND,BAR_ROUND);
-			g2d.setColor(Color.YELLOW);
-			g2d.fillRoundRect(xPos, (int) (yPos+(BAR_HEIGHT*(1-moneyRatio))), BAR_WIDTH, (int) (BAR_HEIGHT - (BAR_HEIGHT*(1-moneyRatio))),BAR_ROUND,BAR_ROUND);
-			g2d.setColor(new Color((int) (pollutionRatio*255),(int) (255-(255*pollutionRatio)),0));
-			g2d.fillRoundRect(xPos, (int) (yPos+yOffset+(BAR_HEIGHT*(1-pollutionRatio))), BAR_WIDTH, (int) (BAR_HEIGHT - (BAR_HEIGHT*(1-pollutionRatio))),BAR_ROUND,BAR_ROUND);
-			
-			
-			int fontSize = FRAME_WIDTH/65;
+			int fontSize = FRAME_WIDTH/20;
 			g2d.setFont(new Font("Monospaced", Font.BOLD, fontSize));
-			DecimalFormat plusMinus = new DecimalFormat("+#;-#");
-			if(moneyIncr > 0)
-				g2d.setColor(Color.GREEN);
-			else
-				g2d.setColor(Color.RED);
-			g2d.drawString(String.format("%s",plusMinus.format(moneyIncr)), BAR_X, BAR_Y-FRAME_HEIGHT/50);
-			//g2d.drawString(String.format("$%.2f",moneyRatio*1000), BAR_X, BAR_Y-25);
-			//g2d.drawString("Pollution:\n", BAR_X, BAR_Y+BAR_Y_OFFSET-25);
-			if(pollIncr >= 10)
-				g2d.setColor(Color.RED);
-			else
-				g2d.setColor(Color.GREEN);
-			g2d.drawString(String.format("%s",plusMinus.format(pollIncr)), BAR_X, BAR_Y+BAR_Y_OFFSET-FRAME_HEIGHT/50);	
-			//g2d.drawString(String.format("%.2f",pollutionRatio*10000), BAR_X, BAR_Y+BAR_Y_OFFSET-10);		
-			
-			g2d.setColor(Color.BLACK);
-			switch(bError) {
-			case NONE:
-				if(tutorial) {
-					g2d.drawString("PRESS ENTER",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
-					g2d.drawString("  TO PLAY  ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
+			if(gameOver) {
+				for(int i = 0;i < board.length; i++) {
+		    		for(int j = 0; j < board[0].length; j++) {
+		    			board[i][j].getButton().setVisible(false);
+		    		}
+		    	}
+				for (Entry<String, JButton> entry : sidebarButtons.entrySet()) {
+				    entry.getValue().setVisible(false);
 				}
+				try {
+					g2d.drawImage(MainView.resize(ImageIO.read(new File("assets/main-screen/mainscreen.png")),FRAME_WIDTH,FRAME_HEIGHT),0,0,null);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				g2d.drawString(" GAME OVER ", FRAME_WIDTH/5, FRAME_HEIGHT/2-g2d.getFontMetrics().getHeight());
+				g2d.drawString("PRESS  ENTER", FRAME_WIDTH/5, FRAME_HEIGHT/2);
+				g2d.drawString(" TO RESTART ", FRAME_WIDTH/5, FRAME_HEIGHT/2+g2d.getFontMetrics().getHeight());
+			}
+			else {
+				setBackground(new Color(100, 153, 239));
+				
+				
+				float thickness = 2;
+				g2d.setStroke(new BasicStroke(thickness));
+				g2d.setColor(Color.BLACK);
+				g2d.drawRoundRect(xPos, yPos, BAR_WIDTH, BAR_HEIGHT,BAR_ROUND,BAR_ROUND);
+				g2d.drawRoundRect(xPos, yPos+yOffset, BAR_WIDTH, BAR_HEIGHT,BAR_ROUND,BAR_ROUND);
+				g2d.setColor(Color.YELLOW);
+				g2d.fillRoundRect(xPos, (int) (yPos+(BAR_HEIGHT*(1-moneyRatio))), BAR_WIDTH, (int) (BAR_HEIGHT - (BAR_HEIGHT*(1-moneyRatio))),BAR_ROUND,BAR_ROUND);
+				g2d.setColor(new Color((int) (pollutionRatio*255),(int) (255-(255*pollutionRatio)),0));
+				g2d.fillRoundRect(xPos, (int) (yPos+yOffset+(BAR_HEIGHT*(1-pollutionRatio))), BAR_WIDTH, (int) (BAR_HEIGHT - (BAR_HEIGHT*(1-pollutionRatio))),BAR_ROUND,BAR_ROUND);
+				
+				
+				fontSize = FRAME_WIDTH/65;
+				g2d.setFont(new Font("Monospaced", Font.BOLD, fontSize));
+				DecimalFormat plusMinus = new DecimalFormat("+#;-#");
+				if(moneyIncr > 0)
+					g2d.setColor(Color.GREEN);
 				else
-				g2d.drawString("",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET));
-				break;
-			case SPOT:
-				g2d.drawString("  NOT  A  ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
-				g2d.drawString("VALID SPOT",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
-				break;
-			case POLLUTION:
-				g2d.drawString("TOO  MUCH",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
-				g2d.drawString("POLLUTION",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
-				break;
-			case COST:
-				g2d.drawString("NOT  ENOUGH",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
-				g2d.drawString("   MONEY   ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
-				break;
-			case PLACED:
-				g2d.drawString(" BUILDING ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
-				g2d.drawString("  EXISTS  ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
-				break;
-			default:
-				g2d.drawString("GAME OVER",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
-				g2d.drawString("PRESS ENTER",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
-				break;
+					g2d.setColor(Color.RED);
+				g2d.drawString(String.format("%s",plusMinus.format(moneyIncr)), BAR_X, BAR_Y-FRAME_HEIGHT/50);
+				//g2d.drawString(String.format("$%.2f",moneyRatio*1000), BAR_X, BAR_Y-25);
+				//g2d.drawString("Pollution:\n", BAR_X, BAR_Y+BAR_Y_OFFSET-25);
+				if(pollIncr >= 10)
+					g2d.setColor(Color.RED);
+				else
+					g2d.setColor(Color.GREEN);
+				g2d.drawString(String.format("%s",plusMinus.format(pollIncr)), BAR_X, BAR_Y+BAR_Y_OFFSET-FRAME_HEIGHT/50);	
+				//g2d.drawString(String.format("%.2f",pollutionRatio*10000), BAR_X, BAR_Y+BAR_Y_OFFSET-10);		
+				
+				g2d.setColor(Color.BLACK);
+				switch(bError) {
+				case NONE:
+					if(tutorial) {
+						g2d.drawString("PRESS ENTER",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
+						g2d.drawString("  TO PLAY  ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
+					}
+					else
+					g2d.drawString("",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET));
+					break;
+				case SPOT:
+					g2d.drawString("  NOT  A  ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
+					g2d.drawString("VALID SPOT",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
+					break;
+				case POLLUTION:
+					g2d.drawString("TOO  MUCH",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
+					g2d.drawString("POLLUTION",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
+					break;
+				case COST:
+					g2d.drawString("NOT  ENOUGH",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
+					g2d.drawString("   MONEY   ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
+					break;
+				case PLACED:
+					g2d.drawString(" BUILDING ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
+					g2d.drawString("  EXISTS  ",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
+					break;
+				default:
+					g2d.drawString("GAME OVER",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+g2d.getFontMetrics().getHeight());
+					g2d.drawString("PRESS ENTER",BUILDING_BUTTON_X,BUILDING_BUTTON_Y+(buildingNames.length*BUILDING_BUTTON_Y_OFFSET)+2*g2d.getFontMetrics().getHeight());
+					break;
+				}
 			}
 		}
 	}
@@ -494,7 +518,7 @@ public class MainView {
 	 * @param poll The current pollution level.
 	 * @param map The current state of the main grid.
 	 */
-	public void update(double money, double poll, MapSpot[][] map, boolean gOver,int moneyIncr, int pollIncr,BuildError be,HashMap<BuildingName,Building> buildTypes, boolean tutorial, boolean built) {
+	public void update(double money, double poll, MapSpot[][] map, boolean gOver,int moneyIncr, int pollIncr,BuildError be,HashMap<BuildingName,Building> buildTypes, boolean tutorial, boolean built, boolean gameOver) {
 		if(firstFrame) {
 			for(BuildingName name : BuildingName.values()) {
 				if(name != BuildingName.TUTORIAL)
@@ -513,6 +537,7 @@ public class MainView {
     	}
 		updateBoard();
 		updateBars(money, poll);
+		this.gameOver = gameOver;
 		panel.repaint();
 		this.moneyIncr = moneyIncr;
 		this.pollIncr = pollIncr;
