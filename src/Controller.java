@@ -72,8 +72,10 @@ public class Controller{
 				case KeyEvent.VK_ENTER:
 					if(mMod.getTutorial())
 						mMod.reset();
-					if(mMod.gameOver())
-						mMod.reset();
+					else {
+						mView = new MainView();
+						mMod = new MainModel(mView.getBoard());
+					}
 					break;
 				}
 			}
@@ -247,6 +249,7 @@ public class Controller{
 					if (rMod.endCheck()) {
 						rView.getPanel().setVisible(false);
 						activePanel = Active.MAIN;
+						paused = false;
 					}
 					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight(), false);
 					break;
@@ -473,20 +476,6 @@ public class Controller{
 	 * Redraws the active panel to animate and update games.
 	 */
 	public void redraw() {
-		if(activePanel != Active.MAIN) {
-			for(int i = 0; i < mView.getBoard().length; i++) {
-				for(int j = 0; j < mView.getBoard()[0].length; j++) {
-					mView.getBoard()[i][j].getButton().setVisible(false);
-				}
-			}
-		}
-		else {
-			for(int i = 0; i < mView.getBoard().length; i++) {
-				for(int j = 0; j < mView.getBoard()[0].length; j++) {
-					mView.getBoard()[i][j].getButton().setVisible(true);
-				}
-			}
-		}
 		if(!paused) {
 			switch(activePanel) {
 			case MAIN:
@@ -502,7 +491,7 @@ public class Controller{
 						mMod.getBuildingTypes(),
 						mMod.getTutorial(),
 						mMod.getBuilt());
-				mMod.setBuilt(false);/*
+				mMod.setBuilt(false);
 				if(mMod.gameOver()) {
 					try {
 						Thread.sleep(1500);
@@ -510,7 +499,7 @@ public class Controller{
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-				}*/
+				}
 				break;
 			case BIRD:
 				bMod.update();
@@ -540,7 +529,7 @@ public class Controller{
 					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight(), false);
 				}
 				if (rMod.endCheck()) {
-					activePanel = Active.MAIN;
+					paused = true;
 				}
 				break;
 			default:
