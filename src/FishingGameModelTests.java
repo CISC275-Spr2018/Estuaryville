@@ -4,10 +4,12 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-/**
- * 
- */
 
+/**
+ * This class holds all JUnit tests for the FishingGame
+ * @author Joel
+ *
+ */
 public class FishingGameModelTests {
 	FishingGameModel fgm = new FishingGameModel(1440,900);
 	

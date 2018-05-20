@@ -15,10 +15,6 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-/* 
- * Joel Turk
- */
-
 /**
  * Fishing game view loads all sprites and animations into BufferedImages as
  * well as draws the Model's objects onto a custom JPanel
@@ -76,9 +72,9 @@ public class FishingGameView {
 		reeling = false;
 		tutorial = true;
 		gameOver = false;
-		if(WIDTH > 2000){
+		if (WIDTH > 2000) {
 			strokeWidth = 7;
-		}else{
+		} else {
 			strokeWidth = 3;
 		}
 	}
@@ -109,7 +105,7 @@ public class FishingGameView {
 			g.drawImage(hook_sprite, hook.getXPos(), hook.getYPos(), this);
 			g.setColor(Color.WHITE);
 			Graphics2D g2d = (Graphics2D) g;
-			
+
 			g2d.setStroke(new BasicStroke(strokeWidth));
 			int hookX = hook.getXPos() + (HOOK_WIDTH * 2 / 3);
 			int hookY = hook.getYPos();
@@ -166,8 +162,10 @@ public class FishingGameView {
 					// is HOOKED");
 					recentlyCaught = f;
 				}
-				//g.drawRect(f.getMouth().x, f.getMouth().y, f.getMouth().width, f.getMouth().height);
-				//g.drawRect(hook.getHitbox().x, hook.getHitbox().y, hook.getHitbox().width, hook.getHitbox().height);
+				// g.drawRect(f.getMouth().x, f.getMouth().y,
+				// f.getMouth().width, f.getMouth().height);
+				// g.drawRect(hook.getHitbox().x, hook.getHitbox().y,
+				// hook.getHitbox().width, hook.getHitbox().height);
 				if (f.getDirection().equals(Direction.WEST))
 					g.drawImage(fish_sprites[f.getSpecies().ordinal() * 2][frameCount], f.getXPos(), f.getYPos(), this);
 				else
@@ -347,10 +345,18 @@ public class FishingGameView {
 	 * Calls repaint on the custom JPanel and updates which frame of the
 	 * animations to show
 	 * 
-	 * @param fArr
+	 * @param fish
 	 *            array of Fish to display
+	 * @param t
+	 *            array of Trash to display
 	 * @param h
 	 *            the current Hook
+	 * @param hooked
+	 *            A Mover that is on the hook
+	 * @param done
+	 *            tells whether the game is done
+	 * @param show
+	 *            If a fish info is to be shown
 	 */
 	public void update(ArrayList<Fish> fish, ArrayList<Trash> t, Hook h, Mover hooked, boolean done, boolean show) {
 		fishes = fish;

@@ -1,5 +1,4 @@
 
-
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -22,7 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import javax.swing.Timer;
 
-public class Controller{
+public class Controller {
 	private String FILEPATH = "data.bin";
 	static Active activePanel = Active.MAIN;
 	static BuildError buildProblem = BuildError.NONE;
@@ -38,8 +37,8 @@ public class Controller{
 	boolean firstFrame = true;
 
 	ResearchGameView rView = new ResearchGameView();
-	ResearchGameModel rMod = new ResearchGameModel(MainView.FRAME_WIDTH, MainView.FRAME_HEIGHT,0,0, true);
-	
+	ResearchGameModel rMod = new ResearchGameModel(MainView.FRAME_WIDTH, MainView.FRAME_HEIGHT, 0, 0, true);
+
 	public Action glow;
 	public Action drawAction;
 	private static boolean paused = false;
@@ -50,23 +49,30 @@ public class Controller{
 	 * Creates an instance of Controller
 	 */
 	@SuppressWarnings("serial")
-	public Controller() {		
-		
-		
-		mView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
-		bView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
-		fView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
-		rView.getPanel().setBounds(0,0,MainView.FRAME_WIDTH,MainView.FRAME_HEIGHT);
+	public Controller() {
+
+		mView.getPanel().setBounds(0, 0, MainView.FRAME_WIDTH, MainView.FRAME_HEIGHT);
+		bView.getPanel().setBounds(0, 0, MainView.FRAME_WIDTH, MainView.FRAME_HEIGHT);
+		fView.getPanel().setBounds(0, 0, MainView.FRAME_WIDTH, MainView.FRAME_HEIGHT);
+		rView.getPanel().setBounds(0, 0, MainView.FRAME_WIDTH, MainView.FRAME_HEIGHT);
 
 		mView.getPanel().addMouseListener(new MouseListener() {
 			@Override
-			public void mouseReleased(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {
+			}
+
 			@Override
-			public void mousePressed(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {
+			}
+
 			@Override
-			public void mouseExited(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {
+			}
+
 			@Override
-			public void mouseEntered(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {
+			}
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (tutClicked) {
@@ -74,36 +80,38 @@ public class Controller{
 				}
 			}
 		});
-		
+
 		mView.getPanel().addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent ke) {
-				switch(ke.getKeyCode()) {
+				switch (ke.getKeyCode()) {
 				case KeyEvent.VK_P:
 					paused = !paused;
 					break;
 				case KeyEvent.VK_S:
-					if(ke.isControlDown())
+					if (ke.isControlDown())
 						save();
 					break;
 				case KeyEvent.VK_L:
-					if(ke.isControlDown())
+					if (ke.isControlDown())
 						load();
 					break;
 				case KeyEvent.VK_ENTER:
-					if(mMod.getTutorial())
+					if (mMod.getTutorial())
 						mMod.reset();
-					if(mMod.gameOver()) {
+					if (mMod.gameOver()) {
 						mMod.reset();
 						firstClick = true;
 					}
 					break;
 				}
 			}
+
 			@Override
 			public void keyReleased(KeyEvent ke) {
 
 			}
+
 			@Override
 			public void keyTyped(KeyEvent ke) {
 
@@ -151,8 +159,7 @@ public class Controller{
 						bView.setTutorial(bMod.getTutorial());
 						bView.setToDisplayInfo(null);
 						bMod.setToDisplayInfo(null);
-					}
-					else if (bView.getGameOver()) {
+					} else if (bView.getGameOver()) {
 						bView.getPanel().setVisible(false);
 						activePanel = Active.MAIN;
 					}
@@ -161,19 +168,19 @@ public class Controller{
 					paused = !paused;
 					break;
 				}
-				bView.setGameOver(bMod.getGameOver());	
+				bView.setGameOver(bMod.getGameOver());
 				bView.setWrongBird(bMod.getWrongBird());
 				bView.setTryAgain(bMod.getTryAgain());
 			}
 
 			/**
 			 * Overrides the keyReleased method from KeyListener. This method
-			 * looks for keys to be released in the Bird Watching Game and 
+			 * looks for keys to be released in the Bird Watching Game and
 			 * performs actions accordingly.
 			 */
 			@Override
 			public void keyReleased(KeyEvent ke) {
-				switch(ke.getKeyCode()){
+				switch (ke.getKeyCode()) {
 				case KeyEvent.VK_UP:
 				case KeyEvent.VK_DOWN:
 					bMod.getCamera().setYSpeed(0);
@@ -196,26 +203,26 @@ public class Controller{
 
 		fView.getPanel().addKeyListener(new KeyListener() {
 			@Override
-			public void keyPressed(KeyEvent ke) {	
-				switch(ke.getKeyCode()){
+			public void keyPressed(KeyEvent ke) {
+				switch (ke.getKeyCode()) {
 				case KeyEvent.VK_UP:
-					if(!fMod.getDisplayCatch() && fMod.caught == null)
+					if (!fMod.getDisplayCatch() && fMod.caught == null)
 						fMod.getHook().setYSpeed(-15);
 					break;
 				case KeyEvent.VK_DOWN:
-					if(!fMod.getDisplayCatch() && fMod.caught == null)
+					if (!fMod.getDisplayCatch() && fMod.caught == null)
 						fMod.getHook().setYSpeed(15);
 					break;
 				case KeyEvent.VK_LEFT:
-					if(!fMod.getDisplayCatch() && fMod.caught == null)
+					if (!fMod.getDisplayCatch() && fMod.caught == null)
 						fMod.getHook().setXSpeed(-15);
 					break;
 				case KeyEvent.VK_RIGHT:
-					if(!fMod.getDisplayCatch() && fMod.caught == null)
+					if (!fMod.getDisplayCatch() && fMod.caught == null)
 						fMod.getHook().setXSpeed(15);
 					break;
 				case KeyEvent.VK_ENTER:
-					if(fMod.isTutorial() && fMod.getFish().isEmpty()) {
+					if (fMod.isTutorial() && fMod.getFish().isEmpty()) {
 						fMod.populate();
 						fView.setTutorial(false);
 					}
@@ -232,7 +239,7 @@ public class Controller{
 
 			@Override
 			public void keyReleased(KeyEvent ke) {
-				switch(ke.getKeyCode()){
+				switch (ke.getKeyCode()) {
 				case KeyEvent.VK_UP:
 				case KeyEvent.VK_DOWN:
 					fMod.getHook().setYSpeed(0);
@@ -253,7 +260,7 @@ public class Controller{
 		rView.getPanel().addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent ke) {
-				switch(ke.getKeyCode()) {
+				switch (ke.getKeyCode()) {
 				case KeyEvent.VK_UP:
 					rMod.getPlayer().setDirection(RDirection.NORTHEAST);
 					break;
@@ -272,26 +279,30 @@ public class Controller{
 						activePanel = Active.MAIN;
 						paused = false;
 					}
-					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight(), false);
+					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(),
+							rView.getImageHeight(), false);
 					break;
 				case KeyEvent.VK_P:
 					paused = !paused;
 					break;
 				}
 			}
+
 			@Override
 			public void keyReleased(KeyEvent ke) {
 
 			}
+
 			@Override
 			public void keyTyped(KeyEvent ke) {
 
-			}});
+			}
+		});
 
-		mView.getMainPanel().add(mView.getPanel(),JLayeredPane.DEFAULT_LAYER,-1);
-		mView.getMainPanel().add(bView.getPanel(),JLayeredPane.DEFAULT_LAYER,-1);
-		mView.getMainPanel().add(fView.getPanel(),JLayeredPane.DEFAULT_LAYER,-1);
-		mView.getMainPanel().add(rView.getPanel(),JLayeredPane.DEFAULT_LAYER,-1);
+		mView.getMainPanel().add(mView.getPanel(), JLayeredPane.DEFAULT_LAYER, -1);
+		mView.getMainPanel().add(bView.getPanel(), JLayeredPane.DEFAULT_LAYER, -1);
+		mView.getMainPanel().add(fView.getPanel(), JLayeredPane.DEFAULT_LAYER, -1);
+		mView.getMainPanel().add(rView.getPanel(), JLayeredPane.DEFAULT_LAYER, -1);
 
 		Controller c = this;
 		drawAction = new AbstractAction() {
@@ -299,50 +310,45 @@ public class Controller{
 				c.redraw();
 			}
 		};
-		
+
 		JButton tButton = mView.getTButton();
 		JButton rButton = mView.getSidebarButtons().get("Remove");
 		glow = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				if(mMod.getTutorial()) {
+				if (mMod.getTutorial()) {
 					Color defaultC = new JButton().getBackground();
 					rButton.setBackground(defaultC);
-					if(mMod.getBuild() == BuildState.NONE && mMod.getMap()[5][5].getB() == null) {
-						if(tButton.getBackground() == defaultC)	
+					if (mMod.getBuild() == BuildState.NONE && mMod.getMap()[5][5].getB() == null) {
+						if (tButton.getBackground() == defaultC)
 							tButton.setBackground(Color.GREEN);
 						else
 							tButton.setBackground(defaultC);
-					}
-					else if(mMod.getBuild() == BuildState.TUTORIAL && mMod.getMap()[5][5].getB() == null) {
+					} else if (mMod.getBuild() == BuildState.TUTORIAL && mMod.getMap()[5][5].getB() == null) {
 						tButton.setBackground(defaultC);
 						JButton boardButton = mView.getBoard()[5][5].getButton();
-						if(boardButton.getBackground() == defaultC) {
+						if (boardButton.getBackground() == defaultC) {
 							boardButton.setBackground(Color.GREEN);
 							boardButton.setIcon(null);
-						}
-						else {
+						} else {
 							boardButton.setBackground(defaultC);
 							boardButton.setIcon(mView.getBoard()[5][5].getBackground());
 						}
-					}
-					else if(mMod.getBuild() == BuildState.NONE && mMod.getMap()[5][5].getB() != null) {
-						if(firstClick) {
+					} else if (mMod.getBuild() == BuildState.NONE && mMod.getMap()[5][5].getB() != null) {
+						if (firstClick) {
 							tutClicked = true;
-						firstClick = false;
+							firstClick = false;
 						}
-						if(rButton.getBackground() == defaultC)	
+						if (rButton.getBackground() == defaultC)
 							rButton.setBackground(Color.GREEN);
 						else
 							rButton.setBackground(defaultC);
-					}
-					else if(mMod.getBuild() == BuildState.REMOVE && mMod.getMap()[5][5].getB() != null) {
+					} else if (mMod.getBuild() == BuildState.REMOVE && mMod.getMap()[5][5].getB() != null) {
 						tButton.setBackground(defaultC);
 						JButton boardButton = mView.getBoard()[5][5].getButton();
-						if(boardButton.getBackground() == defaultC) {
+						if (boardButton.getBackground() == defaultC) {
 							boardButton.setBackground(Color.GREEN);
 							boardButton.setIcon(null);
-						}
-						else {
+						} else {
 							boardButton.setBackground(defaultC);
 							boardButton.setIcon(mView.getBoard()[5][5].getShowImage());
 						}
@@ -351,23 +357,27 @@ public class Controller{
 			}
 		};
 	}
+
 	/**
 	 * Adds listeners to the main map of the main screen.
-	 * @param model The Main Screen Model.
-	 * @param view The Main Screen View.
+	 * 
+	 * @param model
+	 *            The Main Screen Model.
+	 * @param view
+	 *            The Main Screen View.
 	 */
 	public void generateMapListeners(MainModel model, MainView view) {
-		for(int i = 0; i < view.getBoard().length; i++) {
-			for(int j = 0; j < view.getBoard()[0].length; j++) {
+		for (int i = 0; i < view.getBoard().length; i++) {
+			for (int j = 0; j < view.getBoard()[0].length; j++) {
 				final int x = i;
 				final int y = j;
 				view.getBoard()[i][j].getButton().addMouseListener(new MouseAdapter() {
 					@Override
 					public void mousePressed(MouseEvent e) {
-						if(!paused) {
+						if (!paused) {
 							BuildReturn br;
-							if(activePanel == Active.MAIN) {
-								switch(model.getBuild()) {
+							if (activePanel == Active.MAIN) {
+								switch (model.getBuild()) {
 								case PORT:
 									br = model.build(model.getBuildingTypes().get(BuildingName.PORT), x, y);
 									activePanel = br.getActive();
@@ -376,7 +386,7 @@ public class Controller{
 								case BIRD:
 									br = model.build(model.getBuildingTypes().get(BuildingName.BIRD), x, y);
 									activePanel = br.getActive();
-									if(activePanel == Active.BIRD) {
+									if (activePanel == Active.BIRD) {
 										bView.getPanel().requestFocusInWindow();
 									}
 									buildProblem = br.getBuildError();
@@ -389,7 +399,7 @@ public class Controller{
 								case RESEARCH:
 									br = model.build(model.getBuildingTypes().get(BuildingName.RESEARCH), x, y);
 									activePanel = br.getActive();
-									if(activePanel == Active.RESEARCH) {
+									if (activePanel == Active.RESEARCH) {
 										rView.getPanel().requestFocusInWindow();
 									}
 									buildProblem = br.getBuildError();
@@ -397,7 +407,7 @@ public class Controller{
 								case FISH:
 									br = model.build(model.getBuildingTypes().get(BuildingName.FISH), x, y);
 									activePanel = br.getActive();
-									if(activePanel == Active.FISH) {
+									if (activePanel == Active.FISH) {
 										fView.getPanel().requestFocusInWindow();
 									}
 									buildProblem = br.getBuildError();
@@ -419,16 +429,20 @@ public class Controller{
 			}
 		}
 	}
+
 	/**
 	 * Generates Listeners for the sidebar.
-	 * @param model The Main Screen Model.
-	 * @param view The Main Screen View.
+	 * 
+	 * @param model
+	 *            The Main Screen Model.
+	 * @param view
+	 *            The Main Screen View.
 	 */
 	public static void generateSidebarListeners(MainModel model, MainView view) {//
 		view.getSidebarButtons().get("Port").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN && !paused)
+				if (activePanel == Active.MAIN && !paused)
 					model.setBuild(BuildState.PORT);
 			}
 		});
@@ -436,7 +450,7 @@ public class Controller{
 		view.getSidebarButtons().get("Bird Watching Tower").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN && !paused)
+				if (activePanel == Active.MAIN && !paused)
 					model.setBuild(BuildState.BIRD);
 			}
 		});
@@ -444,7 +458,7 @@ public class Controller{
 		view.getSidebarButtons().get("Factory").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN && !paused)
+				if (activePanel == Active.MAIN && !paused)
 					model.setBuild(BuildState.FACTORY);
 			}
 		});
@@ -452,7 +466,7 @@ public class Controller{
 		view.getSidebarButtons().get("Research Station").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN && !paused)
+				if (activePanel == Active.MAIN && !paused)
 					model.setBuild(BuildState.RESEARCH);
 			}
 		});
@@ -460,7 +474,7 @@ public class Controller{
 		view.getSidebarButtons().get("Fishing Pier").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN && !paused)
+				if (activePanel == Active.MAIN && !paused)
 					model.setBuild(BuildState.FISH);
 			}
 		});
@@ -468,24 +482,26 @@ public class Controller{
 		view.getSidebarButtons().get("Remove").addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(activePanel == Active.MAIN && !paused)
+				if (activePanel == Active.MAIN && !paused)
 					model.setBuild(BuildState.REMOVE);
 			}
 		});
-		
+
 		view.getTButton().addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if(model.getTutorial()) {
+				if (model.getTutorial()) {
 					model.setBuild(BuildState.TUTORIAL);
 				}
 			}
-			
+
 		});
 	}
+
 	/**
-	 * Runs games on 30 millisecond tick speed, and the tutorial flash at 750 milliseconds.
+	 * Runs games on 30 millisecond tick speed, and the tutorial flash at 750
+	 * milliseconds.
 	 */
 	public void start() {
 		EventQueue.invokeLater(new Runnable() {
@@ -497,63 +513,54 @@ public class Controller{
 			}
 		});
 	}
+
 	/**
 	 * Redraws the active panel to animate and update games.
 	 */
 	public void redraw() {
-		if(activePanel != Active.MAIN) {
-			for(int i = 0; i < mView.getBoard().length; i++) {
-				for(int j = 0; j < mView.getBoard()[0].length; j++) {
+		if (activePanel != Active.MAIN) {
+			for (int i = 0; i < mView.getBoard().length; i++) {
+				for (int j = 0; j < mView.getBoard()[0].length; j++) {
 					mView.getBoard()[i][j].getButton().setVisible(false);
 				}
 			}
-		}
-		else {
-			for(int i = 0; i < mView.getBoard().length; i++) {
-				for(int j = 0; j < mView.getBoard()[0].length; j++) {
+		} else {
+			for (int i = 0; i < mView.getBoard().length; i++) {
+				for (int j = 0; j < mView.getBoard()[0].length; j++) {
 					mView.getBoard()[i][j].getButton().setVisible(true);
 				}
 			}
 		}
-		if(!paused) {
-			switch(activePanel) {
+		if (!paused) {
+			switch (activePanel) {
 			case MAIN:
 				mView.getPanel().requestFocusInWindow();
 				if (!tutClicked) {
 					mMod.update();
 				}
-				mView.update((double) (mMod.getMoney())/(double) (mMod.MONEY_MAX),
-						(double) (mMod.getPollution()) /(double) (mMod.POLLUTION_MAX),
-						mMod.getMap(),
-						mMod.getMoneyIncr(),
-						mMod.getPollIncr(),
-						buildProblem,
-						mMod.getBuildingTypes(),
-						mMod.getTutorial(),
-						mMod.getBuilt(), 
-						mMod.gameOver(),
-						tutClicked);
+				mView.update((double) (mMod.getMoney()) / (double) (mMod.MONEY_MAX),
+						(double) (mMod.getPollution()) / (double) (mMod.POLLUTION_MAX), mMod.getMap(),
+						mMod.getMoneyIncr(), mMod.getPollIncr(), buildProblem, mMod.getBuildingTypes(),
+						mMod.getTutorial(), mMod.getBuilt(), mMod.gameOver(), tutClicked);
 				mMod.setBuilt(false);/*
-				if(mMod.gameOver()) {
-					try {
-						Thread.sleep(1500);
-						System.exit(0);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}*/
+										 * if(mMod.gameOver()) { try {
+										 * Thread.sleep(1500); System.exit(0); }
+										 * catch (InterruptedException e) {
+										 * e.printStackTrace(); } }
+										 */
 				break;
 			case BIRD:
 				bMod.update();
-				bView.update(bMod.getBirds(),bMod.getCamera(),bMod.isFlash(), bMod.toDisplayInfo);
+				bView.update(bMod.getBirds(), bMod.getCamera(), bMod.isFlash(), bMod.toDisplayInfo);
 				break;
 			case FISH:
-				if(firstFrame) {
-					fMod.setPollutionLevel((double) mMod.getPollution()/(double) mMod.POLLUTION_MAX);
+				if (firstFrame) {
+					fMod.setPollutionLevel((double) mMod.getPollution() / (double) mMod.POLLUTION_MAX);
 					firstFrame = false;
 				}
 				fMod.update();
-				fView.update(fMod.getFish(),fMod.getTrash(),fMod.getHook(),fMod.getCaught(), fMod.getGameOver(), fMod.getDisplayCatch());
+				fView.update(fMod.getFish(), fMod.getTrash(), fMod.getHook(), fMod.getCaught(), fMod.getGameOver(),
+						fMod.getDisplayCatch());
 				break;
 			case RESEARCH:
 				rMod.updateLocationAndDirection();
@@ -562,13 +569,16 @@ public class Controller{
 				rMod.endCheck();
 				rView.update(rMod.getPlayer(), rMod.getCrabs(), rMod.getRects(), rMod.getTutorial());
 				if (rMod.tutorialEndCheck()) {
-					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight(), true);
+					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(),
+							rView.getImageHeight(), true);
 				}
 				if (rMod.tutorialLifeCheck()) {
-					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight(), true);
+					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(),
+							rView.getImageHeight(), true);
 				}
 				if (rMod.lifeCheck()) {
-					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(), rView.getImageHeight(), false);
+					rMod = new ResearchGameModel(rView.getWidth(), rView.getHeight(), rView.getImageWidth(),
+							rView.getImageHeight(), false);
 				}
 				if (rMod.endCheck()) {
 					paused = true;
@@ -595,6 +605,7 @@ public class Controller{
 			e.printStackTrace();
 		}
 	}
+
 	/**
 	 * Loads the main model from a save file
 	 */
