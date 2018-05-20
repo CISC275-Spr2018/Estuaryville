@@ -1,9 +1,5 @@
 import java.util.ArrayList;
 
-/*
- * Joel Turk
- */
-
 /**
  * This is a model of the fishing game that holds all objects that should be
  * presented during the game. This model is responsible for movement, collision,
@@ -26,33 +22,48 @@ public class FishingGameModel extends Model {
 	boolean gameOver;
 	boolean tutorial;
 	boolean reeling;
+
 	// GETTERS
 	/**
 	 * returns the Mover that is on the hook currently
+	 * 
 	 * @return the caught Mover
 	 */
-	public Mover getCaught(){return caught;}
+	public Mover getCaught() {
+		return caught;
+	}
+
 	/**
 	 * a boolean telling whether the mini game is done
+	 * 
 	 * @return true if game is over, false if not
 	 */
-	public boolean getGameOver(){return gameOver;}
+	public boolean getGameOver() {
+		return gameOver;
+	}
+
 	/**
 	 * a boolean telling whether a fish has been reeled in
+	 * 
 	 * @return true if a fish has been caught, false if not
 	 */
-	public boolean getDisplayCatch(){return displayCatch;}
-	
-	public void setPollutionLevel(double pl){
+	public boolean getDisplayCatch() {
+		return displayCatch;
+	}
+
+	public void setPollutionLevel(double pl) {
 		piecesOfTrash = (int) (pl * MAX_TRASH);
 	}
-	
+
 	/**
 	 * Returns true if the game mode is set to tutorial
+	 * 
 	 * @return a Boolean
 	 */
-	public boolean isTutorial(){return tutorial;}
-	
+	public boolean isTutorial() {
+		return tutorial;
+	}
+
 	/**
 	 * Creates a new instance of FishingGameModel Adds an interactive hook and
 	 * fish to the screen.
@@ -86,7 +97,7 @@ public class FishingGameModel extends Model {
 	public ArrayList<Fish> getFish() {
 		return fishes;
 	}
-	
+
 	/**
 	 * Gets all Trash currently in the game's Model
 	 * 
@@ -115,32 +126,32 @@ public class FishingGameModel extends Model {
 		Fish f;
 		Trash t;
 		int i = 0;
-		if(fishes.size() == 0 && !tutorial)
+		if (fishes.size() == 0 && !tutorial)
 			gameOver = true;
 		while (!reeling && i < fishes.size() + trashAL.size()) {
-			if(i < fishes.size() && fishCaught(fishes.get(i))) {
+			if (i < fishes.size() && fishCaught(fishes.get(i))) {
 				caught = fishes.get(i);
 				reeling = true;
-			}else if(i >= fishes.size() && trashCaught(trashAL.get(i - fishes.size()))){
+			} else if (i >= fishes.size() && trashCaught(trashAL.get(i - fishes.size()))) {
 				caught = trashAL.get(i - fishes.size());
 				reeling = true;
 			}
 			i++;
 		}
-		if(reeling){
+		if (reeling) {
 			reelItIn(caught);
-		}else{
+		} else {
 			caught = null;
 			checkBounds(); // checks the hook
 		}
-		if(timeSinceCatch >= 0){
+		if (timeSinceCatch >= 0) {
 			displayCatch = true;
-			timeSinceCatch++;		
+			timeSinceCatch++;
 		}
-		if(timeSinceCatch > 30){
+		if (timeSinceCatch > 30) {
 			displayCatch = false;
-			hook.setXPos((int) (500.0/1100.0 * FishingGameView.getWidth()));
-			hook.setYPos((int) (450.0/700.0 * FishingGameView.getHeight()));
+			hook.setXPos((int) (500.0 / 1100.0 * FishingGameView.getWidth()));
+			hook.setYPos((int) (450.0 / 700.0 * FishingGameView.getHeight()));
 			timeSinceCatch = -1;
 			reeling = false;
 		}
@@ -152,31 +163,33 @@ public class FishingGameModel extends Model {
 				checkBounds(f);
 			f.setMouth(f.getXPos(), f.getYPos(), f.getDirection());
 		}
-		for(i = 0; i < trashAL.size(); i++){
+		for (i = 0; i < trashAL.size(); i++) {
 			t = trashAL.get(i);
-			if(!t.getHooked())
+			if (!t.getHooked())
 				t.move();
-			//System.out.println("Y:"+t.getYPos());
+			// System.out.println("Y:"+t.getYPos());
 			t.setHitbox(t.getXPos(), t.getYPos());
 		}
 
 	}
-	
-	public void populate(){
-			tutorial = false;
-			for (int j = 0; j < 9; j++) {
-				fishes.add(new Fish(Fish.Species.values()[j % 3], 9, 2, (j % 2 == 0 ? Direction.EAST : Direction.WEST)));
-			}
-			for(int k = 0; k < piecesOfTrash; k++){
-				trashAL.add(new Trash(Trash.Type.values()[k%3]));
-			}
-			timeSinceCatch = 31;
+
+	public void populate() {
+		tutorial = false;
+		for (int j = 0; j < 9; j++) {
+			fishes.add(new Fish(Fish.Species.values()[j % 3], 9, 2, (j % 2 == 0 ? Direction.EAST : Direction.WEST)));
+		}
+		for (int k = 0; k < piecesOfTrash; k++) {
+			trashAL.add(new Trash(Trash.Type.values()[k % 3]));
+		}
+		timeSinceCatch = 31;
 	}
-	
-/**
- * Reels in the hook and whatever Mover is caught
- * @param m a Mover that is caught on the hook
- */
+
+	/**
+	 * Reels in the hook and whatever Mover is caught
+	 * 
+	 * @param m
+	 *            a Mover that is caught on the hook
+	 */
 	public void reelItIn(Mover m) {
 		int xDiff = (FishingGameView.ROD_X - hook.getXPos()) / 7;
 		int yDiff = (FishingGameView.ROD_Y - hook.getYPos()) / 7;
@@ -184,14 +197,14 @@ public class FishingGameModel extends Model {
 		m.setYPos(m.getYPos() + yDiff);
 		hook.setXPos(hook.getXPos() + xDiff);
 		hook.setYPos(hook.getYPos() + yDiff);
-		if(Math.abs(hook.getXPos() - FishingGameView.ROD_X) < 7 && Math.abs(hook.getYPos() - FishingGameView.ROD_Y) < 7){
+		if (Math.abs(hook.getXPos() - FishingGameView.ROD_X) < 7
+				&& Math.abs(hook.getYPos() - FishingGameView.ROD_Y) < 7) {
 			timeSinceCatch = 0;
 			reeling = false;
-			if(m instanceof Fish)
-			{
+			if (m instanceof Fish) {
 				Fish f = (Fish) m;
-				fishes.remove(f);	
-			}else{
+				fishes.remove(f);
+			} else {
 				Trash t = (Trash) m;
 				trashAL.remove(t);
 			}
@@ -207,14 +220,14 @@ public class FishingGameModel extends Model {
 	 */
 	public void checkBounds(Fish f) {
 		if (caught instanceof Fish && f.getSpecies() == ((Fish) caught).getSpecies()) {
-			//System.out.println((f.getDirection().ordinal()*2 - 4) * 1);
-			switch(f.getDirection()){
+			// System.out.println((f.getDirection().ordinal()*2 - 4) * 1);
+			switch (f.getDirection()) {
 			case EAST:
-				f.setXPos(f.getXPos() + (int)(5.0*FishingGameView.getWidth()/1280*f.getXSpeed()));
+				f.setXPos(f.getXPos() + (int) (5.0 * FishingGameView.getWidth() / 1280 * f.getXSpeed()));
 				break;
 			case WEST:
-				default:
-				f.setXPos(f.getXPos() - (int)(5*FishingGameView.getWidth()/1280*f.getXSpeed()));
+			default:
+				f.setXPos(f.getXPos() - (int) (5 * FishingGameView.getWidth() / 1280 * f.getXSpeed()));
 				break;
 			}
 			if (f.getXPos() < (-1 * FishingGameView.FISH_WIDTH)
@@ -223,14 +236,12 @@ public class FishingGameModel extends Model {
 			}
 		} else {
 			switch (f.getDirection()) {
-			/*case NORTH:
-				if (f.getYPos() - f.getYSpeed() < 300)
-					f.setDirection(Direction.SOUTH);
-				else {
-					f.setYPos(f.getYPos() - f.getYSpeed());
-					f.setMouth(f.getXPos(), f.getYPos(), f.getDirection());
-				}
-				break;*/
+			/*
+			 * case NORTH: if (f.getYPos() - f.getYSpeed() < 300)
+			 * f.setDirection(Direction.SOUTH); else { f.setYPos(f.getYPos() -
+			 * f.getYSpeed()); f.setMouth(f.getXPos(), f.getYPos(),
+			 * f.getDirection()); } break;
+			 */
 			case EAST:
 				if (f.getXPos() + f.getXSpeed() > FishingGameView.getWidth() - 50)
 					f.setDirection(Direction.WEST);
@@ -240,7 +251,7 @@ public class FishingGameModel extends Model {
 				}
 				break;
 			case WEST:
-				default:
+			default:
 				if (f.getXPos() - f.getXSpeed() < -50)
 					f.setDirection(Direction.EAST);
 				else {
@@ -248,16 +259,13 @@ public class FishingGameModel extends Model {
 					f.setMouth(f.getXPos(), f.getYPos(), f.getDirection());
 				}
 				break;
-			/*case SOUTH:
-				if (f.getYPos() + f.getYSpeed() > FishingGameView.getHeight() - 100)
-					f.setDirection(Direction.NORTH);
-				else {
-					f.setYPos(f.getYPos() + f.getYSpeed());
-					f.setMouth(f.getXPos(), f.getYPos(), f.getDirection());
-				}
-				break;
-			default:
-				break;*/
+			/*
+			 * case SOUTH: if (f.getYPos() + f.getYSpeed() >
+			 * FishingGameView.getHeight() - 100)
+			 * f.setDirection(Direction.NORTH); else { f.setYPos(f.getYPos() +
+			 * f.getYSpeed()); f.setMouth(f.getXPos(), f.getYPos(),
+			 * f.getDirection()); } break; default: break;
+			 */
 			}
 		}
 	}
@@ -284,12 +292,15 @@ public class FishingGameModel extends Model {
 
 	/**
 	 * checks the Trash with the hook
-	 * @param t the Trash
+	 * 
+	 * @param t
+	 *            the Trash
 	 * @return a boolean, if the Trash is hooked
 	 */
 	public boolean trashCaught(Trash t) {
 		if (t.getHitbox().intersects(hook.getHitbox())) {
-			//System.out.println("The " + f.getSpecies().getName() + " is HOOKED");
+			// System.out.println("The " + f.getSpecies().getName() + " is
+			// HOOKED");
 			t.setHooked(true);
 			return true;
 		} else {
@@ -297,10 +308,12 @@ public class FishingGameModel extends Model {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * checks the Fish with the hook
-	 * @param f the Fish
+	 * 
+	 * @param f
+	 *            the Fish
 	 * @return a boolean, if the fish is hooked
 	 */
 	public boolean fishCaught(Fish f) {
