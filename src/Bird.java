@@ -59,12 +59,8 @@ public class Bird {
 		} else {
 			this.xSpd = rand.nextInt(20) + 15;
 			this.ySpd = rand.nextInt(20) + 15;
-			this.xPos = rand.nextInt(screenWidth - getScaledWidth(331)); // keeps
-																			// inside
-																			// screen
-																			// bounds
-			this.yPos = rand.nextInt(getScaledHeight(330)); // keeps above grass
-															// level
+			this.xPos = rand.nextInt(screenWidth - getScaledWidth(331)); // keeps inside screen bounds
+			this.yPos = rand.nextInt(getScaledHeight(330)); // keeps above grass level
 			int randStartDir = rand.nextInt(2);
 			if (randStartDir == 1)
 				randStartDir = 3;
