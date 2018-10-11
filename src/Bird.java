@@ -1,4 +1,5 @@
 
+
 import java.awt.Rectangle;
 import java.util.Random;
 
@@ -37,18 +38,9 @@ public class Bird {
 		if (sp == Bird.Species.BLUE_HERON) {
 			this.xSpd = 0; // Blue Heron doesn't move
 			this.ySpd = 0; // Blue Heron doesn't move
-			this.xPos = getScaledWidth(150) + rand.nextInt(getScaledWidth(525)); // keeps
-																					// Blue
-																					// Heron
-																					// on
-																					// grass
-			this.yPos = getScaledHeight(350) + rand.nextInt(getScaledHeight(170)); // keeps
-																					// Blue
-																					// Heron
-																					// on
-																					// grass
-			int dirToUse = rand.nextInt(2); // used to choose east or west
-											// direction
+			this.xPos = getScaledWidth(150) + rand.nextInt(getScaledWidth(525)); // keeps Blue Heron on grass																		
+			this.yPos = getScaledHeight(350) + rand.nextInt(getScaledHeight(170)); // keeps Blue Heron on grass												
+			int dirToUse = rand.nextInt(2); // used to choose east or west direction
 			if (dirToUse == 1)
 				dirToUse = 3;
 			this.direction = BDirection.values()[dirToUse]; // east or west
