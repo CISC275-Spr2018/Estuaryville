@@ -27,7 +27,7 @@ public class ResearchGameModel {
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	final int frameWidth = (int) screenSize.getWidth();
 	final int frameHeight = (int) screenSize.getHeight();
-	final int xIncr = frameWidth / 140;
+	final int xIncr = frameWidth / 175;
 	final int yIncr = frameHeight / 100;
 
 	final int playerStartingX = getScaledWidth(180);
