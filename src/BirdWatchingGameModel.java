@@ -1,4 +1,5 @@
 
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -46,7 +47,6 @@ public class BirdWatchingGameModel extends Model {
 		}
 		numBirdsNotFound = birds.size();
 		camera = new Camera(w, h);
-		// Random rand = new Random();
 		searchingFor = birds.get(0);
 	}
 
