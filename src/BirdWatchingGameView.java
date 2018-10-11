@@ -1,4 +1,5 @@
 
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -173,7 +174,7 @@ public class BirdWatchingGameView {
 	 */
 	private void loadSprites() {
 		int numSpecies = Bird.Species.values().length;
-		int numDirections = 2; // only east or west //ADD EAST DIRECTIONS LATER
+		int numDirections = 2; // only east or west 
 		try {
 			background = ImageIO.read(new File("assets/bird-game/birdwatching-background.png"));
 			camera_sprite = ImageIO.read(new File("assets/bird-game/camera.png"));
@@ -185,10 +186,7 @@ public class BirdWatchingGameView {
 			Scanner scan = new Scanner(new File("assets/bird-game/info.txt"));
 			imgHeights = new int[numSpecies];
 			imgWidths = new int[numSpecies];
-			bird_sprites = new BufferedImage[numSpecies * numDirections][16]; // MULTIPLY
-																				// NUMSPECIES
-																				// BY
-																				// NUMDIR
+			bird_sprites = new BufferedImage[numSpecies * numDirections][16]; 
 			bird_info_screens = new BufferedImage[numSpecies];
 			String nextLine = "";
 			for (int i = 0; i < numSpecies; i++) {
